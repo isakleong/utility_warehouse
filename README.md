@@ -1,6 +1,6 @@
 # utility_warehouse
 
-A new Flutter project.
+Utility Warehouse Apps to support daily stock opname and SMI Utility such as Export SMI, Reset SMI and Add FPBr
 
 ## Getting Started
 
