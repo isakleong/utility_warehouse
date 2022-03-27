@@ -4,6 +4,7 @@ import 'package:http/http.dart' show Client;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:utility_warehouse/screens/pick_page.dart';
 import 'package:utility_warehouse/settings/configuration.dart';
 import 'package:utility_warehouse/tools/function.dart';
 
@@ -145,7 +146,11 @@ class LoginState extends State<Login> {
                           ),
                           child: Text("MASUK ", style: TextStyle(color: Colors.white)),
                           onPressed: () {
-                            submitValidation();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => PickPage()),
+                            );
+                            // submitValidation();
                           },
                         ),
                       ),
