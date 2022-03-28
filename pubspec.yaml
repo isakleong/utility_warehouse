@@ -27,6 +27,12 @@ dependencies:
   json_annotation: 3.1.1
   http: ^0.11.3+2
   intl: ^0.17.0
+  lottie: ^1.2.2
+  path_provider: ^2.0.4
+  permission_handler: ^8.1.6
+  percent_indicator: ^3.4.0
+  open_file: ^3.0.3
+  dio: ^3.0.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -60,6 +66,30 @@ flutter:
 
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: assets/font/Roboto-Light.ttf
+          weight: 300
+        - asset: assets/font/Roboto-Regular.ttf
+          weight: 400
+        - asset: assets/font/Roboto-Bold.ttf
+          weight: 700
+        - asset: assets/font/Roboto-Black.ttf
+          weight: 900
+        - asset: assets/font/Roboto-LightItalic.ttf
+          weight: 300
+          style: italic
+        - asset: assets/font/Roboto-MediumItalic.ttf
+          weight: 500
+          style: italic
+        - asset: assets/font/Roboto-BoldItalic.ttf
+          weight: 700
+          style: italic
+        - asset: assets/font/Roboto-BlackItalic.ttf
+          weight: 900
+          style: italic
+  
   assets:
     - assets/illustration/
 

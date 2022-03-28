@@ -35,6 +35,9 @@ class LoginState extends State<Login> {
   @override
   void initState() {
     super.initState();
+    // SystemChrome.setPreferredOrientations([
+    //   DeviceOrientation.landscapeRight,
+    // ]);
   }
 
   @override
@@ -76,8 +79,8 @@ class LoginState extends State<Login> {
                       Hero(
                         tag: 'logo',
                         child: Container(
-                          width: 220,
-                          height: 220,
+                          width: 200,
+                          height: 200,
                           child: Image.asset("assets/illustration/logo.png", alignment: Alignment.center, fit: BoxFit.contain),
                         ),
                       ),

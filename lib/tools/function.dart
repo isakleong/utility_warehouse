@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'package:http/http.dart' show Client, Request;
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'dart:io';
 import 'package:utility_warehouse/settings/configuration.dart';
+import 'package:utility_warehouse/widget/button.dart';
+import 'package:utility_warehouse/widget/textView.dart';
 
 printHelp(final print) {
   debugPrint("---------------------------------");
@@ -45,7 +48,9 @@ class MyHttpOverrides extends HttpOverrides {
   }
 }
 
-String fetchAPI(String url, {String parameter = "", bool print = false, BuildContext context}) {
+// String url_address_1 = config.baseUrl + "/config/" + "getVersion.php" + (parameter == "" ? "" : "?" + parameter);
+
+String fetchAPI(String url, {String parameter = "", bool print = false, bool secondary = false, BuildContext context}) {
   Configuration config;
   if (context != null) {
     config = Configuration.of(context);
@@ -57,4 +62,137 @@ String fetchAPI(String url, {String parameter = "", bool print = false, BuildCon
   if(print)
     debugPrint("url api "+url);
   return urlAPI;
+}
+
+void Alert({ context, String title, Widget content, List<Widget> actions, VoidCallback defaultAction, bool cancel = true, String type = "warning", bool showIcon = true,
+  bool disableBackButton = false, VoidCallback willPopAction, loading = false, double value, String errorBtnTitle = "Ok" }) {
+
+  bool isShowing = false;
+
+  Configuration config = new Configuration();
+  
+  if (loading == false) {
+    if (actions == null) {
+      actions = [];
+    }
+
+    if (defaultAction == null) {
+      defaultAction = () {};
+    }
+
+    Widget icon;
+    double iconWidth = 40, iconHeight = 40;
+    if (type == "success") {
+      icon = Container(
+        child: Lottie.asset('assets/illustration/waiting.json', width: iconWidth, height: iconHeight, fit: BoxFit.contain),
+      );
+    } else if (type == "warning") {
+      icon = Container(
+        child: Lottie.asset('assets/illustration/waiting.json', width: iconWidth, height: iconHeight, fit: BoxFit.contain),
+      );
+    } else if (type == "error") {
+      icon = Container(
+        child: Lottie.asset('assets/illustration/waiting.json', width: iconWidth, height: iconHeight, fit: BoxFit.contain),
+      );
+    }
+
+    Widget titleWidget;
+    // kalau titlenya gak null, judulnya ada
+    if (title != null) {
+      // kalau titlenya kosongan, brarti gk ada judulnya
+      if (title == "") {
+        titleWidget = null;
+      } else {
+        titleWidget = Row(
+          children: <Widget>[
+            showIcon ? Padding(padding: EdgeInsets.only(right: 20), child:icon) : Container(),
+            Expanded(child: TextView(title, 2)),
+          ],
+        );
+        
+      }
+    } else {
+      // kalau titlenya null berarti auto generate tergantung typenya
+      titleWidget = Row(
+        children: <Widget>[
+          showIcon ? Padding(padding: EdgeInsets.only(right: 20), child:icon) : Container(),
+          Expanded(child: TextView("Warning", 2)),
+        ],
+      );
+    }
+    
+    showDialog (
+      context: context,
+      barrierDismissible: false,
+      builder: (context){
+        return WillPopScope(
+          onWillPop: disableBackButton ? () {
+          }:willPopAction,
+          child:AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(7.5)),
+            ),
+            title: titleWidget,
+            content: content == null ? null:content,
+            // kalau actions nya kosong akan otomatis mengeluarkan tombol ok untuk menutup alert
+            actions: actions.length == 0 ?
+            [
+              defaultAction != null && cancel ?
+              Button(
+                key: Key("cancel"),
+                child: TextView("Tidak", 2, fontSize: 12, color: Colors.white),
+                fill: false,
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+              ) : Container(),
+              Button(
+                key: Key("ok"),
+                child: cancel ? TextView("Ya", 2, fontSize: 12, color: Colors.white) : type == "error" ? TextView(errorBtnTitle, 2, fontSize: 12, color: Colors.white) : TextView("Ok", 2, fontSize: 12, color: Colors.white),
+                fill: true,
+                onTap: () {
+                  Navigator.of(context).pop();
+                  defaultAction();
+                },
+              ),
+              // kalau ada default action akan otomatis menampilkan tombol cancel, jadi akan muncul ok dan cancel
+            ]
+            :
+            [
+              // kalau ada pilihan tombol lain, akan otomatis mengeluarkan tulisan cancel
+              // Button(
+              //   key: Key("cancel"),
+              //   child: TextView("Tidak", 2, size: 12, caps: false, color: Colors.white),
+              //   fill: false,
+              //   onTap: () {
+              //     Navigator.of(context).pop();
+              //   },
+              // )
+            ]..addAll(actions)..add(Padding(padding: EdgeInsets.only(right:5)))
+          )
+        );
+      }
+    );    
+  } else if (loading) {
+    showDialog (
+      context: context,
+      barrierDismissible: false,
+      builder: (context){
+        return WillPopScope(
+          onWillPop: disableBackButton ? () {
+
+          }:null,
+          child: ListView(
+            children: [
+              SizedBox(height: 30),
+              Container(
+                child: Lottie.asset('assets/illustration/waiting.json', width: 220, height: 220, fit: BoxFit.contain)
+              ),
+            ],
+          )
+        );
+      }
+    );
+  }
+
 }
