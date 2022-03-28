@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:utility_warehouse/widgets/textView.dart';
-import 'package:data_table_2/data_table_2.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 
 class PickPage extends StatefulWidget {
   @override
@@ -13,6 +13,7 @@ class PickPage extends StatefulWidget {
 }
 
 class _PickPageState extends State<PickPage> {
+  bool valuefirst = false;
 
   final DataTableSource _data = MyData();
 
@@ -33,7 +34,7 @@ class _PickPageState extends State<PickPage> {
             Column(
               children: [
                 Padding(
-                  padding: EdgeInsets.all(40),
+                  padding: EdgeInsets.only(top: 40, left: 40, right: 40),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -42,10 +43,10 @@ class _PickPageState extends State<PickPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             TextView(text:'Sinar Surya', fontWeight:FontWeight.bold),
-                            TextView(text:'BP. ANTONIUS',  fontWeight:FontWeight.bold),
+                            TextView(text:'BP. ANTONIUS', fontWeight:FontWeight.bold),
                             TextView(text:'Ruko Kebraon Selatan Fa-36', fontWeight:FontWeight.bold),
                             TextView(text:'Karang Pilang, 60221', fontWeight:FontWeight.bold),
-                            TextView(text:'16C-SURABAYA '),
+                            TextView(text:'16C-SURABAYA'),
                             TextView(text:'JAWA TIMUR'),
                           ],
                         ),
@@ -54,6 +55,34 @@ class _PickPageState extends State<PickPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+
+//                            Column(
+//                              crossAxisAlignment: CrossAxisAlignment.start,
+//                              children: [
+//                                Row(
+//                                  children: [
+//                                    TextView(text:'Pick No.', color: Colors.grey),
+//                                    TextView(text:':'),
+//                                    dropdownSearch(),
+//                                  ],
+//                                ),
+//                                Row(
+//                                  children: [
+//                                    TextView(text:'Gudang', color: Colors.grey),
+//                                    TextView(text:':'),
+//                                    TextView(text:'16C-GDWMS'),
+//                                  ],
+//                                ),
+//                                Row(
+//                                  children: [
+//                                    TextView(text:'Source', color: Colors.grey),
+//                                    TextView(text:':'),
+//                                    TextView(text:'SG-16C-2201-01329'),
+//                                  ],
+//                                ),
+//                              ],
+//                            ),
+
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
@@ -63,8 +92,8 @@ class _PickPageState extends State<PickPage> {
                                       child: Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: <Widget>[
-                                            TextView(text:'Gudang', color: Colors.grey),
                                             TextView(text:'Pick No.', color: Colors.grey),
+                                            TextView(text:'Gudang', color: Colors.grey),
                                             TextView(text:'Source', color: Colors.grey),
                                             TextView(text:'Tanggal', color: Colors.grey),
                                             TextView(text:'Berat', color: Colors.grey),
@@ -95,6 +124,7 @@ class _PickPageState extends State<PickPage> {
                                 ),
                               ],
                             ),
+
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
@@ -104,8 +134,8 @@ class _PickPageState extends State<PickPage> {
                                       child: Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: <Widget>[
+                                            dropdownSearch(),
                                             TextView(text:'16C-GDWMS'),
-                                            TextView(text:'PK-16C-2202-00001'),
                                             TextView(text:'SG-16C-2201-01329'),
                                             TextView(text:'02/03/22	16CC2A0505'),
                                             TextView(text:'76.07 KG'),
@@ -137,7 +167,7 @@ class _PickPageState extends State<PickPage> {
                     children: [
                       PaginatedDataTable(
                         source: _data,
-                        header: const Text('My Products'),
+//                        header: const Text('My Products'),
                         columns: const [
                           DataColumn(label: Text('ID')),
                           DataColumn(label: Text('Name')),
@@ -178,7 +208,7 @@ class _PickPageState extends State<PickPage> {
               ),
             ),
 
-            Align(
+              Align(
               alignment: Alignment.center,
               child: Padding(
                 padding: EdgeInsets.all(10),
@@ -194,6 +224,66 @@ class _PickPageState extends State<PickPage> {
               ),
             ),
           ]
+        ),
+      ),
+    );
+  }
+
+  Widget dropdownSearch(){
+    return Container(
+      width: 250,
+      height: 50,
+      child: ///BottomSheet Mode with no searchBox
+      DropdownSearch<String>(
+        mode: Mode.BOTTOM_SHEET,
+        items: [
+          "Brazil",
+          "Italia",
+          "Tunisia",
+          'Canada',
+          'Zraoua',
+          'France',
+          'Belgique'
+        ],
+//        dropdownSearchDecoration: InputDecoration(
+//          labelText: "Custom BottomShet mode",
+//          contentPadding: EdgeInsets.fromLTRB(12, 12, 0, 0),
+//          border: OutlineInputBorder(),
+//        ),
+        onChanged: print,
+        showSearchBox: true,
+        searchFieldProps: TextFieldProps(
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            contentPadding: EdgeInsets.fromLTRB(12, 12, 8, 0),
+            labelText: "Search a country",
+          ),
+        ),
+        popupTitle: Container(
+          height: 50,
+          decoration: BoxDecoration(
+            color: Theme.of(context).primaryColorDark,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          child: Center(
+            child: Text(
+              'Country',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+        popupShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(24),
+            topRight: Radius.circular(24),
+          ),
         ),
       ),
     );
@@ -242,7 +332,16 @@ class _PickPageState extends State<PickPage> {
           DataCell(Text('1.15.24.1')),
           DataCell(Text('8')),
           DataCell(Text('ID')),
-          DataCell(Text('ID')),
+          DataCell(Checkbox(
+            checkColor: Colors.greenAccent,
+            activeColor: Colors.red,
+            value: valuefirst,
+            onChanged: (bool value) {
+              setState(() {
+                this.valuefirst = value;
+              });
+            },
+          ),),
         ]),
         DataRow(cells: [
           DataCell(Text('SUZUKA Lacquer 470')),
