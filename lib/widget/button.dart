@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:utility_warehouse/widget/textView.dart';
 
 class Button extends StatelessWidget {
 
   Widget child;
-  Color backgroundColor;
   Key key;
-  bool fill, loading;
+  bool loading, disable;
   VoidCallback onTap;
-  double borderRadius;
 
-  Button({this.child, this.backgroundColor, this.onTap, this.key, this.fill = true, this.loading:false
-  });
+  Button({this.child, this.onTap, this.key, this.loading = false, this.disable = false});
 
   @override
   Widget build(BuildContext context){
@@ -19,7 +17,14 @@ class Button extends StatelessWidget {
     }
     return ElevatedButton(
       key: key,
-      onPressed: onTap,
+      onPressed: disable ? null : onTap,
+      style: ElevatedButton.styleFrom(
+        padding: EdgeInsets.zero,
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10)
+        )
+      ),
       child: loading ?
         // Container(
         //   width: 40,
@@ -28,12 +33,22 @@ class Button extends StatelessWidget {
         // )
         null
         :
-        child,
-        style: ElevatedButton.styleFrom(
-          primary: backgroundColor,
-          padding: EdgeInsets.all(14),
-          elevation: 2,
-          )
+        Ink(
+          decoration: BoxDecoration(
+            color: disable ? Colors.grey : null,
+            gradient: disable ? null : LinearGradient(
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+              colors: [Color(0xFF1A2980), Color(0xFF3476aa), Color(0xFF26D0CE)]
+            ),
+            borderRadius: BorderRadius.circular(10)
+          ),
+          child: Container(
+            padding: EdgeInsets.all(12),
+            alignment: Alignment.center,
+            child: child,
+          ),
+        ),
     );
   }
 }

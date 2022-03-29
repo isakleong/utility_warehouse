@@ -65,7 +65,7 @@ String fetchAPI(String url, {String parameter = "", bool print = false, bool sec
 }
 
 void Alert({ context, String title, Widget content, List<Widget> actions, VoidCallback defaultAction, bool cancel = true, String type = "warning", bool showIcon = true,
-  bool disableBackButton = false, VoidCallback willPopAction, loading = false, double value, String errorBtnTitle = "Ok" }) {
+  bool disableBackButton = false, Future<bool> willPopAction, loading = false, double value, String errorBtnTitle = "Ok" }) {
 
   bool isShowing = false;
 
@@ -84,15 +84,11 @@ void Alert({ context, String title, Widget content, List<Widget> actions, VoidCa
     double iconWidth = 40, iconHeight = 40;
     if (type == "success") {
       icon = Container(
-        child: Lottie.asset('assets/illustration/waiting.json', width: iconWidth, height: iconHeight, fit: BoxFit.contain),
-      );
-    } else if (type == "warning") {
-      icon = Container(
-        child: Lottie.asset('assets/illustration/waiting.json', width: iconWidth, height: iconHeight, fit: BoxFit.contain),
+        child: Lottie.asset('assets/illustration/success.json', width: iconWidth, height: iconHeight, fit: BoxFit.contain),
       );
     } else if (type == "error") {
       icon = Container(
-        child: Lottie.asset('assets/illustration/waiting.json', width: iconWidth, height: iconHeight, fit: BoxFit.contain),
+        child: Lottie.asset('assets/illustration/failed.json', width: iconWidth, height: iconHeight, fit: BoxFit.contain),
       );
     }
 
@@ -126,8 +122,9 @@ void Alert({ context, String title, Widget content, List<Widget> actions, VoidCa
       barrierDismissible: false,
       builder: (context){
         return WillPopScope(
-          onWillPop: disableBackButton ? () {
-          }:willPopAction,
+          // onWillPop: disableBackButton ? () {
+          // }:willPopAction,
+          onWillPop: null,
           child:AlertDialog(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(7.5)),
@@ -141,7 +138,6 @@ void Alert({ context, String title, Widget content, List<Widget> actions, VoidCa
               Button(
                 key: Key("cancel"),
                 child: TextView("Tidak", 2, fontSize: 12, color: Colors.white),
-                fill: false,
                 onTap: () {
                   Navigator.of(context).pop();
                 },
@@ -149,7 +145,6 @@ void Alert({ context, String title, Widget content, List<Widget> actions, VoidCa
               Button(
                 key: Key("ok"),
                 child: cancel ? TextView("Ya", 2, fontSize: 12, color: Colors.white) : type == "error" ? TextView(errorBtnTitle, 2, fontSize: 12, color: Colors.white) : TextView("Ok", 2, fontSize: 12, color: Colors.white),
-                fill: true,
                 onTap: () {
                   Navigator.of(context).pop();
                   defaultAction();
@@ -179,14 +174,14 @@ void Alert({ context, String title, Widget content, List<Widget> actions, VoidCa
       barrierDismissible: false,
       builder: (context){
         return WillPopScope(
-          onWillPop: disableBackButton ? () {
-
-          }:null,
+          // onWillPop: disableBackButton ? () {
+          // }:null,
+          onWillPop: disableBackButton ? null : null,
           child: ListView(
             children: [
               SizedBox(height: 30),
               Container(
-                child: Lottie.asset('assets/illustration/waiting.json', width: 220, height: 220, fit: BoxFit.contain)
+                child: Lottie.asset('assets/illustration/loader.json', width: 220, height: 220, fit: BoxFit.contain)
               ),
             ],
           )

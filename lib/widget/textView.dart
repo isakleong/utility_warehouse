@@ -14,7 +14,6 @@ class TextView extends StatelessWidget{
 
   @override
   Widget build(BuildContext context){
-    Configuration config = Configuration.of(context);
     double space = 0;
 
     switch(type) {

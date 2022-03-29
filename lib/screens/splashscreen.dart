@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 import 'package:dio/dio.dart';
@@ -10,11 +11,13 @@ import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:utility_warehouse/models/result.dart';
 import 'package:utility_warehouse/screens/login.dart';
 import 'package:utility_warehouse/settings/configuration.dart';
 import 'package:utility_warehouse/tools/function.dart';
 import 'package:utility_warehouse/widget/button.dart';
 import 'package:utility_warehouse/widget/textView.dart';
+import 'package:xml/xml.dart';
 
 const debug = true;
 
@@ -54,23 +57,45 @@ class SplashScreenState extends State<SplashScreen> {
     // startTimer();
   }
 
-  Future<bool> checkAppsPermission() async {
-    setState(() {
-      isPermissionPermanentlyDenied = false;
-    });
-    var status = await Permission.storage.request();
+  void setSat(String a ){
+    printHelp("GETGET "+a);
+  }
 
-    if(status != PermissionStatus.granted) {
-      if(status == PermissionStatus.denied) {
-        setState(() {
-          isPermissionPermanentlyDenied = true;
-        });
-      } else {
-        openAppSettings();
-        return status == PermissionStatus.granted;
-      }
+  getDeviceConfig() async {
+    Configuration config = Configuration.of(context);
+    Directory dir = await getExternalStorageDirectory();
+    String path = '${dir?.path}/deviceconfig.xml';
+    File file = File(path);
+
+    if(FileSystemEntity.typeSync(path) != FileSystemEntityType.notFound){
+      final document = XmlDocument.parse(file.readAsStringSync());
+      final url_address_1 = document.findAllElements('url_address_1').map((node) => node.text);
+      final url_address_2 = document.findAllElements('url_address_2').map((node) => node.text);
+      config?.setBaseUrl(url_address_1.first);
+      config?.setBaseUrlAlt(url_address_2.first);
+      printHelp("setter " + config.baseUrl);
+      printHelp("setter " + config.baseUrlAlt);
+      // print(document.toString());
+      // print(document.toXmlString(pretty: true, indent: '\t'));
+    } else {
+      config?.setBaseUrl("http://203.142.77.243/NewUtilityWarehouseDev");
+      config?.setBaseUrlAlt("http://103.76.27.124/NewUtilityWarehouseDev");
+
+      final builder = XmlBuilder();
+      builder.processing('xml', 'version="1.0" encoding="UTF-8" standalone="yes"');
+      builder.element('deviceconfig', nest: () {
+        builder.element('url_address_1', nest: "http://203.142.77.243/NewUtilityWarehouseDev");
+        builder.element('url_address_2', nest: "http://103.76.27.124/NewUtilityWarehouseDev");
+        builder.element('token_id', nest: '');
+      });
+      final document = builder.buildDocument();
+      await file.writeAsString(document.toString());
+      // print(document.toString());
+      // print(document.toXmlString(pretty: true, indent: '\t'));
     }
-    return status == PermissionStatus.granted;
+
+
+    
   }
 
   getAppsReady() async {
@@ -79,6 +104,7 @@ class SplashScreenState extends State<SplashScreen> {
     final isPermissionStatusGranted = await checkAppsPermission();
     
     if(isPermissionStatusGranted) {
+      await getDeviceConfig();
       doCheckVersion();
     } else {
       var isPermissionStatusGranted = false;
@@ -111,6 +137,25 @@ class SplashScreenState extends State<SplashScreen> {
         getAppsReady();
       }
     }
+  }
+
+  Future<bool> checkAppsPermission() async {
+    setState(() {
+      isPermissionPermanentlyDenied = false;
+    });
+    var status = await Permission.storage.request();
+
+    if(status != PermissionStatus.granted) {
+      if(status == PermissionStatus.denied) {
+        setState(() {
+          isPermissionPermanentlyDenied = true;
+        });
+      } else {
+        openAppSettings();
+        return status == PermissionStatus.granted;
+      }
+    }
+    return status == PermissionStatus.granted;
   }
 
   doCheckVersion() async {
@@ -207,7 +252,6 @@ class SplashScreenState extends State<SplashScreen> {
                                 width: MediaQuery.of(context).size.width,
                                 child: Button(
                                   // loading: loginLoading,
-                                  backgroundColor: config.darkOpacityBlueColor,
                                   child: TextView("Coba Lagi", 3, color: Colors.white),
                                   onTap: () {
                                     downloadNewVersion();
@@ -393,8 +437,9 @@ class SplashScreenState extends State<SplashScreen> {
 
     String url = "";
     bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-    String url_address_1 = config.baseUrl + "/" + config.apkName+".apk";
-    String url_address_2 = config.baseUrlAlt + "/" + config.apkName+".apk";
+
+    String url_address_1 = fetchAPI("config/apk/"+config.apkName+".apk", context: context);
+    String url_address_2 = fetchAPI("config/apk/"+config.apkName+".apk", context: context, secondary: true);
 
     try {
 		  final conn_1 = await connectionTest(url_address_1, context);
@@ -450,7 +495,7 @@ class SplashScreenState extends State<SplashScreen> {
         String path = '';
         String filename = config.apkName + ".apk";
         Directory dir = await getExternalStorageDirectory();
-        path = '${dir.path}/$filename';
+        path = '${dir?.path}/$filename';
 
         if(FileSystemEntity.typeSync(path) != FileSystemEntityType.notFound){
           var file = File(path);
@@ -508,13 +553,9 @@ class SplashScreenState extends State<SplashScreen> {
 
     bool isUrlAddress_1 = false, isUrlAddress_2 = false;
     String isGetVersionSuccess = "";
-    // String url_address_1 = config.baseUrl + "/config/" + "getVersion.php" + (parameter == "" ? "" : "?" + parameter);
-    // String url_address_2 = config.baseUrlAlt + "/config/" + "getVersion.php" + (parameter == "" ? "" : "?" + parameter);
 
     String url_address_1 = fetchAPI("config/getVersion.php", context: context);
     String url_address_2 = fetchAPI("config/getVersion.php", context: context, secondary: true);
-
-    printHelp(url_address_1);
 
     try {
 		  final conn_1 = await connectionTest(url_address_1, context);
@@ -548,15 +589,18 @@ class SplashScreenState extends State<SplashScreen> {
     var response;
     if(url != "") {
       try {
-        response = await client.get(url);
+        var parsedUrl = Uri.parse(url);
+        response = await client.get(parsedUrl);
+        var parsedJson = jsonDecode(response.body.toString());
+        var result = Result.fromJson(parsedJson);
 
-        if(response.body.toString() != "false") {
+        if(result.code == 200) {
           isGetVersionSuccess = "OK";
           setState(() {
-            getCheckVersion = response.body.toString();
+            getCheckVersion = result.data;
           });
         } else {
-          isGetVersionSuccess = "Gagal terhubung dengan server";
+          isGetVersionSuccess = result.message;
         }
       } catch (e) {
         isGetVersionSuccess = "Gagal terhubung dengan server";
@@ -577,41 +621,45 @@ class SplashScreenState extends State<SplashScreen> {
 
     return Scaffold(
       body: Center(
-        child: Container(
-          width: mediaWidth*0.75,
+        child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Hero(
-                tag: "logo",
-                child: InkWell(
-                  child: Image.asset(
-                    "assets/illustration/logo.png", alignment: Alignment.center, fit: BoxFit.contain
-                  ),
+              Container(
+                width: mediaWidth*0.7,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Hero(
+                      tag: "logo",
+                      child: InkWell(
+                        child: Image.asset(
+                          "assets/illustration/logo.png", alignment: Alignment.center, fit: BoxFit.contain
+                        ),
+                      ),
+                    ),
+                    // Center(
+                    //   child: CircularProgressIndicator(
+                    //     valueColor: AlwaysStoppedAnimation<Color>(config.darkOpacityBlueColor),
+                    //   ),
+                    // ),
+                  ],
                 ),
               ),
-              // Center(
-              //   child: CircularProgressIndicator(
-              //     valueColor: AlwaysStoppedAnimation<Color>(config.darkOpacityBlueColor),
-              //   ),
-              // ),
-              SizedBox(height: 30),
+              SizedBox(height: 60),
               Container(
-                child: Lottie.asset('assets/illustration/loading_6.json', fit: BoxFit.fitWidth)
+                width: mediaWidth*0.5,
+                child: Lottie.asset('assets/illustration/loading_8.json', fit: BoxFit.contain)
               ),
             ],
           ),
         ),
       ),
-      // bottomNavigationBar: Padding(
-      //   padding: EdgeInsets.only(bottom: 15),
-      //   child: Lottie.asset('assets/illustration/loading_2.json', fit: BoxFit.fitWidth),
-      // ),
     );
   }
 
   startTimer() {
-    var _duration = Duration(milliseconds: 2000);
+    var _duration = Duration(milliseconds: 3000);
     return Timer(_duration, navigate);
   }
 
@@ -619,7 +667,7 @@ class SplashScreenState extends State<SplashScreen> {
     Navigator.pushReplacement(
         context,
         PageRouteBuilder(
-            transitionDuration: Duration(seconds: 4),
+            transitionDuration: Duration(seconds: 5),
             pageBuilder: (_, __, ___) => Login()));
   }
 
