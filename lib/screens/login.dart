@@ -5,6 +5,8 @@ import 'package:http/http.dart' show Client;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:utility_warehouse/models/result.dart';
+import 'package:utility_warehouse/resources/userAPI.dart';
 import 'package:utility_warehouse/screens/pick_page.dart';
 import 'package:lottie/lottie.dart';
 import 'package:utility_warehouse/settings/configuration.dart';
@@ -146,10 +148,10 @@ class LoginState extends State<Login> {
                           disable: false,
                           child: TextView('Masuk', 3, color: Colors.white, caps: true),
                           onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => PickPage()),
-                              );
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(builder: (context) => PickPage()),
+                              // );
                               submitValidation();
                             },
                         ),
@@ -183,26 +185,27 @@ class LoginState extends State<Login> {
 
     Alert(context: context, loading: true, disableBackButton: true);
 
-    // String getLogin = await userAPI.login(context, parameter: 'json={"user_code":"${usernameController.text}","user_pass":"${passwordController.text}","token":"${fcmToken}"}');
+    await getDeviceConfig(context);
+
+    Result result = await userAPI.login(context, usernameController.text, passwordController.text);
 
     Navigator.of(context).pop();
 
-    // if(getLogin == "OK"){
-    //   // final SharedPreferences sharedPreferences = await _sharedPreferences;
-    //   // await sharedPreferences.setString("get_user_login", usernameController.text);
-    //   Navigator.pushReplacementNamed(
-    //       context,
-    //       "dashboard"
-    //   );
-    // } else {
-    //   Alert(
-    //     context: context,
-    //     title: "Maaf,",
-    //     content: Text(getLogin),
-    //     cancel: false,
-    //     type: "error"
-    //   );
-    // }
+    if(result.code == 200) {
+      printHelp("yeeeeeee");
+      // Navigator.pushReplacementNamed(
+      //   context,
+      //   "dashboard"
+      // );
+    } else {
+      Alert(
+        context: context,
+        title: "Maaf,",
+        content: Text(result.error_message),
+        cancel: false,
+        type: "error"
+      );  
+    }
 
     setState(() {
       loginLoading = false;
@@ -217,6 +220,7 @@ class LoginState extends State<Login> {
     });
 
     if(!usernameValid && !passwordValid){
+      printHelp("tes");
       doLogin();
     }
   }

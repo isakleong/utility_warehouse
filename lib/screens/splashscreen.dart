@@ -57,14 +57,10 @@ class SplashScreenState extends State<SplashScreen> {
     // startTimer();
   }
 
-  void setSat(String a ){
-    printHelp("GETGET "+a);
-  }
-
   getDeviceConfig() async {
     Configuration config = Configuration.of(context);
     Directory dir = await getExternalStorageDirectory();
-    String path = '${dir?.path}/deviceconfig.xml';
+    String path = '${dir.path}/deviceconfig.xml';
     File file = File(path);
 
     if(FileSystemEntity.typeSync(path) != FileSystemEntityType.notFound){
@@ -73,13 +69,11 @@ class SplashScreenState extends State<SplashScreen> {
       final url_address_2 = document.findAllElements('url_address_2').map((node) => node.text);
       config?.setBaseUrl(url_address_1.first);
       config?.setBaseUrlAlt(url_address_2.first);
-      printHelp("setter " + config.baseUrl);
-      printHelp("setter " + config.baseUrlAlt);
       // print(document.toString());
       // print(document.toXmlString(pretty: true, indent: '\t'));
     } else {
-      config?.setBaseUrl("http://203.142.77.243/NewUtilityWarehouseDev");
-      config?.setBaseUrlAlt("http://103.76.27.124/NewUtilityWarehouseDev");
+      config.setBaseUrl("http://203.142.77.243/NewUtilityWarehouseDev");
+      config.setBaseUrlAlt("http://103.76.27.124/NewUtilityWarehouseDev");
 
       final builder = XmlBuilder();
       builder.processing('xml', 'version="1.0" encoding="UTF-8" standalone="yes"');
@@ -93,9 +87,6 @@ class SplashScreenState extends State<SplashScreen> {
       // print(document.toString());
       // print(document.toXmlString(pretty: true, indent: '\t'));
     }
-
-
-    
   }
 
   getAppsReady() async {
@@ -649,7 +640,7 @@ class SplashScreenState extends State<SplashScreen> {
               SizedBox(height: 60),
               Container(
                 width: mediaWidth*0.5,
-                child: Lottie.asset('assets/illustration/loading_8.json', fit: BoxFit.contain)
+                child: Lottie.asset('assets/illustration/loading.json', fit: BoxFit.contain)
               ),
             ],
           ),
