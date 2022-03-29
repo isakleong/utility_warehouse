@@ -1,12 +1,16 @@
 import 'dart:async';
 import 'package:flutter/services.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' show Client;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:utility_warehouse/screens/pick_page.dart';
+import 'package:lottie/lottie.dart';
 import 'package:utility_warehouse/settings/configuration.dart';
 import 'package:utility_warehouse/tools/function.dart';
+import 'package:utility_warehouse/widget/button.dart';
+import 'package:utility_warehouse/widget/textView.dart';
 
 class Login extends StatefulWidget {
 
@@ -36,6 +40,9 @@ class LoginState extends State<Login> {
   @override
   void initState() {
     super.initState();
+    // SystemChrome.setPreferredOrientations([
+    //   DeviceOrientation.landscapeRight,
+    // ]);
   }
 
   @override
@@ -61,10 +68,10 @@ class LoginState extends State<Login> {
         child: Stack(
           children:<Widget>[
             Container(
-              height: double.infinity,
-              width: double.infinity,
-              // child: Image.asset("assets/illustration/bg.png", alignment: Alignment.center, fit: BoxFit.fill),
-              color: Colors.orange[200],
+              height: mediaHeight,
+              width: mediaWidth,
+              // color: Colors.white,
+              child: Image.asset("assets/illustration/background.png", fit: BoxFit.fill),
             ),
             Center(
               child: SingleChildScrollView(
@@ -77,8 +84,8 @@ class LoginState extends State<Login> {
                       Hero(
                         tag: 'logo',
                         child: Container(
-                          width: 220,
-                          height: 220,
+                          width: mediaWidth*0.5,
+                          height: mediaWidth*0.5,
                           child: Image.asset("assets/illustration/logo.png", alignment: Alignment.center, fit: BoxFit.contain),
                         ),
                       ),
@@ -127,31 +134,24 @@ class LoginState extends State<Login> {
                               },
                             ),
                           ),
-                          
-                          
                           onSubmitted: (value) {
                             passwordFocus.unfocus();
                             submitValidation();
                           },
                         ),
                       ),
-                      Container(
-                        margin: EdgeInsets.symmetric(vertical: 15),
-                        width: MediaQuery.of(context).size.width,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                          primary: config.darkOpacityBlueColor,
-                          padding: EdgeInsets.all(14),
-                          elevation: 2,
-                          ),
-                          child: Text("MASUK ", style: TextStyle(color: Colors.white)),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => PickPage()),
-                            );
-                            // submitValidation();
-                          },
+                      Padding(
+                        padding: EdgeInsets.only(top: 15),
+                        child: Button(
+                          disable: false,
+                          child: TextView('Masuk', 3, color: Colors.white, caps: true),
+                          onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => PickPage()),
+                              );
+                              submitValidation();
+                            },
                         ),
                       ),
                       Padding(
@@ -175,6 +175,41 @@ class LoginState extends State<Login> {
     );
   }
 
+  void doLogin() async {
+    FocusScope.of(context).requestFocus(FocusNode());
+    setState(() {
+      loginLoading = true;
+    });
+
+    Alert(context: context, loading: true, disableBackButton: true);
+
+    // String getLogin = await userAPI.login(context, parameter: 'json={"user_code":"${usernameController.text}","user_pass":"${passwordController.text}","token":"${fcmToken}"}');
+
+    Navigator.of(context).pop();
+
+    // if(getLogin == "OK"){
+    //   // final SharedPreferences sharedPreferences = await _sharedPreferences;
+    //   // await sharedPreferences.setString("get_user_login", usernameController.text);
+    //   Navigator.pushReplacementNamed(
+    //       context,
+    //       "dashboard"
+    //   );
+    // } else {
+    //   Alert(
+    //     context: context,
+    //     title: "Maaf,",
+    //     content: Text(getLogin),
+    //     cancel: false,
+    //     type: "error"
+    //   );
+    // }
+
+    setState(() {
+      loginLoading = false;
+    });
+
+  }
+
   void submitValidation() {
     setState(() {
       usernameController.text.isEmpty ? usernameValid = true : usernameValid = false;
@@ -182,7 +217,7 @@ class LoginState extends State<Login> {
     });
 
     if(!usernameValid && !passwordValid){
-      printHelp("SUCCESS VALIDATE LOGIN");
+      doLogin();
     }
   }
 
