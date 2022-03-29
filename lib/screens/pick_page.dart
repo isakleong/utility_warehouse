@@ -4,6 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:utility_warehouse/models/pickModel.dart';
+import 'package:utility_warehouse/resources/pickAPI.dart';
+import 'package:utility_warehouse/settings/configuration.dart';
 import 'package:utility_warehouse/widgets/textView.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 
@@ -13,9 +16,31 @@ class PickPage extends StatefulWidget {
 }
 
 class _PickPageState extends State<PickPage> {
+  List<Pick> picks = [];
+
+  // mocking a future that returns List of Objects
+  Future<List> fetchComplexData() async {
+    List _list = new List();
+    List _jsonList = [];
+    for(int i =0; i < picks.length; i++){
+      print(i);
+      print(picks[i].pickNo);
+      _jsonList.add(
+        {'label' : picks[i].pickNo.toString(), 'value': i}
+      );
+    }
+    for(int i = 0; i < _jsonList.length; i++){
+      _list.add(new ShowItem.fromJson(_jsonList[i]));
+    }
+
+    return _list;
+  }
+
   bool valuefirst = false;
 
   final DataTableSource _data = MyData();
+
+  
 
   void initState() {
     super.initState();
@@ -23,6 +48,23 @@ class _PickPageState extends State<PickPage> {
       DeviceOrientation.landscapeRight,
 //      DeviceOrientation.landscapeLeft,
     ]);
+  }
+  @override
+  void didChangeDependencies() async {
+    print('here');
+    getNomorPick();
+  }
+
+  getNomorPick() async {
+    Configuration config = Configuration.of(context);
+
+    picks = await PickAPIs.getPickNo(context);
+    print("ini list : ");
+    print(picks[1].pickNo);
+
+    setState(() {
+      picks = picks;
+    });
   }
 
   @override
@@ -55,7 +97,6 @@ class _PickPageState extends State<PickPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-
 //                            Column(
 //                              crossAxisAlignment: CrossAxisAlignment.start,
 //                              children: [
@@ -82,7 +123,6 @@ class _PickPageState extends State<PickPage> {
 //                                ),
 //                              ],
 //                            ),
-
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
@@ -155,7 +195,6 @@ class _PickPageState extends State<PickPage> {
                 )
               ],
             ),
-
             Padding(
               padding: EdgeInsets.only(left: 40, right: 40),
               child: ConstrainedBox(
@@ -207,7 +246,6 @@ class _PickPageState extends State<PickPage> {
                 ),
               ),
             ),
-
               Align(
               alignment: Alignment.center,
               child: Padding(
@@ -236,15 +274,8 @@ class _PickPageState extends State<PickPage> {
       child: ///BottomSheet Mode with no searchBox
       DropdownSearch<String>(
         mode: Mode.BOTTOM_SHEET,
-        items: [
-          "Brazil",
-          "Italia",
-          "Tunisia",
-          'Canada',
-          'Zraoua',
-          'France',
-          'Belgique'
-        ],
+        items: 
+        picks.map((e) => e.pickNo).toList(),
 //        dropdownSearchDecoration: InputDecoration(
 //          labelText: "Custom BottomShet mode",
 //          contentPadding: EdgeInsets.fromLTRB(12, 12, 0, 0),
@@ -332,16 +363,18 @@ class _PickPageState extends State<PickPage> {
           DataCell(Text('1.15.24.1')),
           DataCell(Text('8')),
           DataCell(Text('ID')),
-          DataCell(Checkbox(
-            checkColor: Colors.greenAccent,
-            activeColor: Colors.red,
-            value: valuefirst,
-            onChanged: (bool value) {
-              setState(() {
-                this.valuefirst = value;
-              });
-            },
-          ),),
+          DataCell(
+            Checkbox(
+              checkColor: Colors.greenAccent,
+              activeColor: Colors.red,
+              value: valuefirst,
+              onChanged: (bool value) {
+                setState(() {
+                  this.valuefirst = value;
+                });
+              },
+            ),
+          ),
         ]),
         DataRow(cells: [
           DataCell(Text('SUZUKA Lacquer 470')),
@@ -406,5 +439,17 @@ class MyData extends DataTableSource {
       DataCell(Text(_data[index]["title"])),
       DataCell(Text(_data[index]["price"].toString())),
     ]);
+  }
+}
+
+
+class ShowItem {
+  String label;
+  dynamic value;
+
+  ShowItem({this.label, this.value});
+
+  factory ShowItem.fromJson(Map<String, dynamic> json) {
+    return ShowItem(label: json['label'], value: json['value']);
   }
 }
