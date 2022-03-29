@@ -5,6 +5,7 @@ import 'package:http/http.dart' show Client;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:utility_warehouse/screens/pick_page.dart';
 import 'package:lottie/lottie.dart';
 import 'package:utility_warehouse/settings/configuration.dart';
 import 'package:utility_warehouse/tools/function.dart';
@@ -145,6 +146,10 @@ class LoginState extends State<Login> {
                           disable: false,
                           child: TextView('Masuk', 3, color: Colors.white, caps: true),
                           onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => PickPage()),
+                              );
                               submitValidation();
                             },
                         ),
