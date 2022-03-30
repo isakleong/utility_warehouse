@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/services.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' show Client;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:utility_warehouse/models/result.dart';
+import 'package:utility_warehouse/models/userModel.dart';
 import 'package:utility_warehouse/resources/userAPI.dart';
 import 'package:utility_warehouse/screens/pick_page.dart';
 import 'package:lottie/lottie.dart';
@@ -13,6 +16,7 @@ import 'package:utility_warehouse/settings/configuration.dart';
 import 'package:utility_warehouse/tools/function.dart';
 import 'package:utility_warehouse/widget/button.dart';
 import 'package:utility_warehouse/widget/textView.dart';
+import 'package:xml/xml.dart';
 
 class Login extends StatefulWidget {
 
@@ -27,15 +31,25 @@ class LoginState extends State<Login> {
   static const platform = const MethodChannel("connectionTest");
 
   bool unlockPassword = true;
+  bool unlockNewPassword = true;
+  bool unlockConfirmPassword = true;
   bool loginLoading = false;
 
   bool usernameValid = false;
   bool passwordValid = false;
+  bool newPasswordValid = false;
+  bool confirmPasswordValid = false;
 
   final FocusNode usernameFocus = FocusNode();  
   final FocusNode passwordFocus = FocusNode();
+  final FocusNode newPasswordFocus = FocusNode();
+  final FocusNode confirmPasswordFocus = FocusNode();
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+  final newPasswordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+
+  StateSetter _setState;
 
   DateTime currentBackPressTime;
 
@@ -55,6 +69,8 @@ class LoginState extends State<Login> {
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
+    usernameController.text = "000-WH-MG9";
+    passwordController.text = "Gustiawan22";
   }
   
   @override
@@ -138,7 +154,7 @@ class LoginState extends State<Login> {
                           ),
                           onSubmitted: (value) {
                             passwordFocus.unfocus();
-                            submitValidation();
+                            submitLoginValidation();
                           },
                         ),
                       ),
@@ -152,7 +168,7 @@ class LoginState extends State<Login> {
                               //   context,
                               //   MaterialPageRoute(builder: (context) => PickPage()),
                               // );
-                              submitValidation();
+                              submitLoginValidation();
                             },
                         ),
                       ),
@@ -177,6 +193,21 @@ class LoginState extends State<Login> {
     );
   }
 
+  getToken(context) async {
+    Configuration config = Configuration.of(context);
+    Directory dir = await getExternalStorageDirectory();
+    String path = '${dir.path}/deviceconfig.xml';
+    File file = File(path);
+
+    if(FileSystemEntity.typeSync(path) != FileSystemEntityType.notFound){
+      final document = XmlDocument.parse(file.readAsStringSync());
+      final tokenID = document.findAllElements('token_id').map((node) => node.text);
+      return tokenID.first;
+    } else {
+      return "";
+    }
+  }
+
   void doLogin() async {
     FocusScope.of(context).requestFocus(FocusNode());
     setState(() {
@@ -192,7 +223,129 @@ class LoginState extends State<Login> {
     Navigator.of(context).pop();
 
     if(result.code == 200) {
-      printHelp("yeeeeeee");
+      // auth validation
+      String tokenID = await getToken(context);
+      tokenID = "5753";
+      User user = await userAPI.authValidation(context, usernameController.text, tokenID);
+      
+      bool isAuthValid = false;
+      try {
+        if(user.userId != "") {
+          isAuthValid = true;
+        }
+      } catch (e) {
+        isAuthValid = false;
+      }
+
+      if(isAuthValid) {
+        if(DateTime.now().isBefore(user.dtmValid)) {
+          if(passwordController.text.contains("1234")){
+            Navigator.pushReplacementNamed(
+              context,
+              "dashboard"
+            );
+          } else {
+            setState(() {
+              newPasswordController.clear();
+              confirmPasswordController.clear();
+            });
+            Alert(
+              context: context,
+              title: "Silahkan masukkan password baru,",
+              content: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+                  _setState = setState;
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextField(
+                        key: Key("NewPassword"),
+                        controller: newPasswordController,
+                        obscureText: unlockNewPassword,
+                        focusNode: newPasswordFocus,
+                        keyboardType: TextInputType.text,
+                        textInputAction: TextInputAction.next,
+                        decoration: InputDecoration(
+                          hintText: "Password",
+                          errorText: newPasswordValid ? "Password tidak boleh kosong" : null,
+                          suffixIcon: InkWell(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 5),
+                              child: Icon(
+                                Icons.remove_red_eye,
+                                color:  unlockNewPassword ? config.lightGrayColor : config.grayColor,
+                                size: 18,
+                              ),
+                            ),
+                            onTap: () {
+                              setState(() {
+                                unlockNewPassword = !unlockNewPassword;
+                              });
+                            },
+                          ),
+                        ),
+                        onSubmitted: (value) {
+                          _fieldFocusChange(context, newPasswordFocus, confirmPasswordFocus);
+                        },
+                      ),
+                      SizedBox(height: 15),
+                      TextField(
+                        key: Key("ConfirmPassword"),
+                        controller: confirmPasswordController,
+                        obscureText: unlockConfirmPassword,
+                        focusNode: confirmPasswordFocus,
+                        keyboardType: TextInputType.text,
+                        textInputAction: TextInputAction.go,
+                        decoration: InputDecoration(
+                          hintText: "Konfirmasi Password",
+                          errorText: confirmPasswordValid ? "Konfirmasi password tidak boleh kosong" : null,
+                          suffixIcon: InkWell(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 5),
+                              child: Icon(
+                                Icons.remove_red_eye,
+                                color:  unlockConfirmPassword ? config.lightGrayColor : config.grayColor,
+                                size: 18,
+                              ),
+                            ),
+                            onTap: () {
+                              setState(() {
+                                unlockConfirmPassword = !unlockConfirmPassword;
+                              });
+                            },
+                          ),
+                        ),
+                        onSubmitted: (value) {
+                          confirmPasswordFocus.unfocus();
+                          submitUpdatePasswordValidation();
+                        },
+                      ),
+                    ],
+                  );
+                }
+              ),
+              cancel: false,
+              type: "warning",
+              defaultAction: () {
+                submitUpdatePasswordValidation();
+              }
+            );  
+          }
+
+        } else {
+          Alert(
+            context: context,
+            title: "Maaf,",
+            content: TextView("Anda tidak lagi memiliki izin untuk mengakses aplikasi ini.\nSilahkan hubungi tim SFA untuk info lebih lanjut.", 4),
+            cancel: false,
+            type: "error"
+          );  
+        }
+      }
+
+      
+      
+
       // Navigator.pushReplacementNamed(
       //   context,
       //   "dashboard"
@@ -207,20 +360,30 @@ class LoginState extends State<Login> {
       );  
     }
 
-    setState(() {
-      loginLoading = false;
-    });
+    // setState(() {
+    //   loginLoading = false;
+    // });
 
   }
 
-  void submitValidation() {
+  void submitUpdatePasswordValidation() {
+    setState(() {
+      newPasswordController.text.isEmpty ? newPasswordValid = true : newPasswordValid = false;
+      newPasswordController.text.isEmpty ? newPasswordValid = true : newPasswordValid = false;
+    });
+
+    if(!newPasswordValid && !confirmPasswordValid){
+      // doUpdatePassword();
+    }
+  }
+
+  void submitLoginValidation() {
     setState(() {
       usernameController.text.isEmpty ? usernameValid = true : usernameValid = false;
       passwordController.text.isEmpty ? passwordValid = true : passwordValid = false;
     });
 
     if(!usernameValid && !passwordValid){
-      printHelp("tes");
       doLogin();
     }
   }

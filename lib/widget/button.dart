@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:utility_warehouse/widget/textView.dart';
 
 class Button extends StatelessWidget {
@@ -29,7 +30,7 @@ class Button extends StatelessWidget {
         // Container(
         //   width: 40,
         //   height: 20,
-        //   child:FlareActor('assets/flare/loading-button.flr', animation: "Play")
+        //   child: Lottie.asset('assets/illustration/loader.json', width: 40, height: 20, fit: BoxFit.contain)
         // )
         null
         :

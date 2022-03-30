@@ -8,18 +8,18 @@ part of 'userModel.dart';
 
 User _$UserFromJson(Map<String, dynamic> json) {
   return User(
-    userID: json['userID'] as String,
-    nik: json['NIK'] as String ?? '',
-    password: json['password'] as String,
-    tokenID: json['tokenID'] as String,
-    ModuleId: (json['ModuleId'] as List)?.map((e) => e as String)?.toList(),
+    userId: json['userId'] as String ?? '',
+    nik: json['nik'] as String ?? '',
+    tokenId: json['tokenId'] as String ?? '',
+    dtmValid: json['dtmValid'] == null
+        ? null
+        : DateTime.parse(json['dtmValid']['date'] as String),
   );
 }
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
-      'userID': instance.userID,
-      'NIK': instance.nik,
-      'password': instance.password,
-      'tokenID': instance.tokenID,
-      'ModuleId': instance.ModuleId,
+      'userId': instance.userId,
+      'nik': instance.nik,
+      'tokenId': instance.tokenId,
+      'dtmValid': instance.dtmValid?.toIso8601String(),
     };

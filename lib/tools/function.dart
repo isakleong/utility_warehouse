@@ -76,8 +76,8 @@ getDeviceConfig(context) async {
       final document = XmlDocument.parse(file.readAsStringSync());
       final url_address_1 = document.findAllElements('url_address_1').map((node) => node.text);
       final url_address_2 = document.findAllElements('url_address_2').map((node) => node.text);
-      config?.setBaseUrl(url_address_1.first);
-      config?.setBaseUrlAlt(url_address_2.first);
+      config.setBaseUrl(url_address_1.first);
+      config.setBaseUrlAlt(url_address_2.first);
       // print(document.toString());
       // print(document.toXmlString(pretty: true, indent: '\t'));
     } else {
@@ -99,7 +99,7 @@ getDeviceConfig(context) async {
   }
 
 void Alert({ context, String title, Widget content, List<Widget> actions, VoidCallback defaultAction, bool cancel = true, String type = "warning", bool showIcon = true,
-  bool disableBackButton = false, Future<bool> willPopAction, loading = false, double value, String errorBtnTitle = "Ok" }) {
+  bool disableBackButton = false, Future<bool> willPopAction, loading = false, double value, String errorBtnTitle = "OK" }) {
 
   bool isShowing = false;
 
@@ -177,7 +177,7 @@ void Alert({ context, String title, Widget content, List<Widget> actions, VoidCa
               ) : Container(),
               Button(
                 key: Key("ok"),
-                child: cancel ? TextView("Ya", 2, fontSize: 12, color: Colors.white) : type == "error" ? TextView(errorBtnTitle, 2, fontSize: 12, color: Colors.white) : TextView("Ok", 2, fontSize: 12, color: Colors.white),
+                child: cancel ? TextView("Ya", 2, fontSize: 12, color: Colors.white) : type == "error" ? TextView(errorBtnTitle, 2, fontSize: 12, color: Colors.white) : TextView("Ok", 2, caps: true, fontSize: 12, color: Colors.white),
                 onTap: () {
                   Navigator.of(context).pop();
                   defaultAction();

@@ -19,51 +19,51 @@ class TextView extends StatelessWidget{
     switch(type) {
       case 1:
         this.fontSize = 20;
-        this.fontFamily = 'WorkSans';
+        this.fontFamily = 'Roboto';
         this.fontWeight = FontWeight.w700;
       break;
       case 2:
         this.fontSize = 20;
-        this.fontFamily = 'WorkSans';
+        this.fontFamily = 'Roboto';
         this.fontWeight = FontWeight.w700;
       break;
       case 3:
-        this.fontFamily = 'WorkSans';
+        this.fontFamily = 'Roboto';
         this.fontSize = 16;
         this.fontWeight = FontWeight.w600;
       break;
       case 4:
-        this.fontFamily = 'WorkSans';
+        this.fontFamily = 'Roboto';
         this.fontSize = 16;
         this.fontWeight = FontWeight.w500;
       break;
       case 5:
-        this.fontFamily = 'WorkSans';
+        this.fontFamily = 'Roboto';
         this.fontSize = 14;
         this.fontWeight = FontWeight.w600;
       break;
       case 6:
-        this.fontFamily = 'WorkSans';
+        this.fontFamily = 'Roboto';
         this.fontSize = 14;
         this.fontWeight = FontWeight.w500;
       break;
       case 7:
-        this.fontFamily = 'WorkSans';
+        this.fontFamily = 'Roboto';
         this.fontSize = 12;
         this.fontWeight = FontWeight.w600;
       break;
       case 8:
-        this.fontFamily = 'WorkSans';
+        this.fontFamily = 'Roboto';
         this.fontSize = 12;
         this.fontWeight = FontWeight.w600;
       break;
       case 9:
-        this.fontFamily = 'WorkSans';
+        this.fontFamily = 'Roboto';
         this.fontSize = 10;
         this.fontWeight = FontWeight.w500;
       break;
       case 10:
-        this.fontFamily = 'WorkSans';
+        this.fontFamily = 'Roboto';
         this.fontSize = 8;
         this.fontWeight = FontWeight.w500;
       break;
@@ -79,9 +79,11 @@ class TextView extends StatelessWidget{
         fontFamily: this.fontFamily,
         fontWeight: this.fontWeight,
         fontSize: this.fontSize,
-        letterSpacing: space
+        letterSpacing: space,
+        height: 1.3,
       ),
       textAlign: this.align,
+      maxLines: 9999999,
     );
     
   } 
