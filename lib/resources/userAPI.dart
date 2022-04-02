@@ -136,6 +136,75 @@ class UserAPI {
     return user;
   }
 
+  Future<Result> nikValidation(final context, String nik) async {
+    Result result;
+    User user;
+    String url = "";
+
+    bool isUrlAddress_1 = false, isUrlAddress_2 = false;
+    String url_address_1 = fetchAPI("users/check_nik_validation.php", context: context);
+    String url_address_2 = fetchAPI("users/check_nik_validation.php", context: context, secondary: true);
+
+    // final body = jsonEncode({
+    //   "userID":username,
+    //   "password":password
+    // });
+
+    final body =  <String, String>{
+      'nik':nik,
+      
+    };
+
+    try {
+		  final conn_1 = await connectionTest(url_address_1, context);
+      printHelp("GET STATUS 1 "+conn_1);
+      if(conn_1 == "OK"){
+        isUrlAddress_1 = true;
+      }
+	  } on SocketException {
+      isUrlAddress_1 = false;
+      result = new Result(code: 500, message: "Gagal terhubung dengan server");
+    }
+
+    if(isUrlAddress_1) {
+      url = url_address_1;
+    } else {
+      try {
+        final conn_2 = await connectionTest(url_address_2, context);
+        printHelp("GET STATUS 2 "+conn_2);
+        if(conn_2 == "OK"){
+          isUrlAddress_2 = true;
+        }
+      } on SocketException {
+        isUrlAddress_2 = false;
+        result = new Result(code: 500, message: "Gagal terhubung dengan server");
+      }
+    }
+    if(isUrlAddress_2){
+      url = url_address_2;
+    }
+
+    try {
+      final response = await client.post(url, headers: {"Content-Type": "application/x-www-form-urlencoded"}, body: body);
+      var parsedJson = jsonDecode(response.body);
+      result = Result.fromJson(parsedJson);
+
+      printHelp("nik valid "+result.data);
+
+      // if(result.code == 200) {
+      //   // User user = User.fromJson(result.data);
+      //   result = new Result(code: result.code, message: result.message, data: result.data);
+      // } else {
+      //   printHelp("cek res "+result.error_message.toString());
+      // }
+    } catch (e) {
+      result = new Result(code: 500, message: "Gagal terhubung dengan server");
+      print(e);
+    }
+
+    return result;
+  }
+
 
 
   // Future<String> login(final context, {String parameter=""}) async {

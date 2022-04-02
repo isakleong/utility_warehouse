@@ -120,7 +120,7 @@ class LoginState extends State<Login> {
                           ),
                           textCapitalization: TextCapitalization.characters,
                           onSubmitted: (value) {
-                            _fieldFocusChange(context, usernameFocus, passwordFocus);
+                            fieldFocusChange(context, usernameFocus, passwordFocus);
                           },
                         ),
                       ),
@@ -158,7 +158,8 @@ class LoginState extends State<Login> {
                           },
                         ),
                       ),
-                      Padding(
+                      Container(
+                        width: mediaWidth,
                         padding: EdgeInsets.only(top: 15),
                         child: Button(
                           disable: false,
@@ -208,11 +209,12 @@ class LoginState extends State<Login> {
     }
   }
 
+  void doUpdatePassword() async {
+
+  }
+
   void doLogin() async {
     FocusScope.of(context).requestFocus(FocusNode());
-    setState(() {
-      loginLoading = true;
-    });
 
     Alert(context: context, loading: true, disableBackButton: true);
 
@@ -225,7 +227,7 @@ class LoginState extends State<Login> {
     if(result.code == 200) {
       // auth validation
       String tokenID = await getToken(context);
-      tokenID = "5753";
+      // tokenID = "5753";
       User user = await userAPI.authValidation(context, usernameController.text, tokenID);
       
       bool isAuthValid = false;
@@ -285,7 +287,7 @@ class LoginState extends State<Login> {
                           ),
                         ),
                         onSubmitted: (value) {
-                          _fieldFocusChange(context, newPasswordFocus, confirmPasswordFocus);
+                          fieldFocusChange(context, newPasswordFocus, confirmPasswordFocus);
                         },
                       ),
                       SizedBox(height: 15),
@@ -341,10 +343,20 @@ class LoginState extends State<Login> {
             type: "error"
           );  
         }
-      }
 
-      
-      
+      } else {
+        Alert(
+          context: context,
+          title: "Maaf,",
+          content: TextView("Perangkat baru terdeteksi\nMohon untuk melakukan registrasi NIK terlebih dahulu", 4),
+          cancel: false,
+          type: "error",
+          defaultAction: () {
+            Navigator.of(context).pop();
+            Navigator.pushNamed(context, "signUp");
+          }
+        );  
+      }
 
       // Navigator.pushReplacementNamed(
       //   context,
@@ -366,14 +378,18 @@ class LoginState extends State<Login> {
 
   }
 
+  void codeVerification() async {
+    
+  }
+
   void submitUpdatePasswordValidation() {
-    setState(() {
+    _setState(() {
       newPasswordController.text.isEmpty ? newPasswordValid = true : newPasswordValid = false;
-      newPasswordController.text.isEmpty ? newPasswordValid = true : newPasswordValid = false;
+      confirmPasswordController.text.isEmpty ? confirmPasswordValid = true : confirmPasswordValid = false;
     });
 
     if(!newPasswordValid && !confirmPasswordValid){
-      // doUpdatePassword();
+      doUpdatePassword();
     }
   }
 
@@ -388,10 +404,10 @@ class LoginState extends State<Login> {
     }
   }
 
-  _fieldFocusChange(BuildContext context, FocusNode currentFocus,FocusNode nextFocus) {
-    currentFocus.unfocus();
-    FocusScope.of(context).requestFocus(nextFocus); 
-  }
+  // fieldFocusChange(BuildContext context, FocusNode currentFocus,FocusNode nextFocus) {
+  //   currentFocus.unfocus();
+  //   FocusScope.of(context).requestFocus(nextFocus); 
+  // }
 
 
   Future<bool> willPopScope() async {

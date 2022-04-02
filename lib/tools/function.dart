@@ -98,6 +98,11 @@ getDeviceConfig(context) async {
     }
   }
 
+fieldFocusChange(BuildContext context, FocusNode currentFocus,FocusNode nextFocus) {
+  currentFocus.unfocus();
+  FocusScope.of(context).requestFocus(nextFocus); 
+}
+
 void Alert({ context, String title, Widget content, List<Widget> actions, VoidCallback defaultAction, bool cancel = true, String type = "warning", bool showIcon = true,
   bool disableBackButton = false, Future<bool> willPopAction, loading = false, double value, String errorBtnTitle = "OK" }) {
 
@@ -175,13 +180,16 @@ void Alert({ context, String title, Widget content, List<Widget> actions, VoidCa
                   Navigator.of(context).pop();
                 },
               ) : Container(),
-              Button(
-                key: Key("ok"),
-                child: cancel ? TextView("Ya", 2, fontSize: 12, color: Colors.white) : type == "error" ? TextView(errorBtnTitle, 2, fontSize: 12, color: Colors.white) : TextView("Ok", 2, caps: true, fontSize: 12, color: Colors.white),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  defaultAction();
-                },
+              Container(
+                width: MediaQuery.of(context).size.width,
+                child: Button(
+                  key: Key("ok"),
+                  child: cancel ? TextView("Ya", 2, fontSize: 12, color: Colors.white) : type == "error" ? TextView(errorBtnTitle, 2, fontSize: 12, color: Colors.white) : TextView("Ok", 2, caps: true, fontSize: 12, color: Colors.white),
+                  onTap: () {
+                    // Navigator.of(context).pop();
+                    defaultAction();
+                  },
+                ),
               ),
               // kalau ada default action akan otomatis menampilkan tombol cancel, jadi akan muncul ok dan cancel
             ]

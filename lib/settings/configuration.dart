@@ -31,6 +31,7 @@ class Configuration extends InheritedWidget {
 
   // color configuration
   Color darkOpacityBlueColor = Color(0xFF0077AF);
+  Color lightOpactityBlueColor = Color(0xFFD2EEFA);
   Color grayColor = Color(0xFF545454);
   Color lightGrayColor = Color(0xFFC4C4C4);
   Color lighterGrayColor = Color(0xFFDDDDDD);

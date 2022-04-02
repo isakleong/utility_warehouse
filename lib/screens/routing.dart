@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:utility_warehouse/screens/otpVerification.dart';
+import 'package:utility_warehouse/screens/signUp.dart';
 import 'package:utility_warehouse/screens/splashscreen.dart';
 
 MaterialPageRoute routing(int mode, int id, List<String> pages, RouteSettings settings) {
   switch (pages[0]) {
     case '':
       return MaterialPageRoute(builder: (context)=> SplashScreen());
+      break;
+    case 'signUp':
+      return MaterialPageRoute(builder: (context)=> SignUp());
+      break;
+    case 'otpVerification':
+      return MaterialPageRoute(builder: (context)=> OTPVerification());
       break;
     // case 'examplePage 1':
     //   return MaterialPageRoute(builder: (context)=> Page1(result: settings.arguments));
