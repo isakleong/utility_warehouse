@@ -24,8 +24,8 @@ class UserAPI {
     // });
 
     final body =  <String, String>{
-      'userID':username,
-      'password':password
+      'userID' : username,
+      'password' : password
     };
 
     try {
@@ -86,8 +86,8 @@ class UserAPI {
     String url_address_2 = fetchAPI("users/auth_validation.php", context: context, secondary: true);
 
     final body =  <String, String>{
-      'userID':username,
-      'tokenID':token
+      'userID' : username,
+      'tokenID' : token
     };
 
     try {
@@ -145,14 +145,8 @@ class UserAPI {
     String url_address_1 = fetchAPI("users/check_nik_validation.php", context: context);
     String url_address_2 = fetchAPI("users/check_nik_validation.php", context: context, secondary: true);
 
-    // final body = jsonEncode({
-    //   "userID":username,
-    //   "password":password
-    // });
-
     final body =  <String, String>{
-      'nik':nik,
-      
+      'nik' : nik
     };
 
     try {
@@ -188,15 +182,175 @@ class UserAPI {
       final response = await client.post(url, headers: {"Content-Type": "application/x-www-form-urlencoded"}, body: body);
       var parsedJson = jsonDecode(response.body);
       result = Result.fromJson(parsedJson);
+    } catch (e) {
+      result = new Result(code: 500, message: "Gagal terhubung dengan server");
+      print(e);
+    }
 
-      printHelp("nik valid "+result.data);
+    return result;
+  }
 
-      // if(result.code == 200) {
-      //   // User user = User.fromJson(result.data);
-      //   result = new Result(code: result.code, message: result.message, data: result.data);
-      // } else {
-      //   printHelp("cek res "+result.error_message.toString());
-      // }
+  Future<Result> generateOTP(final context, String phoneNumber) async {
+    Result result;
+    User user;
+    String url = "";
+
+    bool isUrlAddress_1 = false, isUrlAddress_2 = false;
+    String url_address_1 = fetchAPI("users/generate_otp.php", context: context);
+    String url_address_2 = fetchAPI("users/generate_otp.php", context: context, secondary: true);
+
+    final body =  <String, String>{
+      'phoneNumber' : phoneNumber
+    };
+
+    try {
+		  final conn_1 = await connectionTest(url_address_1, context);
+      printHelp("GET STATUS 1 "+conn_1);
+      if(conn_1 == "OK"){
+        isUrlAddress_1 = true;
+      }
+	  } on SocketException {
+      isUrlAddress_1 = false;
+      result = new Result(code: 500, message: "Gagal terhubung dengan server");
+    }
+
+    if(isUrlAddress_1) {
+      url = url_address_1;
+    } else {
+      try {
+        final conn_2 = await connectionTest(url_address_2, context);
+        printHelp("GET STATUS 2 "+conn_2);
+        if(conn_2 == "OK"){
+          isUrlAddress_2 = true;
+        }
+      } on SocketException {
+        isUrlAddress_2 = false;
+        result = new Result(code: 500, message: "Gagal terhubung dengan server");
+      }
+    }
+    if(isUrlAddress_2){
+      url = url_address_2;
+    }
+
+    try {
+      final response = await client.post(url, headers: {"Content-Type": "application/x-www-form-urlencoded"}, body: body);
+      var parsedJson = jsonDecode(response.body);
+      result = Result.fromJson(parsedJson);
+    } catch (e) {
+      result = new Result(code: 500, message: "Gagal terhubung dengan server");
+      print(e);
+    }
+
+    return result;
+  }
+
+  Future<Result> signUp(final context, String username, String token, String nik) async {
+    Result result;
+    User user;
+    String url = "";
+
+    bool isUrlAddress_1 = false, isUrlAddress_2 = false;
+    String url_address_1 = fetchAPI("users/registration.php", context: context);
+    String url_address_2 = fetchAPI("users/registration.php", context: context, secondary: true);
+
+    print("DATA FETCH 1 "+username);
+    print("DATA FETCH 2 "+token);
+    print("DATA FETCH 3 "+nik);
+
+    final body =  <String, String>{
+      'userID' : username,
+      'tokenID' : token,
+      'nik' : nik
+    };
+
+    try {
+		  final conn_1 = await connectionTest(url_address_1, context);
+      printHelp("GET STATUS 1 "+conn_1);
+      if(conn_1 == "OK"){
+        isUrlAddress_1 = true;
+      }
+	  } on SocketException {
+      isUrlAddress_1 = false;
+      result = new Result(code: 500, message: "Gagal terhubung dengan server");
+    }
+
+    if(isUrlAddress_1) {
+      url = url_address_1;
+    } else {
+      try {
+        final conn_2 = await connectionTest(url_address_2, context);
+        printHelp("GET STATUS 2 "+conn_2);
+        if(conn_2 == "OK"){
+          isUrlAddress_2 = true;
+        }
+      } on SocketException {
+        isUrlAddress_2 = false;
+        result = new Result(code: 500, message: "Gagal terhubung dengan server");
+      }
+    }
+    if(isUrlAddress_2){
+      url = url_address_2;
+    }
+
+    try {
+      final response = await client.post(url, headers: {"Content-Type": "application/x-www-form-urlencoded"}, body: body);
+      var parsedJson = jsonDecode(response.body);
+      result = Result.fromJson(parsedJson);
+    } catch (e) {
+      result = new Result(code: 500, message: "Gagal terhubung dengan server");
+      print(e);
+    }
+
+    return result;
+  }
+
+  Future<Result> updatePassword(final context, String username, String password) async {
+    Result result;
+    User user;
+    String url = "";
+
+    bool isUrlAddress_1 = false, isUrlAddress_2 = false;
+    String url_address_1 = fetchAPI("users/update_password.php", context: context);
+    String url_address_2 = fetchAPI("users/update_password.php", context: context, secondary: true);
+
+    final body =  <String, String>{
+      'userID' : username,
+      'password' : password
+    };
+
+    try {
+		  final conn_1 = await connectionTest(url_address_1, context);
+      printHelp("GET STATUS 1 "+conn_1);
+      if(conn_1 == "OK"){
+        isUrlAddress_1 = true;
+      }
+	  } on SocketException {
+      isUrlAddress_1 = false;
+      result = new Result(code: 500, message: "Gagal terhubung dengan server");
+    }
+
+    if(isUrlAddress_1) {
+      url = url_address_1;
+    } else {
+      try {
+        final conn_2 = await connectionTest(url_address_2, context);
+        printHelp("GET STATUS 2 "+conn_2);
+        if(conn_2 == "OK"){
+          isUrlAddress_2 = true;
+        }
+      } on SocketException {
+        isUrlAddress_2 = false;
+        result = new Result(code: 500, message: "Gagal terhubung dengan server");
+      }
+    }
+    if(isUrlAddress_2){
+      url = url_address_2;
+    }
+
+    try {
+      final response = await client.post(url, headers: {"Content-Type": "application/x-www-form-urlencoded"}, body: body);
+      var parsedJson = jsonDecode(response.body);
+      result = Result.fromJson(parsedJson);
     } catch (e) {
       result = new Result(code: 500, message: "Gagal terhubung dengan server");
       print(e);

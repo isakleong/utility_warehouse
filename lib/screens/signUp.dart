@@ -7,8 +7,9 @@ import 'package:utility_warehouse/widget/button.dart';
 import 'package:utility_warehouse/widget/textView.dart';
 
 class SignUp extends StatefulWidget {
+  final String model;
 
-  const SignUp({Key key}) : super(key: key);
+  const SignUp({Key key, this.model}) : super(key: key);
 
   @override
   SignUpState createState() => SignUpState();
@@ -16,6 +17,7 @@ class SignUp extends StatefulWidget {
 
 
 class SignUpState extends State<SignUp> {
+  String userID = "";
 
   final FocusNode nikFocus = FocusNode();
   final FocusNode whatsappNoFocus = FocusNode();
@@ -28,7 +30,10 @@ class SignUpState extends State<SignUp> {
   @override
   void initState() {
     super.initState();
-    whatsappNoController.text = "+62";
+    userID = widget.model;
+    printHelp("get user id model "+userID);
+    nikController.text = "07060102323";
+    whatsappNoController.text = "+6285162673572";
     whatsappNoController.selection = TextSelection.fromPosition(TextPosition(offset: whatsappNoController.text.length));
   }
 
@@ -49,8 +54,7 @@ class SignUpState extends State<SignUp> {
         disable: false,
         child: TextView('Daftar', 3, color: Colors.white, caps: true),
         onTap: () {
-          Navigator.pushNamed(context, "otpVerification");
-          // submitSignUpValidation();
+          submitSignUpValidation();
         },
       ),
       body: WillPopScope(
@@ -158,41 +162,59 @@ class SignUpState extends State<SignUp> {
     Navigator.of(context).pop();
 
     if(result.code == 200) {
-
+      otpVerification();
     } else {
       Alert(
         context: context,
-        title: "Maaf,",
+        title: "Maaf",
         content: Text(result.error_message),
         cancel: false,
         type: "error"
-      );  
+      );
     }
-
-
   }
 
-  void doSignUp() async {
-    FocusScope.of(context).requestFocus(FocusNode());
+  void otpVerification() async {
+    final data =  <String, String>{
+      'userID' : userID,
+      'tokenID' : 'sdsd|2323',
+      'nik' : nikController.text
+    };
+    print("model 1 "+data['userID']);
+    print("model 2 "+data['tokenID']);
+    print("model 3 "+data['nik']);
+    Navigator.pushNamed(context, "otpVerification", arguments: data);
+    // Result result = await userAPI.generateOTP(context, whatsappNoController.text.replaceAll("+", ""));
 
-    Alert(context: context, loading: true, disableBackButton: true);
+    // Navigator.of(context).pop();
 
-    await getDeviceConfig(context);
-
-
-
-
+    // if(result.code == 200) {
+    //   final data =  <String, String>{
+    //     'userID' : userID,
+    //     'tokenID' : result.data.toString(),
+    //     'nik' : nikController.text
+    //   };
+      // Navigator.pushNamed(context, "otpVerification", arguments: data);
+    // } else {
+    //   Alert(
+    //     context: context,
+    //     title: "Maaf",
+    //     content: Text(result.error_message),
+    //     cancel: false,
+    //     type: "error"
+    //   );
+    // }
+    
   }
 
   void submitSignUpValidation() {
     setState(() {
       nikController.text.isEmpty ? nikValid = true : nikValid = false;
       (whatsappNoController.text.length < 10 || whatsappNoController.text.length > 14) ? whatsappNoValid = true : whatsappNoValid = false;
-
     });
 
     if(!nikValid && !whatsappNoValid){
-      // doSignUp();
+      checkNIKValidation();
     }
   }
 

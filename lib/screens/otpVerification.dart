@@ -1,18 +1,23 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:utility_warehouse/models/result.dart';
 import 'package:utility_warehouse/resources/userAPI.dart';
+import 'package:utility_warehouse/screens/login.dart';
 import 'package:utility_warehouse/settings/configuration.dart';
 import 'package:utility_warehouse/tools/function.dart';
 import 'package:utility_warehouse/widget/button.dart';
 import 'package:utility_warehouse/widget/textView.dart';
+import 'package:xml/xml.dart';
 
 class OTPVerification extends StatefulWidget {
+  final model;
 
-  const OTPVerification({Key key}) : super(key: key);
+  const OTPVerification({Key key, this.model}) : super(key: key);
 
   @override
   OTPVerificationState createState() => OTPVerificationState();
@@ -20,6 +25,9 @@ class OTPVerification extends StatefulWidget {
 
 
 class OTPVerificationState extends State<OTPVerification> {
+  var model;
+  var generatedToken = [];
+
   var onTapRecognizer;
 
   TextEditingController textEditingController = TextEditingController();
@@ -27,10 +35,24 @@ class OTPVerificationState extends State<OTPVerification> {
 
   StreamController<ErrorAnimationType> errorController;
 
-  bool hasError = false;
-  String currentText = "";
+  bool hasError = true;
+  bool otpValid = true;
+  String otpText = "";
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
+
+  bool unlockNewPassword = true;
+  bool unlockConfirmPassword = true;
+
+  bool newPasswordValid = false;
+  bool confirmPasswordValid = false;
+
+  final FocusNode newPasswordFocus = FocusNode();
+  final FocusNode confirmPasswordFocus = FocusNode();
+  final newPasswordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+
+  StateSetter _setState;
 
   @override
   void initState() {
@@ -39,6 +61,14 @@ class OTPVerificationState extends State<OTPVerification> {
         Navigator.pop(context);
       };
     errorController = StreamController<ErrorAnimationType>();
+
+    model = widget.model;
+    generatedToken = model["tokenID"].toString().split("|");
+
+    print("generate token "+generatedToken[1]);
+    print("generate user id "+model["userID"]);
+    print("generate nik "+model["nik"]);
+
     super.initState();
   }
 
@@ -57,10 +87,10 @@ class OTPVerificationState extends State<OTPVerification> {
 
     return Scaffold(
       bottomNavigationBar: Button(
-        disable: false,
+        disable: hasError,
         child: TextView('Verifikasi', 3, color: Colors.white, caps: true),
         onTap: () {
-          // submitOTPValidation();
+          submitOTPValidation();
         },
       ),
       body: WillPopScope(
@@ -117,18 +147,23 @@ class OTPVerificationState extends State<OTPVerification> {
                         child: PinCodeTextField(
                           appContext: context,
                           pastedTextStyle: TextStyle(
-                            color: Colors.yellow,
+                            color: Colors.black,
                             fontWeight: FontWeight.bold,
                           ),
                           length: 4,
-                          animationType: AnimationType.fade,
-                          // validator: (v) {
-                          //   if (v.length < 3) {
-                          //     return "Kode OTP belum lengkap";
-                          //   } else {
-                          //     return null;
-                          //   }
-                          // },
+                          animationType: AnimationType.scale,
+                          errorTextSpace: 30,
+                          validator: (v) {
+                            if(otpValid) {
+                              if (v.length < 4) {
+                                return "Kode Verifikasi belum lengkap, mohon dicek kembali";
+                              } else {
+                                return null;
+                              }
+                            } else {
+                              return "Kode Verifikasi tidak valid, mohon dicek kembali";
+                            }
+                          },
                           pinTheme: PinTheme(
                             shape: PinCodeFieldShape.box,
                             borderRadius: BorderRadius.circular(10),
@@ -139,8 +174,7 @@ class OTPVerificationState extends State<OTPVerification> {
                             activeColor: config.darkOpacityBlueColor,
                             selectedFillColor: config.lightOpactityBlueColor,
                             inactiveFillColor: config.lightOpactityBlueColor,
-                            activeFillColor:
-                                hasError ? Colors.yellow : config.lightOpactityBlueColor,
+                            activeFillColor: !otpValid ? Colors.red[200] : config.lightOpactityBlueColor,
                           ),
                           cursorColor: Colors.black,
                           animationDuration: Duration(milliseconds: 300),
@@ -156,23 +190,31 @@ class OTPVerificationState extends State<OTPVerification> {
                               blurRadius: 10,
                             )
                           ],
-                          onCompleted: (v) {
-                            print("Completed");
-                          },
+
                           // onTap: () {
                           //   print("Pressed");
                           // },
                           onChanged: (value) {
-                            print(value);
                             setState(() {
-                              currentText = value;
+                              otpText = value;
                             });
+
+                            if(value.length == 4) {
+                              setState(() {
+                                hasError = false;
+                              });
+                            } else {
+                              setState(() {
+                                hasError = true;
+                                otpValid = true;
+                              });
+                            }
                           },
                           beforeTextPaste: (text) {
                             print("Allowing to paste $text");
                             //if you return true then it will show the paste confirmation dialog. Otherwise if false, then nothing will happen.
                             //but you can show anything you want here, like your pop up saying wrong paste format or etc
-                            return true;
+                            return false;
                           },
                         )),
                   ),
@@ -185,16 +227,190 @@ class OTPVerificationState extends State<OTPVerification> {
     );
   }
 
-  // void submitOTPValidation() {
-  //   setState(() {
-  //     nikController.text.isEmpty ? nikValid = true : nikValid = false;
-  //     (whatsappNoController.text.length < 10 || whatsappNoController.text.length > 14) ? whatsappNoValid = true : whatsappNoValid = false;
+  void submitOTPValidation() async {
+    if(otpText != generatedToken[1]) {
+      setState(() {
+        otpValid = false;
+      });
+    } else {
+      // user registration
+      doSignUp();
+    }
+  }
 
-  //   });
+  void doSignUp() async {
+    Alert(context: context, loading: true, disableBackButton: true);
 
-  //   if(!nikValid && !whatsappNoValid){
-  //     // doSignUp();
-  //   }
-  // }
+    await getDeviceConfig(context);
+
+    Result result = await userAPI.signUp(context, model["userID"].toString(), generatedToken[1].toString(), model["nik"].toString());
+
+    Navigator.of(context).pop();
+
+    if(result.code == 200) {
+      await updateXMLConfig(generatedToken[1]);
+      Alert(
+        context: context,
+        title: "Silahkan masukkan password baru,",
+        content: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            _setState = setState;
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  key: Key("NewPassword"),
+                  controller: newPasswordController,
+                  obscureText: unlockNewPassword,
+                  focusNode: newPasswordFocus,
+                  keyboardType: TextInputType.text,
+                  textInputAction: TextInputAction.next,
+                  decoration: InputDecoration(
+                    hintText: "Password",
+                    errorText: newPasswordValid ? "Password tidak boleh kosong" : null,
+                    suffixIcon: InkWell(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 5),
+                        child: Icon(
+                          Icons.remove_red_eye,
+                          color:  unlockNewPassword ? config.lightGrayColor : config.grayColor,
+                          size: 18,
+                        ),
+                      ),
+                      onTap: () {
+                        setState(() {
+                          unlockNewPassword = !unlockNewPassword;
+                        });
+                      },
+                    ),
+                  ),
+                  onSubmitted: (value) {
+                    fieldFocusChange(context, newPasswordFocus, confirmPasswordFocus);
+                  },
+                ),
+                SizedBox(height: 15),
+                TextField(
+                  key: Key("ConfirmPassword"),
+                  controller: confirmPasswordController,
+                  obscureText: unlockConfirmPassword,
+                  focusNode: confirmPasswordFocus,
+                  keyboardType: TextInputType.text,
+                  textInputAction: TextInputAction.go,
+                  decoration: InputDecoration(
+                    hintText: "Konfirmasi Password",
+                    errorText: confirmPasswordValid ? "Konfirmasi password tidak boleh kosong" : null,
+                    suffixIcon: InkWell(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 5),
+                        child: Icon(
+                          Icons.remove_red_eye,
+                          color:  unlockConfirmPassword ? config.lightGrayColor : config.grayColor,
+                          size: 18,
+                        ),
+                      ),
+                      onTap: () {
+                        setState(() {
+                          unlockConfirmPassword = !unlockConfirmPassword;
+                        });
+                      },
+                    ),
+                  ),
+                  onSubmitted: (value) {
+                    confirmPasswordFocus.unfocus();
+                    submitUpdatePasswordValidation();
+                  },
+                ),
+              ],
+            );
+          }
+        ),
+        cancel: false,
+        type: "warning",
+        defaultAction: () {
+          submitUpdatePasswordValidation();
+        }
+      );
+    } else {
+      Alert(
+        context: context,
+        title: "Maaf",
+        content: Text(result.error_message),
+        cancel: false,
+        type: "error"
+      );  
+    }
+  }
+
+  void submitUpdatePasswordValidation() async {
+    _setState(() {
+      newPasswordController.text.isEmpty ? newPasswordValid = true : newPasswordValid = false;
+      confirmPasswordController.text.isEmpty ? confirmPasswordValid = true : confirmPasswordValid = false;
+    });
+
+    if(!newPasswordValid && !confirmPasswordValid){
+      doUpdatePassword();
+    }
+  }
+
+  void doUpdatePassword() async {
+    FocusScope.of(context).requestFocus(FocusNode());
+
+    Alert(context: context, loading: true, disableBackButton: true);
+
+    await getDeviceConfig(context);
+
+    Result result = await userAPI.updatePassword(context, model["userID"], newPasswordController.text);
+
+    Navigator.of(context).pop();
+
+    if(result.code == 200) {
+      Alert(
+        context: context,
+        title: "Info",
+        content: Text("Registrasi NIK berhasil\nSilahkan login menggunakan login server Anda"),
+        cancel: false,
+        type: "success",
+        defaultAction: () {
+          Navigator.pushReplacementNamed(context, "login");
+        }
+      );
+    } else {
+
+    }
+  }
+
+  updateXMLConfig(String newToken) async {
+    Directory dir = await getExternalStorageDirectory();
+    String path = '${dir.path}/deviceconfig.xml';
+    File file = File(path);
+
+    var url_address_1, url_address_2;
+
+    if(FileSystemEntity.typeSync(path) != FileSystemEntityType.notFound){
+      final document = XmlDocument.parse(file.readAsStringSync());
+      url_address_1 = document.findAllElements('url_address_1').map((node) => node.text);
+      url_address_2 = document.findAllElements('url_address_2').map((node) => node.text);
+
+      final builder = XmlBuilder();
+      builder.processing('xml', 'version="1.0" encoding="UTF-8" standalone="yes"');
+      builder.element('deviceconfig', nest: () {
+        builder.element('url_address_1', nest: url_address_1);
+        builder.element('url_address_2', nest: url_address_2);
+        builder.element('token_id', nest: newToken);
+      });
+      final newDocument = builder.buildDocument();
+      await file.writeAsString(newDocument.toString());
+    } else {
+      final builder = XmlBuilder();
+      builder.processing('xml', 'version="1.0" encoding="UTF-8" standalone="yes"');
+      builder.element('deviceconfig', nest: () {
+        builder.element('url_address_1', nest: "http://203.142.77.243/NewUtilityWarehouseDev");
+        builder.element('url_address_2', nest: "http://103.76.27.124/NewUtilityWarehouseDev");
+        builder.element('token_id', nest: newToken);
+      });
+      final document = builder.buildDocument();
+      await file.writeAsString(document.toString());
+    }
+  }
 
 }

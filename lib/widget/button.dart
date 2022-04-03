@@ -75,7 +75,13 @@ class Button extends StatelessWidget {
     }
     return DecoratedBox(
       decoration: BoxDecoration(
-          gradient: LinearGradient(
+          gradient: disable ? LinearGradient(
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+            colors: [Color(0xFF9E9E9E), Color(0xFF9E9E9E), Color(0xFF9E9E9E)]
+          )
+          :
+          LinearGradient(
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
             colors: [Color(0xFF1A2980), Color(0xFF3476aa), Color(0xFF26D0CE)]

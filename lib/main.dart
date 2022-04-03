@@ -22,6 +22,7 @@ void main() async {
         title: config.apkName,
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
+          fontFamily: 'Roboto',
           bottomSheetTheme: BottomSheetThemeData(
             backgroundColor: Colors.black.withOpacity(0),
           )

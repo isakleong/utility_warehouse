@@ -186,7 +186,7 @@ void Alert({ context, String title, Widget content, List<Widget> actions, VoidCa
                   key: Key("ok"),
                   child: cancel ? TextView("Ya", 2, fontSize: 12, color: Colors.white) : type == "error" ? TextView(errorBtnTitle, 2, fontSize: 12, color: Colors.white) : TextView("Ok", 2, caps: true, fontSize: 12, color: Colors.white),
                   onTap: () {
-                    // Navigator.of(context).pop();
+                    Navigator.of(context).pop();
                     defaultAction();
                   },
                 ),

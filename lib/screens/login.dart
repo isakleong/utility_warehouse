@@ -28,8 +28,6 @@ class Login extends StatefulWidget {
 
 
 class LoginState extends State<Login> {
-  static const platform = const MethodChannel("connectionTest");
-
   bool unlockPassword = true;
   bool unlockNewPassword = true;
   bool unlockConfirmPassword = true;
@@ -253,7 +251,7 @@ class LoginState extends State<Login> {
             });
             Alert(
               context: context,
-              title: "Silahkan masukkan password baru,",
+              title: "Silahkan masukkan password baru",
               content: StatefulBuilder(
                 builder: (BuildContext context, StateSetter setState) {
                   _setState = setState;
@@ -337,8 +335,8 @@ class LoginState extends State<Login> {
         } else {
           Alert(
             context: context,
-            title: "Maaf,",
-            content: TextView("Anda tidak lagi memiliki izin untuk mengakses aplikasi ini.\nSilahkan hubungi tim SFA untuk info lebih lanjut.", 4),
+            title: "Maaf",
+            content: TextView("Anda tidak lagi memiliki izin untuk mengakses aplikasi ini\nSilahkan hubungi tim SFA untuk info lebih lanjut", 4),
             cancel: false,
             type: "error"
           );  
@@ -347,13 +345,13 @@ class LoginState extends State<Login> {
       } else {
         Alert(
           context: context,
-          title: "Maaf,",
+          title: "Maaf",
           content: TextView("Perangkat baru terdeteksi\nMohon untuk melakukan registrasi NIK terlebih dahulu", 4),
           cancel: false,
           type: "error",
           defaultAction: () {
-            Navigator.of(context).pop();
-            Navigator.pushNamed(context, "signUp");
+            // Navigator.of(context).pop();
+            Navigator.pushNamed(context, "signUp", arguments: usernameController.text);
           }
         );  
       }
@@ -365,7 +363,7 @@ class LoginState extends State<Login> {
     } else {
       Alert(
         context: context,
-        title: "Maaf,",
+        title: "Maaf",
         content: Text(result.error_message),
         cancel: false,
         type: "error"
