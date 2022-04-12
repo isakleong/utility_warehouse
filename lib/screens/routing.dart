@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:utility_warehouse/screens/dashboard.dart';
 import 'package:utility_warehouse/screens/login.dart';
 import 'package:utility_warehouse/screens/otpVerification.dart';
 import 'package:utility_warehouse/screens/signUp.dart';
@@ -17,6 +18,9 @@ MaterialPageRoute routing(int mode, int id, List<String> pages, RouteSettings se
       break;
     case 'otpVerification':
       return MaterialPageRoute(builder: (context)=> OTPVerification(model: settings.arguments));
+      break;
+    case 'dashboard':
+      return MaterialPageRoute(builder: (context)=> Dashboard());
       break;
     // case 'examplePage 1':
     //   return MaterialPageRoute(builder: (context)=> Page1(result: settings.arguments));

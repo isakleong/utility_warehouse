@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:io';
+// import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter/services.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' show Client;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+// import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:utility_warehouse/models/result.dart';
 import 'package:utility_warehouse/models/userModel.dart';
@@ -25,7 +28,6 @@ class Login extends StatefulWidget {
   @override
   LoginState createState() => LoginState();
 }
-
 
 class LoginState extends State<Login> {
   bool unlockPassword = true;
@@ -47,6 +49,14 @@ class LoginState extends State<Login> {
   final newPasswordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
+  String dropdownValue = 'One';
+  String selectedDropdownValue = "Warehouse Manager";
+  List<DropdownMenuItem<String>> userTypeList = [];
+  final _dropdownFormKey = GlobalKey<FormState>();
+
+  String usernameTextHint = "###-##-###";
+  var maskFormatter = MaskTextInputFormatter(mask: "###-##-###", filter: { "#": RegExp(r'[a-zA-Z0-9]') }, type: MaskAutoCompletionType.eager);
+
   StateSetter _setState;
 
   DateTime currentBackPressTime;
@@ -57,6 +67,13 @@ class LoginState extends State<Login> {
     // SystemChrome.setPreferredOrientations([
     //   DeviceOrientation.landscapeRight,
     // ]);
+    // setState(() {
+    //   userTypeList = [
+    //     DropdownMenuItem(child: TextView('Warehouse Manager', 5, color: Colors.white), value: "WM"),
+    //     DropdownMenuItem(child: TextView('Kepala Gudang', 5, color: Colors.white), value: "KG"),
+    //     DropdownMenuItem(child: TextView('Helper', 5, color: Colors.white), value: "HP"),
+    //   ];
+    // });
   }
 
   @override
@@ -67,8 +84,16 @@ class LoginState extends State<Login> {
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
-    usernameController.text = "000-WH-MG9";
-    passwordController.text = "Gustiawan22";
+    // usernameController.text = "000-WH-MG9";
+    // passwordController.text = "Gustiawan22";
+
+    setState(() {
+      userTypeList = [
+        DropdownMenuItem(child: TextView('Warehouse Manager', 5, color: Colors.white), value: "WM"),
+        DropdownMenuItem(child: TextView('Kepala Gudang', 5, color: Colors.white), value: "KG"),
+        DropdownMenuItem(child: TextView('Helper', 5, color: Colors.white), value: "HP"),
+      ];
+    });
   }
   
   @override
@@ -108,11 +133,25 @@ class LoginState extends State<Login> {
                       Container(
                         child: TextField(
                           key: Key("Username"),
+                          inputFormatters: [maskFormatter],
                           controller: usernameController,
                           keyboardType: TextInputType.text,
                           textInputAction: TextInputAction.next,
                           focusNode: usernameFocus,
                           decoration: InputDecoration(
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            hintText: usernameTextHint,
+                            hintStyle: TextStyle(fontWeight: FontWeight.bold, fontSize:16, fontFamily: 'Roboto'),
+                            labelStyle: TextStyle(fontWeight: FontWeight.bold, fontFamily:'Roboto', fontSize: 16),
+                            border: OutlineInputBorder(),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(4)),
+                              borderSide: BorderSide(width: 1.5, color: config.grayColor),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(4)),
+                              borderSide: BorderSide(width: 1.5, color: config.darkOpacityBlueColor),
+                            ),
                             labelText: "Username",
                             errorText: usernameValid ? "Username tidak boleh kosong" : null,
                           ),
@@ -122,8 +161,8 @@ class LoginState extends State<Login> {
                           },
                         ),
                       ),
+                      SizedBox(height: 20),
                       Container(
-                        margin: EdgeInsets.symmetric(vertical: 20),
                         child: TextField(
                           key: Key("Password"),
                           controller: passwordController,
@@ -132,7 +171,19 @@ class LoginState extends State<Login> {
                           keyboardType: TextInputType.text,
                           textInputAction: TextInputAction.go,
                           decoration: InputDecoration(
-                            hintText: "Password",
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            labelStyle: TextStyle(fontWeight: FontWeight.bold, fontFamily:'Roboto', fontSize: 16),
+                            // hintText: "Password",
+                            labelText: "Password",
+                            border: OutlineInputBorder(),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(4)),
+                              borderSide: BorderSide(width: 1.5, color: config.grayColor),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(4)),
+                              borderSide: BorderSide(width: 1.5, color: config.darkOpacityBlueColor),
+                            ),
                             errorText: passwordValid ? "Password tidak boleh kosong" : null,
                             suffixIcon: InkWell(
                               child: Container(
@@ -156,9 +207,55 @@ class LoginState extends State<Login> {
                           },
                         ),
                       ),
+                      SizedBox(height: 20),
+                      Form(
+                        key: _dropdownFormKey,
+                        child: DropdownButtonFormField(
+                          decoration: InputDecoration(
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: config.grayColor, width: 1.5),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            // filled: true,
+                            // fillColor: Colors.white,
+                            labelText: "Login Sebagai",
+                            labelStyle: TextStyle(fontWeight: FontWeight.bold, fontFamily:'Roboto', fontSize: 16),
+                          ),
+                          hint: TextView('Login Sebagai', 5),
+                          validator: (value) => value == null ? "Select a country" : null,
+                          dropdownColor: Colors.white,
+                          value: selectedDropdownValue,
+                          onChanged: (String value) {
+                            setState(() {
+                              selectedDropdownValue = value;
+                              usernameController.clear();
+                              passwordController.clear();
+                              usernameValid = false;
+                              passwordValid = false;
+                              if(value == "Warehouse Manager") {
+                                usernameTextHint = "###-##-###";
+                                maskFormatter = MaskTextInputFormatter(mask: "###-##-###", filter: { "#": RegExp(r'[a-zA-Z0-9]') }, type: MaskAutoCompletionType.eager);
+                              } else if(value == "Kepala Gudang") {
+                                usernameTextHint = "###-##";
+                                maskFormatter = MaskTextInputFormatter(mask: "###-##", filter: { "#": RegExp(r'[a-zA-Z0-9]') }, type: MaskAutoCompletionType.eager);
+                              } else  {
+                                usernameTextHint = "###-##";
+                                maskFormatter = MaskTextInputFormatter(mask: "###-##", filter: { "#": RegExp(r'[a-zA-Z0-9]') }, type: MaskAutoCompletionType.eager);
+                              }
+                            });
+                          },
+                          items: <String>['Warehouse Manager', 'Kepala Gudang', 'Helper']
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: TextView(value, 4),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      SizedBox(height: 30),
                       Container(
                         width: mediaWidth,
-                        padding: EdgeInsets.only(top: 15),
                         child: Button(
                           disable: false,
                           child: TextView('Masuk', 3, color: Colors.white, caps: true),
@@ -398,7 +495,12 @@ class LoginState extends State<Login> {
     });
 
     if(!usernameValid && !passwordValid){
-      doLogin();
+      //doLogin();
+      // direct by pass to dashboard (development purpose)
+      Navigator.pushReplacementNamed(
+          context,
+          "dashboard"
+      );
     }
   }
 
