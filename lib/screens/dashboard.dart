@@ -41,111 +41,262 @@ class DashboardState extends State<Dashboard> {
     return Scaffold(
       body: WillPopScope(
         onWillPop: willPopScope,
-        child: Stack(
-          children: [
-            Container(
-              height: mediaHeight,
-              width: mediaWidth,
-              // color: Colors.white,
-              child: Image.asset("assets/illustration/bg3.png", fit: BoxFit.fill),
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              pinned: false,
+              snap: false,
+              floating: false,
+              expandedHeight: 480,
+              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(bottomLeft: Radius.circular(80), bottomRight: Radius.circular(80)),
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Card(
-                  margin: EdgeInsets.all(20),
-                  elevation: 10,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(16),
-                    onTap: () {
-                      Navigator.pushNamed(context, "processOpnameData");
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Row(
-                        children: [
-                          Container(
-                            child: Icon(Icons.padding, size: 100, color: config.darkOpacityBlueColor)
-                          ),
-                          SizedBox(width: 30),
-                          Expanded(
-                            child: TextView("Process Opname Data", 1)
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 30),
-                Card(
-                  margin: EdgeInsets.all(20),
-                  elevation: 10,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(16),
-                    onTap: () {},
-                    child: Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Row(
-                        children: [
-                          Container(
-                            child: Icon(Icons.padding, size: 100, color: config.darkOpacityBlueColor)
-                          ),
-                          SizedBox(width: 30),
-                          Expanded(
-                            child: TextView("Stock Opname Difference", 1)
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+            flexibleSpace: FlexibleSpaceBar(
+              titlePadding: const EdgeInsetsDirectional.only(start: 16.0, bottom: 16.0),
+              // centerTitle: false,
+              // title: Text(
+              //   'Beach Side',
+              //   textScaleFactor: 1.0,
+              //   style: TextStyle(
+              //       color: Colors.black, fontWeight: FontWeight.bold),
+              // ),
+              background: ClipRRect(
+                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(80), bottomRight: Radius.circular(80)),
+                child: Image.asset('assets/illustration/bg_process_opname_3.png', fit: BoxFit.fill),
+              )),
             ),
-      
-            
-            // Column(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   children: [
-            //      InkWell(
-            //          onTap: () {},
-            //          child: Center(
-            //            child: Row(
-            //              mainAxisAlignment: MainAxisAlignment.center,
-            //              children: [
-            //                Center(
-            //                  child: Card(
-            //                    shape: RoundedRectangleBorder(
-            //                        borderRadius: BorderRadius.circular(100.0)),
-            //                    elevation: 5,
-            //                    child: Padding(
-            //                      padding: const EdgeInsets.all(10.0),
-            //                      child: Icon(Icons.padding, size: 80, color: config.darkOpacityBlueColor),
-            //                    ),
-            //                  ),
-            //                ),
-            //                SizedBox(width: 20),
-            //                Padding(
-            //                  padding: const EdgeInsets.all(10.0),
-            //                  child: Container(
-            //                    alignment: Alignment.bottomCenter,
-            //                    child: TextView('Proses Opname Data', 1)
-            //                  ),
-            //                ),
-            //              ],
-            //            ),
-            //          ),
-            //       ),
-            //   ],
-            // ),
 
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Column(
+                children: <Widget>[
+                  Card(
+                    margin: EdgeInsets.all(20),
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: () {
+                        Navigator.pushNamed(context, "processOpnameData");
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.all(20),
+                        child: Row(
+                          children: [
+                            Container(
+                              child: Icon(Icons.padding, size: 100, color: config.darkOpacityBlueColor)
+                            ),
+                            SizedBox(width: 30),
+                            Expanded(
+                              child: TextView("Process Opname Data", 1)
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Card(
+                    margin: EdgeInsets.all(20),
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: () {},
+                      child: Padding(
+                        padding: EdgeInsets.all(20),
+                        child: Row(
+                          children: [
+                            Container(
+                              child: Icon(Icons.padding, size: 100, color: config.darkOpacityBlueColor)
+                            ),
+                            SizedBox(width: 30),
+                            Expanded(
+                              child: TextView("Stock Opname Difference", 1)
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // SliverList(
+            //   delegate: SliverChildBuilderDelegate(
+            //     (BuildContext context, int index) {
+            //       return Column(
+            //         mainAxisAlignment: MainAxisAlignment.center,
+            //         children: [
+            //           Card(
+            //             margin: EdgeInsets.all(20),
+            //             elevation: 5,
+            //             shape: RoundedRectangleBorder(
+            //               borderRadius: BorderRadius.circular(16),
+            //             ),
+            //             child: InkWell(
+            //               borderRadius: BorderRadius.circular(16),
+            //               onTap: () {
+            //                 Navigator.pushNamed(context, "processOpnameData");
+            //               },
+            //               child: Padding(
+            //                 padding: EdgeInsets.all(20),
+            //                 child: Row(
+            //                   children: [
+            //                     Container(
+            //                       child: Icon(Icons.padding, size: 100, color: config.darkOpacityBlueColor)
+            //                     ),
+            //                     SizedBox(width: 30),
+            //                     Expanded(
+            //                       child: TextView("Process Opname Data", 1)
+            //                     ),
+            //                   ],
+            //                 ),
+            //               ),
+            //             ),
+            //           ),
+            //           Card(
+            //             margin: EdgeInsets.all(20),
+            //             elevation: 5,
+            //             shape: RoundedRectangleBorder(
+            //               borderRadius: BorderRadius.circular(16),
+            //             ),
+            //             child: InkWell(
+            //               borderRadius: BorderRadius.circular(16),
+            //               onTap: () {},
+            //               child: Padding(
+            //                 padding: EdgeInsets.all(20),
+            //                 child: Row(
+            //                   children: [
+            //                     Container(
+            //                       child: Icon(Icons.padding, size: 100, color: config.darkOpacityBlueColor)
+            //                     ),
+            //                     SizedBox(width: 30),
+            //                     Expanded(
+            //                       child: TextView("Stock Opname Difference", 1)
+            //                     ),
+            //                   ],
+            //                 ),
+            //               ),
+            //             ),
+            //           ),
+            //         ],
+            //       );
+            //     },
+            //     childCount: 1,
+            //   ),
+            // ),
           ],
         )
+        
+        // Stack(
+        //   children: [
+        //     Container(
+        //       height: mediaHeight*0.5,
+        //       width: mediaWidth,
+        //       // color: Colors.white,
+        //       child: Image.asset("assets/illustration/bg_process_opname.png", fit: BoxFit.fill),
+        //     ),
+        //     Column(
+        //       mainAxisAlignment: MainAxisAlignment.center,
+        //       children: [
+        //         Card(
+        //           margin: EdgeInsets.all(20),
+        //           elevation: 10,
+        //           shape: RoundedRectangleBorder(
+        //             borderRadius: BorderRadius.circular(16),
+        //           ),
+        //           child: InkWell(
+        //             borderRadius: BorderRadius.circular(16),
+        //             onTap: () {
+        //               Navigator.pushNamed(context, "processOpnameData");
+        //             },
+        //             child: Padding(
+        //               padding: EdgeInsets.all(20),
+        //               child: Row(
+        //                 children: [
+        //                   Container(
+        //                     child: Icon(Icons.padding, size: 100, color: config.darkOpacityBlueColor)
+        //                   ),
+        //                   SizedBox(width: 30),
+        //                   Expanded(
+        //                     child: TextView("Process Opname Data", 1)
+        //                   ),
+        //                 ],
+        //               ),
+        //             ),
+        //           ),
+        //         ),
+        //         SizedBox(height: 30),
+        //         Card(
+        //           margin: EdgeInsets.all(20),
+        //           elevation: 10,
+        //           shape: RoundedRectangleBorder(
+        //             borderRadius: BorderRadius.circular(16),
+        //           ),
+        //           child: InkWell(
+        //             borderRadius: BorderRadius.circular(16),
+        //             onTap: () {},
+        //             child: Padding(
+        //               padding: EdgeInsets.all(20),
+        //               child: Row(
+        //                 children: [
+        //                   Container(
+        //                     child: Icon(Icons.padding, size: 100, color: config.darkOpacityBlueColor)
+        //                   ),
+        //                   SizedBox(width: 30),
+        //                   Expanded(
+        //                     child: TextView("Stock Opname Difference", 1)
+        //                   ),
+        //                 ],
+        //               ),
+        //             ),
+        //           ),
+        //         ),
+        //       ],
+        //     ),
+      
+            
+        //     // Column(
+        //     //   mainAxisAlignment: MainAxisAlignment.center,
+        //     //   children: [
+        //     //      InkWell(
+        //     //          onTap: () {},
+        //     //          child: Center(
+        //     //            child: Row(
+        //     //              mainAxisAlignment: MainAxisAlignment.center,
+        //     //              children: [
+        //     //                Center(
+        //     //                  child: Card(
+        //     //                    shape: RoundedRectangleBorder(
+        //     //                        borderRadius: BorderRadius.circular(100.0)),
+        //     //                    elevation: 5,
+        //     //                    child: Padding(
+        //     //                      padding: const EdgeInsets.all(10.0),
+        //     //                      child: Icon(Icons.padding, size: 80, color: config.darkOpacityBlueColor),
+        //     //                    ),
+        //     //                  ),
+        //     //                ),
+        //     //                SizedBox(width: 20),
+        //     //                Padding(
+        //     //                  padding: const EdgeInsets.all(10.0),
+        //     //                  child: Container(
+        //     //                    alignment: Alignment.bottomCenter,
+        //     //                    child: TextView('Proses Opname Data', 1)
+        //     //                  ),
+        //     //                ),
+        //     //              ],
+        //     //            ),
+        //     //          ),
+        //     //       ),
+        //     //   ],
+        //     // ),
+
+        //   ],
+        // )
       ),
     );
   }

@@ -72,13 +72,13 @@ class SplashScreenState extends State<SplashScreen> {
       // print(document.toString());
       // print(document.toXmlString(pretty: true, indent: '\t'));
     } else {
-      config.setBaseUrl("http://192.168.10.213/NewUtilityWarehouseDev");
+      config.setBaseUrl("http://203.142.77.243/NewUtilityWarehouseDev");
       config.setBaseUrlAlt("http://103.76.27.124/NewUtilityWarehouseDev");
 
       final builder = XmlBuilder();
       builder.processing('xml', 'version="1.0" encoding="UTF-8" standalone="yes"');
       builder.element('deviceconfig', nest: () {
-        builder.element('url_address_1', nest: "http://192.168.10.213/NewUtilityWarehouseDev");
+        builder.element('url_address_1', nest: "http://203.142.77.243/NewUtilityWarehouseDev");
         builder.element('url_address_2', nest: "http://103.76.27.124/NewUtilityWarehouseDev");
         builder.element('token_id', nest: '');
       });
