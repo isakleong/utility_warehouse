@@ -18,7 +18,7 @@ class TextView extends StatelessWidget{
 
     switch(type) {
       case 1:
-        this.fontSize = 20;
+        this.fontSize = 22;
         this.fontFamily = 'Roboto';
         this.fontWeight = FontWeight.w700;
       break;
