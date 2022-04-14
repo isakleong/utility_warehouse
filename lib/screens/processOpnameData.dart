@@ -1,4 +1,5 @@
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:utility_warehouse/settings/configuration.dart';
 import 'package:utility_warehouse/widget/button.dart';
@@ -32,23 +33,19 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
     super.initState();
   }
 
-    Iterable<List<int>> chunked(int size) sync* {
-  // final iterator = this.iterator;
-  // while (iterator.moveNext()) {
-  //   final current = <int>[];
-  //   do {
-  //     current.add(iterator.current);
-  //   } while (current.length < size && iterator.moveNext());
-  //   yield current.toList(growable: false);
-  // }
-}
-
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     super.didChangeDependencies();
     // for(int i = 0; i < 20; i ++) {
     //   selectedDay.add
     // }
+    await initColorWidget();
+  }
+
+  void initColorWidget() {
+    for(int i = 0; i < 20; i++){
+      selectedDay.add(Color(0xFF0066ff));
+    }
   }
   
   @override
@@ -89,30 +86,35 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
                       child: Row(
                         children: List.generate(20, (index){
                           return Container(
-                            height: 180,
-                            width: 90,
+                            height: 200,
+                            width: 100,
                             margin: EdgeInsets.only(top: 40, left: 15, right: 15),
                             decoration: new BoxDecoration(
-                              color: selectedDay,
+                              color: selectedDay[index],
                               border: Border.all(color: Colors.black, width: 0.0),
                               borderRadius: new BorderRadius.all(Radius.elliptical(100, 100)),
                             ),
                             child: InkWell(
                               onTap: (){
                                 setState(() {
-                                  selectedDay = Colors.white;
+                                  for(int i = 0; i < 20; i++){
+                                    if(i!=index) {
+                                      selectedDay[i] = Color(0xFF0066ff);
+                                    }
+                                  }
+                                  selectedDay[index] = Colors.white;
                                 });
                               },
                               child: Column(
                                 children: [
                                   Container(
-                                    padding: EdgeInsets.all(25),
+                                    padding: EdgeInsets.all(20),
                                     decoration: new BoxDecoration(
                                       color: Colors.white,
                                       shape: BoxShape.circle,
                                       border: Border.all(color: Colors.black, width: 0.0),
                                     ),
-                                    child: TextView((index+1).toString(), 1)
+                                    child: AutoSizeText((index+1).toString(), style: TextStyle(fontSize: 20), maxLines: 2),
                                   ),
                                   // Container(
                                   //   child: TextView("Sudah".toString(), 1, color: Colors.white)
