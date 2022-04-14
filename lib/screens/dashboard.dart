@@ -61,7 +61,7 @@ class DashboardState extends State<Dashboard> {
               // ),
               background: ClipRRect(
                 borderRadius: BorderRadius.only(bottomLeft: Radius.circular(80), bottomRight: Radius.circular(80)),
-                child: Image.asset('assets/illustration/bg_process_opname_3.png', fit: BoxFit.fill),
+                child: Image.asset('assets/illustration/bg_process_opname_1.png', fit: BoxFit.fill),
               )),
             ),
 
