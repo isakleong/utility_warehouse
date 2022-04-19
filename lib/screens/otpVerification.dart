@@ -241,7 +241,7 @@ class OTPVerificationState extends State<OTPVerification> {
   void doSignUp() async {
     Alert(context: context, loading: true, disableBackButton: true);
 
-    await getDeviceConfig(context);
+    // await getDeviceConfig(context);
 
     Result result = await userAPI.signUp(context, model["userID"].toString(), generatedToken[1].toString(), model["nik"].toString());
 
@@ -357,7 +357,7 @@ class OTPVerificationState extends State<OTPVerification> {
 
     Alert(context: context, loading: true, disableBackButton: true);
 
-    await getDeviceConfig(context);
+    // await getDeviceConfig(context);
 
     Result result = await userAPI.updatePassword(context, model["userID"], newPasswordController.text);
 

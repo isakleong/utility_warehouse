@@ -57,37 +57,37 @@ class SplashScreenState extends State<SplashScreen> {
     // startTimer();
   }
 
-  getDeviceConfig() async {
-    Configuration config = Configuration.of(context);
-    Directory dir = await getExternalStorageDirectory();
-    String path = '${dir.path}/deviceconfig.xml';
-    File file = File(path);
+  // getDeviceConfig() async {
+  //   Configuration config = Configuration.of(context);
+  //   Directory dir = await getExternalStorageDirectory();
+  //   String path = '${dir.path}/deviceconfig.xml';
+  //   File file = File(path);
 
-    if(FileSystemEntity.typeSync(path) != FileSystemEntityType.notFound){
-      final document = XmlDocument.parse(file.readAsStringSync());
-      final url_address_1 = document.findAllElements('url_address_1').map((node) => node.text);
-      final url_address_2 = document.findAllElements('url_address_2').map((node) => node.text);
-      config?.setBaseUrl(url_address_1.first);
-      config?.setBaseUrlAlt(url_address_2.first);
-      // print(document.toString());
-      // print(document.toXmlString(pretty: true, indent: '\t'));
-    } else {
-      config.setBaseUrl("http://203.142.77.243/NewUtilityWarehouseDev");
-      config.setBaseUrlAlt("http://103.76.27.124/NewUtilityWarehouseDev");
+  //   if(FileSystemEntity.typeSync(path) != FileSystemEntityType.notFound){
+  //     final document = XmlDocument.parse(file.readAsStringSync());
+  //     final url_address_1 = document.findAllElements('url_address_1').map((node) => node.text);
+  //     final url_address_2 = document.findAllElements('url_address_2').map((node) => node.text);
+  //     config?.setBaseUrl(url_address_1.first);
+  //     config?.setBaseUrlAlt(url_address_2.first);
+  //     // print(document.toString());
+  //     // print(document.toXmlString(pretty: true, indent: '\t'));
+  //   } else {
+  //     config.setBaseUrl("http://203.142.77.243/NewUtilityWarehouseDev");
+  //     config.setBaseUrlAlt("http://103.76.27.124/NewUtilityWarehouseDev");
 
-      final builder = XmlBuilder();
-      builder.processing('xml', 'version="1.0" encoding="UTF-8" standalone="yes"');
-      builder.element('deviceconfig', nest: () {
-        builder.element('url_address_1', nest: "http://203.142.77.243/NewUtilityWarehouseDev");
-        builder.element('url_address_2', nest: "http://103.76.27.124/NewUtilityWarehouseDev");
-        builder.element('token_id', nest: '');
-      });
-      final document = builder.buildDocument();
-      await file.writeAsString(document.toString());
-      // print(document.toString());
-      // print(document.toXmlString(pretty: true, indent: '\t'));
-    }
-  }
+  //     final builder = XmlBuilder();
+  //     builder.processing('xml', 'version="1.0" encoding="UTF-8" standalone="yes"');
+  //     builder.element('deviceconfig', nest: () {
+  //       builder.element('url_address_1', nest: "http://203.142.77.243/NewUtilityWarehouseDev");
+  //       builder.element('url_address_2', nest: "http://103.76.27.124/NewUtilityWarehouseDev");
+  //       builder.element('token_id', nest: '');
+  //     });
+  //     final document = builder.buildDocument();
+  //     await file.writeAsString(document.toString());
+  //     // print(document.toString());
+  //     // print(document.toXmlString(pretty: true, indent: '\t'));
+  //   }
+  // }
 
   getAppsReady() async {
     var isNeedOpenSetting = false;
@@ -95,7 +95,7 @@ class SplashScreenState extends State<SplashScreen> {
     final isPermissionStatusGranted = await checkAppsPermission();
     
     if(isPermissionStatusGranted) {
-      await getDeviceConfig();
+      // await getDeviceConfig();
       doCheckVersion();
     } else {
       var isPermissionStatusGranted = false;
@@ -429,8 +429,11 @@ class SplashScreenState extends State<SplashScreen> {
     String url = "";
     bool isUrlAddress_1 = false, isUrlAddress_2 = false;
 
-    String url_address_1 = fetchAPI("config/apk/"+config.apkName+".apk", context: context);
-    String url_address_2 = fetchAPI("config/apk/"+config.apkName+".apk", context: context, secondary: true);
+    // String url_address_1 = fetchAPI("config/apk/"+config.apkName+".apk", context: context);
+    // String url_address_2 = fetchAPI("config/apk/"+config.apkName+".apk", context: context, secondary: true);
+
+    String url_address_1 = config.baseUrl + "config/apk/" + config.apkName + ".apk";
+    String url_address_2 = config.baseUrlAlt + "config/apk/" + config.apkName + ".apk";
 
     try {
 		  final conn_1 = await connectionTest(url_address_1, context);
@@ -545,12 +548,14 @@ class SplashScreenState extends State<SplashScreen> {
     bool isUrlAddress_1 = false, isUrlAddress_2 = false;
     String isGetVersionSuccess = "";
 
-    String url_address_1 = fetchAPI("config/getVersion.php", context: context);
-    String url_address_2 = fetchAPI("config/getVersion.php", context: context, secondary: true);
+    String url_address_1 = config.baseUrl + "config/tes_ip.php";
+    String url_address_2 = config.baseUrlAlt + "config/tes_ip.php";
+
+    print("HSHSHSH "+url_address_1);
 
     try {
 		  final conn_1 = await connectionTest(url_address_1, context);
-      printHelp("GET STATUS 1 "+conn_1);
+      printHelp("GET STATUS 11 "+conn_1);
       if(conn_1 == "OK"){
         isUrlAddress_1 = true;
       }
@@ -560,7 +565,8 @@ class SplashScreenState extends State<SplashScreen> {
     }
 
     if(isUrlAddress_1) {
-      url = url_address_1;
+      // url = url_address_1;
+      url = config.baseUrl + "config/getVersion.php";
     } else {
       try {
         final conn_2 = await connectionTest(url_address_2, context);
@@ -574,7 +580,8 @@ class SplashScreenState extends State<SplashScreen> {
       }
     }
     if(isUrlAddress_2){
-      url = url_address_2;
+      // url = url_address_2;
+      url = config.baseUrlAlt + "config/getVersion.php";
     }
 
     var response;

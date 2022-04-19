@@ -313,7 +313,7 @@ class LoginState extends State<Login> {
 
     Alert(context: context, loading: true, disableBackButton: true);
 
-    await getDeviceConfig(context);
+    // await getDeviceConfig(context);
 
     Result result = await userAPI.login(context, usernameController.text, passwordController.text);
 

@@ -66,37 +66,37 @@ String fetchAPI(String url, {String parameter = "", bool print = false, bool sec
   return urlAPI;
 }
 
-getDeviceConfig(context) async {
-    Configuration config = Configuration.of(context);
-    Directory dir = await getExternalStorageDirectory();
-    String path = '${dir.path}/deviceconfig.xml';
-    File file = File(path);
+// getDeviceConfig(context) async {
+//     Configuration config = Configuration.of(context);
+//     Directory dir = await getExternalStorageDirectory();
+//     String path = '${dir.path}/deviceconfig.xml';
+//     File file = File(path);
 
-    if(FileSystemEntity.typeSync(path) != FileSystemEntityType.notFound){
-      final document = XmlDocument.parse(file.readAsStringSync());
-      final url_address_1 = document.findAllElements('url_address_1').map((node) => node.text);
-      final url_address_2 = document.findAllElements('url_address_2').map((node) => node.text);
-      config.setBaseUrl(url_address_1.first);
-      config.setBaseUrlAlt(url_address_2.first);
-      // print(document.toString());
-      // print(document.toXmlString(pretty: true, indent: '\t'));
-    } else {
-      config.setBaseUrl("http://203.142.77.243/NewUtilityWarehouseDev");
-      config.setBaseUrlAlt("http://103.76.27.124/NewUtilityWarehouseDev");
+//     if(FileSystemEntity.typeSync(path) != FileSystemEntityType.notFound){
+//       final document = XmlDocument.parse(file.readAsStringSync());
+//       final url_address_1 = document.findAllElements('url_address_1').map((node) => node.text);
+//       final url_address_2 = document.findAllElements('url_address_2').map((node) => node.text);
+//       config.setBaseUrl(url_address_1.first);
+//       config.setBaseUrlAlt(url_address_2.first);
+//       // print(document.toString());
+//       // print(document.toXmlString(pretty: true, indent: '\t'));
+//     } else {
+//       config.setBaseUrl("http://203.142.77.243/NewUtilityWarehouseDev");
+//       config.setBaseUrlAlt("http://103.76.27.124/NewUtilityWarehouseDev");
 
-      final builder = XmlBuilder();
-      builder.processing('xml', 'version="1.0" encoding="UTF-8" standalone="yes"');
-      builder.element('deviceconfig', nest: () {
-        builder.element('url_address_1', nest: "http://203.142.77.243/NewUtilityWarehouseDev");
-        builder.element('url_address_2', nest: "http://103.76.27.124/NewUtilityWarehouseDev");
-        builder.element('token_id', nest: '');
-      });
-      final document = builder.buildDocument();
-      await file.writeAsString(document.toString());
-      // print(document.toString());
-      // print(document.toXmlString(pretty: true, indent: '\t'));
-    }
-  }
+//       final builder = XmlBuilder();
+//       builder.processing('xml', 'version="1.0" encoding="UTF-8" standalone="yes"');
+//       builder.element('deviceconfig', nest: () {
+//         builder.element('url_address_1', nest: "http://203.142.77.243/NewUtilityWarehouseDev");
+//         builder.element('url_address_2', nest: "http://103.76.27.124/NewUtilityWarehouseDev");
+//         builder.element('token_id', nest: '');
+//       });
+//       final document = builder.buildDocument();
+//       await file.writeAsString(document.toString());
+//       // print(document.toString());
+//       // print(document.toXmlString(pretty: true, indent: '\t'));
+//     }
+//   }
 
 fieldFocusChange(BuildContext context, FocusNode currentFocus,FocusNode nextFocus) {
   currentFocus.unfocus();

@@ -155,7 +155,7 @@ class SignUpState extends State<SignUp> {
 
     Alert(context: context, loading: true, disableBackButton: true);
 
-    await getDeviceConfig(context);
+    // await getDeviceConfig(context);
 
     Result result = await userAPI.nikValidation(context, nikController.text);
 

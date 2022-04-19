@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:utility_warehouse/settings/configuration.dart';
+import 'package:utility_warehouse/tools/function.dart';
 import 'package:utility_warehouse/widget/button.dart';
 import 'package:utility_warehouse/widget/textView.dart';
 
@@ -17,10 +18,9 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
   String selectedCountPIC = "1";
   String selectedDataType = "Stock Opname";
   
-  List<String> selectedItemPIC = [];
-
-  List<String> listPIC = ["Pilih PIC", "Andi", "Tommy", "Jerry"];
-  List<String> selectedListPIC = ["Pilih PIC", "Andi", "Tommy", "Jerry"];
+  // String selectedPIC = "Andi";
+  List<String> selectedPIC = ["Andi", "Andi"];
+  List<List<String>> selectedListPIC = [];
 
   int totalItem = 200;
 
@@ -31,6 +31,7 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
   @override
   void initState() {
     super.initState();
+    selectedListPIC = new List.generate(2, (i) => ["Andi", "Tommy", "Jerry"]);
   }
 
   @override
@@ -193,111 +194,159 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Container(
-                            child: TextView("Kepala Gudang", 4),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                child: TextView("", 4),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 10),
+                                child: Container(
+                                  child: TextView("Kepala Gudang", 4),
+                                ),
+                              ),
+                            ],
                           ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 15),
-                            child: Container(
-                              child: TextView(":", 4),
-                            ),
+                          SizedBox(width: 30),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                child: TextView("", 4),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 10),
+                                child: Container(
+                                  child: TextView(":", 4),
+                                ),
+                              ),
+                            ],
                           ),
-                          Container(
-                            child: TextView("Rahman Yuliansyah", 4),
+                          SizedBox(width: 30),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                child: TextView("", 4),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 10),
+                                child: Container(
+                                  child: TextView("Rahman Yuliansyah", 4),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                      // Divider(),//sdsd
-                      // Row(
-                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //   mainAxisSize: MainAxisSize.min,
-                      //   children: [
-                      //     Column(
-                      //       crossAxisAlignment: CrossAxisAlignment.start,
-                      //       children: <Widget>[
-                      //         Container(
-                      //             child: Column(
-                      //                 crossAxisAlignment: CrossAxisAlignment.start,
-                      //                 children: <Widget>[
-                      //                   TextView("Kepala Gudang", 4),
-                      //                   SizedBox(height: 30),
-                      //                   TextView("Pembagian Jumlah PIC", 4),
-                      //                 ]
-                      //             )
-                      //         ),
-                      //       ],
-                      //     ),
-                      //     Column(
-                      //       crossAxisAlignment: CrossAxisAlignment.start,
-                      //       children: <Widget>[
-                      //         Container(
-                      //             child: Column(
-                      //                 crossAxisAlignment: CrossAxisAlignment.start,
-                      //                 children: <Widget>[
-                      //                   TextView(":", 4),
-                      //                   SizedBox(height: 30),
-                      //                   TextView(":", 4),
-                      //                 ]
-                      //             )
-                      //         ),
-                      //       ],
-                      //     ),
-                      //     Column(
-                      //       crossAxisAlignment: CrossAxisAlignment.start,
-                      //       children: <Widget>[
-                      //         Container(
-                      //             child: Column(
-                      //                 crossAxisAlignment: CrossAxisAlignment.start,
-                      //                 children: <Widget>[
-                      //                   TextView("Rahman Yuliansyah", 4),
-                      //                   SizedBox(height: 30),
-                      //                   Container(
-                      //                     height: 40,
-                      //                     child: DropdownButtonHideUnderline(
-                      //                       child: ButtonTheme(
-                      //                         alignedDropdown: true,
-                      //                         child: DropdownButton<String>(
-                      //                           dropdownColor: Colors.white,
-                      //                           value: selectedCountPIC,
-                      //                           icon: Icon(Icons.keyboard_arrow_down, color: config.grayColor),
-                      //                           onChanged: (newValue) {
-                      //                             setState(() {
-                      //                               selectedCountPIC = newValue;
-                      //                             });
-                      //                           },
-                      //                           items: <String>['1','2','3','4','5']
-                      //                           .map<DropdownMenuItem<String>>((String value) {
-                      //                             return DropdownMenuItem<String>(
-                      //                               value: value,
-                      //                               child: TextView(value, 4),
-                      //                             );
-                      //                           }).toList(),
-                      //                         ),
-                      //                       ),
-                      //                     ),
-                      //                     decoration: BoxDecoration(
-                      //                       border: Border.all(color: config.darkOpacityBlueColor, width: 1.5),
-                      //                       borderRadius: BorderRadius.all(Radius.circular(8)),
-                      //                     ),
-                      //                   ),
-                      //                 ]
-                      //             )
-                      //         ),
-                      //       ],
-                      //     ),
-                      //   ],
-                      // ),
-                      //pic section
+                      
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 10),
+                                child: Container(
+                                  child: TextView("Tipe Data", 4),
+                                ),
+                              ),
+                              Container(
+                                child: TextView("Kepala Gudang", 4, color: Colors.transparent),
+                              ),
+                            ],
+                          ),
+                          SizedBox(width: 30),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 10),
+                                child: Container(
+                                  child: TextView(":", 4),
+                                ),
+                              ),
+                              Container(
+                                child: TextView(":", 4, color: Colors.transparent),
+                              ),
+                            ],
+                          ),
+                          SizedBox(width: 30),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 10),
+                                child: Container(
+                                  height: 40,
+                                  child: DropdownButtonHideUnderline(
+                                    child: ButtonTheme(
+                                      alignedDropdown: true,
+                                      child: DropdownButton<String>(
+                                        dropdownColor: Colors.white,
+                                        value: selectedDataType,
+                                        icon: Icon(Icons.keyboard_arrow_down, color: config.grayColor),
+                                        onChanged: (newValue) {
+                                          setState(() {
+                                            selectedDataType = newValue;
+                                          });
+                                        },
+                                        items: <String>['Stock Opname','Stock Opname Difference']
+                                        .map<DropdownMenuItem<String>>((String value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value,
+                                            child: TextView(value, 4),
+                                          );
+                                        }).toList(),
+                                      ),
+                                    ),
+                                  ),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.red, width: 1.5),
+                                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                child: TextView("Rahman Yuliansyah", 4, color: Colors.transparent),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      Center(
+                        child: Button(
+                          disable: false,
+                          child: TextView('Pilih Helper', 3, color: Colors.white, caps: false),
+                          onTap: () {
+                            print("object");
+                            Alert(
+                              context: context,
+                              title: "Info,",
+                              content: Text("Pilih Helper"),
+                              cancel: false,
+                              type: "warning",
+                              defaultAction: () {
+                                
+                              }
+                            );
+                          },
+                        ),
+                      ),
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 20),
-                        child: Divider(),
+                        child: Divider(thickness: 3),
                       ),
+                      //pic section
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Container(
-                            child: TextView("Pembagian PIC", 4),
+                            child: TextView("Jumlah Helper", 4),
                           ),
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 15),
@@ -305,95 +354,176 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
                               child: TextView(":", 4),
                             ),
                           ),
-                          Container(
-                            height: 40,
-                            child: DropdownButtonHideUnderline(
-                              child: ButtonTheme(
-                                alignedDropdown: true,
-                                child: DropdownButton<String>(
-                                  dropdownColor: Colors.white,
-                                  value: selectedCountPIC,
-                                  icon: Icon(Icons.keyboard_arrow_down, color: config.grayColor),
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      selectedCountPIC = newValue;
-                                    });
-                                  },
-                                  items: <String>['1','2','3','4','5']
-                                  .map<DropdownMenuItem<String>>((String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: TextView(value, 4),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
-                            ),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: config.darkOpacityBlueColor, width: 1.5),
-                              borderRadius: BorderRadius.all(Radius.circular(8)),
-                            ),
+                          // Container(
+                          //   height: 40,
+                          //   child: DropdownButtonHideUnderline(
+                          //     child: ButtonTheme(
+                          //       alignedDropdown: true,
+                          //       child: DropdownButton<String>(
+                          //         dropdownColor: Colors.white,
+                          //         value: selectedCountPIC,
+                          //         icon: Icon(Icons.keyboard_arrow_down, color: config.grayColor),
+                          //         onChanged: (newValue) {
+                          //           setState(() {
+                          //             selectedCountPIC = newValue;
+                          //           });
+                          //         },
+                          //         items: <String>['1','2','3','4','5']
+                          //         .map<DropdownMenuItem<String>>((String value) {
+                          //           return DropdownMenuItem<String>(
+                          //             value: value,
+                          //             child: TextView(value, 4),
+                          //           );
+                          //         }).toList(),
+                          //       ),
+                          //     ),
+                          //   ),
+                          //   decoration: BoxDecoration(
+                          //     border: Border.all(color: config.darkOpacityBlueColor, width: 1.5),
+                          //     borderRadius: BorderRadius.all(Radius.circular(8)),
+                          //   ),
+                          // ),
+                          // SizedBox(width: 15),
+                          Button(
+                            disable: false,
+                            child: TextView('Pilih Helperxx', 3, color: Colors.white, caps: false),
+                            onTap: () {
+                              print("object");
+                              Alert(
+                                context: context,
+                                title: "Info,",
+                                content: Text("Pilih Helper"),
+                                cancel: false,
+                                type: "warning",
+                                defaultAction: () {
+                                  
+                                }
+                              );
+                            },
                           ),
                         ],
                       ),
-                      SizedBox(height: 50),
-                      Center(
+                      SizedBox(height: 30),
+                      Container(
                         child: Column(
                           children: List.generate(int.parse(selectedCountPIC), (index){
-                            return Padding(
-                              padding: EdgeInsets.only(bottom: 30),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Container(
-                                    height: 40,
-                                    child: DropdownButtonHideUnderline(
-                                      child: ButtonTheme(
-                                        alignedDropdown: true,
-                                        child: DropdownButton<String>(
-                                          dropdownColor: Colors.white,
-                                          value: selectedListPIC[index],
-                                          icon: Icon(Icons.keyboard_arrow_down, color: config.grayColor),
-                                          onChanged: (newValue) {
-                                            int countValid = 0;
-                                            for(int i = 0; i < int.parse(selectedCountPIC); i++){
-                                              if(i!=index && newValue == selectedListPIC[i]) {
-                                                print("TIDAK BOEL");
-                                              }
-                                            }
-                                            setState(() {
-                                              selectedListPIC[index] = newValue;
-                                            });
-                                          },
-                                          items: listPIC
-                                          .map<DropdownMenuItem<String>>((String value) {
-                                            return DropdownMenuItem<String>(
-                                              value: value,
-                                              child: TextView(value, 4),
-                                            );
-                                          }).toList(),
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 8),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                        child: TextView("PIC Helper "+(index+1).toString(), 4)
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 15),
+                                        child: Container(
+                                          child: TextView(":", 4),
                                         ),
                                       ),
-                                    ),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: config.darkOpacityBlueColor, width: 1.5),
-                                      borderRadius: BorderRadius.all(Radius.circular(8)),
-                                    ),
+                                      Container(
+                                        height: 40,
+                                        child: DropdownButtonHideUnderline(
+                                          child: ButtonTheme(
+                                            alignedDropdown: true,
+                                            child: DropdownButton<String>(
+                                              dropdownColor: Colors.white,
+                                              value: selectedPIC[index],
+                                              icon: Icon(Icons.keyboard_arrow_down, color: config.grayColor),
+                                              onChanged: (newValue) {
+                                                setState(() {
+                                                  selectedPIC[index] = newValue;
+                                                  // selectedListPIC = new List.generate(int.parse(newValue), (i) => ["Andi", "Tommy", "Jerry"]);
+                                                });
+                                              },
+                                              items: selectedListPIC[index]
+                                              .map<DropdownMenuItem<String>>((String value) {
+                                                return DropdownMenuItem<String>(
+                                                  value: value,
+                                                  child: TextView(value, 4),
+                                                );
+                                              }).toList(),
+                                            ),
+                                          ),
+                                        ),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(color: Colors.red, width: 1.5),
+                                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 15),
-                                    child: Container(
-                                      child: TextView(":", 4),
-                                    ),
-                                  ),
-                                  TextView("Item 1 - 50", 4),
-                                ],
-                              ),
+                                ),
+                              ],
                             );
                           }),
                         ),
                       ),
+                      
+
+                      ////////////////
+                      // SizedBox(height: 50),
+                      // Center(
+                      //   child: Column(
+                      //     children: List.generate(int.parse(selectedCountPIC), (index){
+                      //       return Padding(
+                      //         padding: EdgeInsets.only(bottom: 30),
+                      //         child: Row(
+                      //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //           mainAxisSize: MainAxisSize.min,
+                      //           children: [
+                      //             Container(
+                      //               height: 40,
+                      //               child: DropdownButtonHideUnderline(
+                      //                 child: ButtonTheme(
+                      //                   alignedDropdown: true,
+                      //                   child: DropdownButton<String>(
+                      //                     dropdownColor: Colors.white,
+                      //                     value: selectedListPIC[index],
+                      //                     icon: Icon(Icons.keyboard_arrow_down, color: config.grayColor),
+                      //                     onChanged: (newValue) {
+                      //                       int countValid = 0;
+                      //                       for(int i = 0; i < int.parse(selectedCountPIC); i++){
+                      //                         if(i!=index && newValue == selectedListPIC[i]) {
+                      //                           print("TIDAK BOEL");
+                      //                         }
+                      //                       }
+                      //                       setState(() {
+                      //                         selectedListPIC[index] = newValue;
+                      //                       });
+                      //                     },
+                      //                     items: listPIC
+                      //                     .map<DropdownMenuItem<String>>((String value) {
+                      //                       return DropdownMenuItem<String>(
+                      //                         value: value,
+                      //                         child: TextView(value, 4),
+                      //                       );
+                      //                     }).toList(),
+                      //                   ),
+                      //                 ),
+                      //               ),
+                      //               decoration: BoxDecoration(
+                      //                 border: Border.all(color: config.darkOpacityBlueColor, width: 1.5),
+                      //                 borderRadius: BorderRadius.all(Radius.circular(8)),
+                      //               ),
+                      //             ),
+                      //             Padding(
+                      //               padding: EdgeInsets.symmetric(horizontal: 15),
+                      //               child: Container(
+                      //                 child: TextView(":", 4),
+                      //               ),
+                      //             ),
+                      //             TextView("Item 1 - 50", 4),
+                      //           ],
+                      //         ),
+                      //       );
+                      //     }),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
