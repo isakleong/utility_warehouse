@@ -187,7 +187,7 @@ class SplashScreenState extends State<SplashScreen> {
           await OpenFile.open(downloadPath);
         }        
       } else {
-        // startTimer();
+        startTimer();
       }
     } else {
       Alert(
@@ -390,11 +390,8 @@ class SplashScreenState extends State<SplashScreen> {
     String url = "";
     bool isUrlAddress_1 = false, isUrlAddress_2 = false;
 
-    // String url_address_1 = fetchAPI("config/apk/"+config.apkName+".apk", context: context);
-    // String url_address_2 = fetchAPI("config/apk/"+config.apkName+".apk", context: context, secondary: true);
-
-    String url_address_1 = config.baseUrl + "config/apk/" + config.apkName + ".apk";
-    String url_address_2 = config.baseUrlAlt + "config/apk/" + config.apkName + ".apk";
+    String url_address_1 = configuration.getUrlPath + "/config/apk/" + config.apkName + ".apk";
+    String url_address_2 = configuration.getUrlPathAlt + "/config/apk/" + config.apkName + ".apk";
 
     try {
 		  final conn_1 = await connectionTest(url_address_1, context);
@@ -516,8 +513,7 @@ class SplashScreenState extends State<SplashScreen> {
     }
 
     if(isUrlAddress_1) {
-      // url = url_address_1;
-      url = config.baseUrl + "config/getVersion.php";
+      url = configuration.getUrlPath + "/config/getVersion.php";
     } else {
       try {
         final conn_2 = await connectionTest(url_address_2, context);
@@ -531,8 +527,8 @@ class SplashScreenState extends State<SplashScreen> {
       }
     }
     if(isUrlAddress_2){
-      // url = url_address_2;
-      url = config.baseUrlAlt + "config/getVersion.php";
+
+      url = configuration.getUrlPathAlt + "/config/getVersion.php";
     }
 
     var response;
@@ -552,11 +548,11 @@ class SplashScreenState extends State<SplashScreen> {
           isGetVersionSuccess = result.message;
         }
       } catch (e) {
-        isGetVersionSuccess = "Gagal terhubung dengan server";
+        isGetVersionSuccess = "Gagal terhubung dengan server\nError message : " + e.toString();
         printHelp(e);
       }
     } else {
-      isGetVersionSuccess = "Gagal terhubung dengan server";
+      isGetVersionSuccess = "Gagal terhubung dengan server, silahkan periksa kembali koneksi Anda atau cek pengaturan IP pada aplikasi.";
     }
 
     return isGetVersionSuccess;
@@ -571,7 +567,7 @@ class SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, "setting");
+          Navigator.popAndPushNamed(context, "setting");
         },
         child: Icon(Icons.settings),
         backgroundColor: configuration.darkOpacityBlueColor,

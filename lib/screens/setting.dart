@@ -44,6 +44,7 @@ class SettingState extends State<Setting> {
   @override
   void initState() {
     super.initState();
+    getDeviceConfig();
   }
 
   @override
@@ -54,7 +55,6 @@ class SettingState extends State<Setting> {
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
-    await getDeviceConfig();
   }
   
   @override
@@ -155,8 +155,17 @@ class SettingState extends State<Setting> {
                           disable: false,
                           child: TextView('Simpan', 3, color: Colors.white, caps: true),
                           onTap: () {
-                              submitUrlConfig();
-                            },
+                            Alert(
+                              context: context,
+                              title: "Konfirmasi,",
+                              content: TextView("Apakah Anda yakin ingin menyimpan konfigurasi IP?", 4),
+                              cancel: true,
+                              type: "warning",
+                              defaultAction: (){
+                                submitUrlConfig();
+                              }
+                            );
+                          },
                         ),
                       ),
                     ],
@@ -212,7 +221,20 @@ class SettingState extends State<Setting> {
     await file.writeAsString(document.toString());
 
     Navigator.of(context).pop();
-    Navigator.pushReplacementNamed(context, "");
+    Alert(
+      context: context,
+      title: "Info,",
+      content: TextView("Pengaturan konfigurasi IP berhasil disimpan", 4),
+      cancel: false,
+      type: "success",
+      defaultAction: (){
+        setState(() {
+          urlAdrressFocus_1.unfocus();
+          urlAdrressFocus_2.unfocus();
+        });
+      }
+    );
+    // Navigator.pushReplacementNamed(context, "");
   }
 
 }

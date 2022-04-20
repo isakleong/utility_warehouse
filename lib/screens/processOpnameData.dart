@@ -26,7 +26,18 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
 
   List<Color> selectedDay = [];
 
-  static final List<GlobalKey> _key = List.generate(20, (index) => GlobalKey());
+  var helperList = <HelperItem>[
+    HelperItem(1, 'Andi', false),
+    HelperItem(2, 'Tommy', false),
+    HelperItem(3, 'Jerry', false),
+    HelperItem(4, 'Alex', false),
+    HelperItem(5, 'Berto', false),
+  ];
+
+  // static final List<GlobalKey> _key = List.generate(20, (index) => GlobalKey());
+  final List<GlobalObjectKey<FormState>> _key = List.generate(20, (index) => GlobalObjectKey<FormState>(index));
+
+  StateSetter _setState;
 
   @override
   void initState() {
@@ -323,16 +334,82 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
                           child: TextView('Pilih Helper', 3, color: Colors.white, caps: false),
                           onTap: () {
                             print("object");
-                            Alert(
+                            showDialog (
                               context: context,
-                              title: "Info,",
-                              content: Text("Pilih Helper"),
-                              cancel: false,
-                              type: "warning",
-                              defaultAction: () {
-                                
+                              barrierDismissible: false,
+                              builder: (context){
+                                return WillPopScope(
+                                  onWillPop: null,
+                                  child: AlertDialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(Radius.circular(7.5)),
+                                    ),
+                                    content: StatefulBuilder(
+                                      builder: (BuildContext context, StateSetter setState) {
+                                      _setState = setState;
+                                      return Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.only(bottom: 30),
+                                            child: Container(
+                                              child: TextView("Pilih Helper", 3),
+                                            ),
+                                          ),
+                                          SingleChildScrollView(
+                                            scrollDirection: Axis.horizontal,
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: List.generate(helperList.length,(index){
+                                                var item = helperList[index];
+                                                return Padding(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                                  child: FilterChip(
+                                                    label: TextView(item.name, 4),
+                                                    selected: item.isSelected,
+                                                    onSelected: (_) {
+                                                      _setState(() {
+                                                        item.isSelected = !item.isSelected;
+                                                      });
+                                                    },
+                                                    selectedColor: config.lightOpactityBlueColor,
+                                                  ),
+                                                );
+                                              }),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(top: 30),
+                                            child: Align(
+                                              alignment: Alignment.bottomRight,
+                                              child: Container(
+                                                child: Button(
+                                                  disable: false,
+                                                  child: TextView('OK', 3, color: Colors.white, caps: false),
+                                                  onTap: (){
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    }),
+                                  )
+                                );
                               }
                             );
+                            // Alert(
+                            //   context: context,
+                            //   title: "Pilih Helper",
+                            //   content: 
+                            //   cancel: false,
+                            //   type: "warning",
+                            //   defaultAction: () {
+                                
+                            //   }
+                            // );
                           },
                         ),
                       ),
@@ -341,6 +418,40 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
                         child: Divider(thickness: 3),
                       ),
                       //pic section
+                      Container(
+                        child: StatefulBuilder(
+                          builder: (BuildContext context, StateSetter setState) {
+                          _setState = setState;
+                          return Column(
+                            children: List.generate(helperList.length,(index){
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      helperList[index].isSelected ?
+                                      Container(
+                                        child: TextView("Helper "+(index+1).toString(), 4),
+                                      )
+                                      :
+                                      Container(),
+                                      helperList[index].isSelected ?
+                                      Container(
+                                        child: TextView(helperList[index].name, 4),
+                                      )
+                                      :
+                                      Container(),
+                                    ],
+                                  )
+                                ],
+                              );
+                            }),
+                          );
+                        }),
+                      ),
+
+                      
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         mainAxisSize: MainAxisSize.min,
@@ -1086,4 +1197,12 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
     );
   }
 
+}
+
+class HelperItem {
+  final int id;
+  final String name;
+  bool isSelected;
+
+  HelperItem(this.id, this.name, this.isSelected);
 }

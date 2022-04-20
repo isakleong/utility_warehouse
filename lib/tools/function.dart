@@ -175,21 +175,18 @@ void Alert({ context, String title, Widget content, List<Widget> actions, VoidCa
               defaultAction != null && cancel ?
               Button(
                 key: Key("cancel"),
-                child: TextView("Tidak", 2, fontSize: 12, color: Colors.white),
+                child: TextView("Tidak", 2, fontSize: 16, color: Colors.white),
                 onTap: () {
                   Navigator.of(context).pop();
                 },
               ) : Container(),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                child: Button(
-                  key: Key("ok"),
-                  child: cancel ? TextView("Ya", 2, fontSize: 12, color: Colors.white) : type == "error" ? TextView(errorBtnTitle, 2, fontSize: 12, color: Colors.white) : TextView("Ok", 2, caps: true, fontSize: 12, color: Colors.white),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    defaultAction();
-                  },
-                ),
+              Button(
+                key: Key("ok"),
+                child: cancel ? TextView("Ya", 2, fontSize: 16, color: Colors.white) : type == "error" ? TextView(errorBtnTitle, 2, fontSize: 16, color: Colors.white) : TextView("Ok", 2, caps: true, fontSize: 16, color: Colors.white),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  defaultAction();
+                },
               ),
               // kalau ada default action akan otomatis menampilkan tombol cancel, jadi akan muncul ok dan cancel
             ]
