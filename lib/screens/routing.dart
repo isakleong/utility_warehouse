@@ -3,6 +3,7 @@ import 'package:utility_warehouse/screens/dashboard.dart';
 import 'package:utility_warehouse/screens/login.dart';
 import 'package:utility_warehouse/screens/otpVerification.dart';
 import 'package:utility_warehouse/screens/processOpnameData.dart';
+import 'package:utility_warehouse/screens/setting.dart';
 import 'package:utility_warehouse/screens/signUp.dart';
 import 'package:utility_warehouse/screens/splashscreen.dart';
 
@@ -10,6 +11,9 @@ MaterialPageRoute routing(int mode, int id, List<String> pages, RouteSettings se
   switch (pages[0]) {
     case '':
       return MaterialPageRoute(builder: (context)=> SplashScreen());
+      break;
+    case 'setting':
+      return MaterialPageRoute(builder: (context)=> Setting());
       break;
     case 'login':
       return MaterialPageRoute(builder: (context)=> Login());

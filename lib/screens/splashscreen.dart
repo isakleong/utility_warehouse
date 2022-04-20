@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:dio/dio.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:http/http.dart' show Client, Request;
 import 'package:open_file/open_file.dart';
+import 'package:ota_update/ota_update.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -41,6 +44,9 @@ class SplashScreenState extends State<SplashScreen> {
 
   var fileDownloaded = 0;
 
+  Configuration configuration;
+
+  Timer timer;
   @override
   void initState() {
     super.initState();
@@ -52,42 +58,42 @@ class SplashScreenState extends State<SplashScreen> {
   didChangeDependencies() async {
     super.didChangeDependencies();
 
-    await getAppsReady();
+    configuration = Configuration.of(context);
 
-    // startTimer();
+    await getAppsReady();
   }
 
-  // getDeviceConfig() async {
-  //   Configuration config = Configuration.of(context);
-  //   Directory dir = await getExternalStorageDirectory();
-  //   String path = '${dir.path}/deviceconfig.xml';
-  //   File file = File(path);
+  getDeviceConfig() async {
+    // Configuration config = Configuration.of(context);
+    Directory dir = await getExternalStorageDirectory();
+    String path = '${dir.path}/deviceconfig.xml';
+    File file = File(path);
 
-  //   if(FileSystemEntity.typeSync(path) != FileSystemEntityType.notFound){
-  //     final document = XmlDocument.parse(file.readAsStringSync());
-  //     final url_address_1 = document.findAllElements('url_address_1').map((node) => node.text);
-  //     final url_address_2 = document.findAllElements('url_address_2').map((node) => node.text);
-  //     config?.setBaseUrl(url_address_1.first);
-  //     config?.setBaseUrlAlt(url_address_2.first);
-  //     // print(document.toString());
-  //     // print(document.toXmlString(pretty: true, indent: '\t'));
-  //   } else {
-  //     config.setBaseUrl("http://203.142.77.243/NewUtilityWarehouseDev");
-  //     config.setBaseUrlAlt("http://103.76.27.124/NewUtilityWarehouseDev");
+    if(FileSystemEntity.typeSync(path) != FileSystemEntityType.notFound){
+      final document = XmlDocument.parse(file.readAsStringSync());
+      final url_address_1 = document.findAllElements('url_address_1').map((node) => node.text);
+      final url_address_2 = document.findAllElements('url_address_2').map((node) => node.text);
+      configuration.setUrlPath = url_address_1.first;
+      configuration.setUrlPathAlt = url_address_2.first;
+      // print(document.toString());
+      // print(document.toXmlString(pretty: true, indent: '\t'));
+    } else {
+      configuration.setUrlPath = "http://203.142.77.243/NewUtilityWarehouseDev";
+      configuration.setUrlPathAlt = "http://103.76.27.124/NewUtilityWarehouseDev";
 
-  //     final builder = XmlBuilder();
-  //     builder.processing('xml', 'version="1.0" encoding="UTF-8" standalone="yes"');
-  //     builder.element('deviceconfig', nest: () {
-  //       builder.element('url_address_1', nest: "http://203.142.77.243/NewUtilityWarehouseDev");
-  //       builder.element('url_address_2', nest: "http://103.76.27.124/NewUtilityWarehouseDev");
-  //       builder.element('token_id', nest: '');
-  //     });
-  //     final document = builder.buildDocument();
-  //     await file.writeAsString(document.toString());
-  //     // print(document.toString());
-  //     // print(document.toXmlString(pretty: true, indent: '\t'));
-  //   }
-  // }
+      final builder = XmlBuilder();
+      builder.processing('xml', 'version="1.0" encoding="UTF-8" standalone="yes"');
+      builder.element('deviceconfig', nest: () {
+        builder.element('url_address_1', nest: "http://203.142.77.243/NewUtilityWarehouseDev");
+        builder.element('url_address_2', nest: "http://103.76.27.124/NewUtilityWarehouseDev");
+        builder.element('token_id', nest: '');
+      });
+      final document = builder.buildDocument();
+      await file.writeAsString(document.toString());
+      // print(document.toString());
+      // print(document.toXmlString(pretty: true, indent: '\t'));
+    }
+  }
 
   getAppsReady() async {
     var isNeedOpenSetting = false;
@@ -95,7 +101,7 @@ class SplashScreenState extends State<SplashScreen> {
     final isPermissionStatusGranted = await checkAppsPermission();
     
     if(isPermissionStatusGranted) {
-      // await getDeviceConfig();
+      await getDeviceConfig();
       doCheckVersion();
     } else {
       var isPermissionStatusGranted = false;
@@ -105,7 +111,6 @@ class SplashScreenState extends State<SplashScreen> {
         if(!isPermissionPermanentlyDenied) {
           isPermissionStatusGranted = await checkAppsPermission();
         } else {
-          // isPermissionStatusGranted = await checkAppsPermission();
           isNeedOpenSetting = true;
           break;
         }
@@ -163,10 +168,10 @@ class SplashScreenState extends State<SplashScreen> {
 
     if(checkVersion == "OK") {
       await isReadyToInstall();
-      if(getCheckVersion != config.apkVersion) {
+      if(getCheckVersion != configuration.apkVersion) {
         if(!toInstall) {
           printHelp("getcheckversion "+getCheckVersion);
-          printHelp("apkVersion "+config.apkVersion);
+          printHelp("apkVersion "+configuration.apkVersion);
           Alert(
             context: context,
             title: "Info,",
@@ -178,11 +183,11 @@ class SplashScreenState extends State<SplashScreen> {
             }
           );   
         } else {
-          String downloadPath = await getFilePath(config.apkName+".apk");
+          String downloadPath = await getFilePath(configuration.apkName+".apk");
           await OpenFile.open(downloadPath);
         }        
       } else {
-        startTimer();
+        // startTimer();
       }
     } else {
       Alert(
@@ -199,12 +204,120 @@ class SplashScreenState extends State<SplashScreen> {
     }
   }
 
+  Future<bool> isInternet() async {
+    printHelp("isinternet");
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile) {
+      // connected to mobile network
+      if (await DataConnectionChecker().hasConnection) {
+        // mobile data detected & internet connection confirmed.
+        return true;
+      } else {
+        // mobile data detected but no internet connection found.
+        _setState(() {
+          isRetryDownload = true;
+        });
+        return false;
+      }
+    } else if (connectivityResult == ConnectivityResult.wifi) {
+      // connected to wifi network
+      if (await DataConnectionChecker().hasConnection) {
+        // wifi detected & internet connection confirmed.
+        return true;
+      } else {
+        // wifi detected but no internet connection found.
+        _setState(() {
+          isRetryDownload = true;
+        });
+        return false;
+      }
+    } else {
+      // neither mobile data or wifi detected, not internet connection found.
+      _setState(() {
+        isRetryDownload = true;
+      });
+      return false;
+    }
+  }
+
+  Future<void> downloadApps() async {
+    setState(() {
+      isRetryDownload = false;
+    });
+
+    String url = "";
+
+    bool isUrlAddress_1 = false, isUrlAddress_2 = false;
+    String url_address_1 = config.baseUrl + "/" + config.apkName+".apk";
+    String url_address_2 = config.baseUrlAlt + "/" + config.apkName+".apk";
+
+    try {
+		  final conn_1 = await connectionTest(url_address_1, context);
+      printHelp("GET STATUS 1 apps "+conn_1);
+      if(conn_1 == "OK"){
+        isUrlAddress_1 = true;
+      }
+	  } on SocketException {
+      isUrlAddress_1 = false;
+    }
+
+    if(isUrlAddress_1) {
+      url = url_address_1;
+    } else {
+      try {
+        final conn_2 = await connectionTest(url_address_2, context);
+        printHelp("GET STATUS 2 "+conn_2);
+        if(conn_2 == "OK"){
+          isUrlAddress_2 = true;
+        }
+      } on SocketException {
+        isUrlAddress_2 = false;
+      }
+    }
+    if(isUrlAddress_2){
+      url = url_address_2;
+    }
+
+    if(url != "") {
+      final isPermissionStatusGranted = await checkAppsPermission();
+      Client client = Client();
+
+      if(isPermissionStatusGranted) {
+        try {
+          OtaUpdate().execute(
+            url,
+            destinationFilename: config.apkName+".apk"
+          ).listen(
+            (OtaEvent event) async{
+              _setState(() {
+                  progressValue = double.parse(event.value)/100;
+                  progressText = event.value;
+              });
+            }, onDone: () => timer.cancel()
+          );
+        } catch (e) {
+            print('Failed to make OTA update. Details: $e');
+            _setState(() {
+              isRetryDownload = true;
+            });
+        }
+      }
+
+    } else {
+      //gagal terhubung
+      _setState(() {
+        isRetryDownload = true;
+      });
+    }
+  }
+
   void preparingNewVersion() {
     setState(() {
       isLoadingVersion = false;
       isDownloadNewVersion = true;
     });
-    downloadNewVersion();
+    timer = Timer.periodic(Duration(seconds: 5), (Timer t) => isInternet());
+    downloadApps();
     showDialog (
       context: context,
       barrierDismissible: false,
@@ -245,7 +358,7 @@ class SplashScreenState extends State<SplashScreen> {
                                   // loading: loginLoading,
                                   child: TextView("Coba Lagi", 3, color: Colors.white),
                                   onTap: () {
-                                    downloadNewVersion();
+                                    downloadApps();
                                   },
                                 ),
                               ),
@@ -264,158 +377,6 @@ class SplashScreenState extends State<SplashScreen> {
         );
       }
     );
-  }
-
-  Future<void> downloadNewVersion() async {
-    setState(() {
-      isRetryDownload = false;
-    });
-
-    String url = "";
-
-    bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-    String url_address_1 = config.baseUrl + "/" + config.apkName+".apk";
-    String url_address_2 = config.baseUrlAlt + "/" + config.apkName+".apk";
-
-    try {
-		  final conn_1 = await connectionTest(url_address_1, context);
-      printHelp("GET STATUS 1 "+conn_1);
-      if(conn_1 == "OK"){
-        isUrlAddress_1 = true;
-      }
-	  } on SocketException {
-      isUrlAddress_1 = false;
-      // isGetVersionSuccess = "Gagal terhubung dengan server";
-    }
-
-    if(isUrlAddress_1) {
-      url = url_address_1;
-    } else {
-      try {
-        final conn_2 = await connectionTest(url_address_2, context);
-        printHelp("GET STATUS 2 "+conn_2);
-        if(conn_2 == "OK"){
-          isUrlAddress_2 = true;
-        }
-      } on SocketException {
-        isUrlAddress_2 = false;
-        // isGetVersionSuccess = "Gagal terhubung dengan server";
-      }
-    }
-    if(isUrlAddress_2){
-      url = url_address_2;
-    }
-
-    if(url != "") {
-      final isPermissionStatusGranted = await checkAppsPermission();
-      Client client = Client();
-
-      if(isPermissionStatusGranted) {
-        try {
-          Dio dio = Dio(
-            BaseOptions(
-              baseUrl: url,
-              connectTimeout: 3000,
-              receiveTimeout: 300000,
-            ),
-          );
-
-          String downloadPath = await getFilePath(config.apkName+".apk");
-
-          printHelp("download path "+downloadPath);
-          printHelp("url download "+ url);
-
-          // final response = await client.get(url);
-          // // Response response = await client.get(url);
-          // printHelp("content length "+response.headers.toString());
-
-          var fileSize=0;
-          var totalDownloaded = 0;
-          var totalProgress = 0;
-
-          final request = new Request('HEAD', Uri.parse(url))..followRedirects = false;
-          final response = await client.send(request).timeout(
-            Duration(seconds: 5),
-              onTimeout: () {
-                return null;
-              },
-          );
-          printHelp("full header "+response.headers.toString());
-          printHelp("content length "+response.headers['content-length'].toString());
-
-          fileDownloaded = isInCompleteDownload(downloadPath);
-          printHelp("tes fileDownloaded "+fileDownloaded.toString());
-          if(fileDownloaded > 0) {
-            printHelp("masuk if");
-            totalDownloaded = fileDownloaded;
-            fileSize = fileDownloaded;
-          }
-          fileSize += int.parse(response.headers['content-length']);
-
-          try {
-            dio.download(url, downloadPath,
-              onReceiveProgress: (rcv, total) {
-                print(
-                    'received: ${rcv.toStringAsFixed(0)} out of total WOI: ${total.toStringAsFixed(0)}');
-                _setState(() {
-                  progressValue = (rcv / total * 100)/100;
-                  progressText = ((rcv / total) * 100).toStringAsFixed(0);
-                });
-
-                if (progressText == '100') {
-                  _setState(() {
-                    isDownloadNewVersion = true;
-                  });
-                } else if (double.parse(progressText) < 100) {}
-              },
-              deleteOnError: true,
-            ). onError((error, stackTrace) {
-              _setState(() {
-                isRetryDownload = true;
-              });
-              throw('coba thro');
-            }).then((_) async {
-              _setState(() {
-                if (progressText == '100') {
-                  isDownloadNewVersion = true;
-                }
-
-                isDownloadNewVersion = false;
-              });
-
-              Navigator.of(context).pop();
-
-              setState(() {
-                isLoadingVersion = false;
-                isDownloadNewVersion = false;
-              });
-
-              printHelp("MASUK SELESAI");
-              SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-              OpenFile.open(downloadPath);
-              // exit(0);
-              
-            });
-          } catch (e) {
-            _setState(() {
-              isRetryDownload = true;
-            });
-          }
-
-        } catch (e) {
-          _setState(() {
-            isRetryDownload = true;
-          });
-        }
-
-      }
-
-    } else {
-      //gagal terhubung
-      _setState(() {
-        isRetryDownload = true;
-      });
-    }
   }
 
   Future<void> isReadyToInstall() async {
@@ -489,7 +450,7 @@ class SplashScreenState extends State<SplashScreen> {
         String path = '';
         String filename = config.apkName + ".apk";
         Directory dir = await getExternalStorageDirectory();
-        path = '${dir?.path}/$filename';
+        path = '${dir.path}/$filename';
 
         if(FileSystemEntity.typeSync(path) != FileSystemEntityType.notFound){
           var file = File(path);
@@ -521,16 +482,6 @@ class SplashScreenState extends State<SplashScreen> {
     }
   }
 
-  int isInCompleteDownload(String downloadPath) {
-    if(FileSystemEntity.typeSync(downloadPath) != FileSystemEntityType.notFound){
-      var file = File(downloadPath);
-      printHelp("masuk exist "+file.lengthSync().toString());
-      return file.lengthSync();
-    }
-    printHelp("masuk not exist");
-    return 0;
-  }
-
   Future<String> getFilePath(filename) async {
     String path = '';
 
@@ -547,11 +498,11 @@ class SplashScreenState extends State<SplashScreen> {
 
     bool isUrlAddress_1 = false, isUrlAddress_2 = false;
     String isGetVersionSuccess = "";
-
-    String url_address_1 = config.baseUrl + "config/tes_ip.php";
-    String url_address_2 = config.baseUrlAlt + "config/tes_ip.php";
-
-    print("HSHSHSH "+url_address_1);
+    
+    print("HSHSHSH "+configuration.getUrlPath.toString());
+    
+    String url_address_1 = configuration.getUrlPath + "/config/tes_ip.php";
+    String url_address_2 = configuration.getUrlPathAlt + "/config/tes_ip.php";
 
     try {
 		  final conn_1 = await connectionTest(url_address_1, context);
@@ -618,6 +569,13 @@ class SplashScreenState extends State<SplashScreen> {
     double mediaHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, "setting");
+        },
+        child: Icon(Icons.settings),
+        backgroundColor: configuration.darkOpacityBlueColor,
+      ),
       body: Center(
         child: SingleChildScrollView(
           child: Column(

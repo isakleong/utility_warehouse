@@ -15,8 +15,8 @@ class Configuration extends InheritedWidget {
   String apkName = "Utility Warehouse Dev";
   String apkVersion = "1.0";
 
-  // String baseUrl = "";
-  // String baseUrlAlt = "";
+  String urlPath;
+  String urlPathAlt;
 
   String get baseUrl => "http://"+ip_public+"/"+serverName+"/";
   String get baseUrlAlt => "http://"+ip_public_alt+"/"+serverName+"/";
@@ -35,6 +35,22 @@ class Configuration extends InheritedWidget {
   Color grayColor = Color(0xFF545454);
   Color lightGrayColor = Color(0xFFC4C4C4);
   Color lighterGrayColor = Color(0xFFDDDDDD);
+
+  String get getUrlPath {
+    return urlPath;
+  }
+
+  String get getUrlPathAlt {
+    return urlPathAlt;
+  }
+
+  set setUrlPath(String url) {
+    urlPath = url;
+  }
+
+  set setUrlPathAlt(String url) {
+    urlPathAlt = url;
+  }
 
   // void setBaseUrl(String url) {
   //   this.baseUrl = url;
