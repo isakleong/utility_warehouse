@@ -130,6 +130,52 @@ class LoginState extends State<Login> {
                           child: Image.asset("assets/illustration/logo.png", alignment: Alignment.center, fit: BoxFit.contain),
                         ),
                       ),
+                      Form(
+                        key: _dropdownFormKey,
+                        child: DropdownButtonFormField(
+                          decoration: InputDecoration(
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: config.grayColor, width: 1.5),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            // filled: true,
+                            // fillColor: Colors.white,
+                            labelText: "Login Sebagai",
+                            labelStyle: TextStyle(fontWeight: FontWeight.bold, fontFamily:'Roboto', fontSize: 16),
+                          ),
+                          hint: TextView('Login Sebagai', 5),
+                          validator: (value) => value == null ? "Select a country" : null,
+                          dropdownColor: Colors.white,
+                          value: selectedDropdownValue,
+                          onChanged: (String value) {
+                            setState(() {
+                              selectedDropdownValue = value;
+                              usernameController.clear();
+                              passwordController.clear();
+                              usernameValid = false;
+                              passwordValid = false;
+                              if(value == "Warehouse Manager") {
+                                usernameTextHint = "###-##-###";
+                                maskFormatter = MaskTextInputFormatter(mask: "###-##-###", filter: { "#": RegExp(r'[a-zA-Z0-9]') }, type: MaskAutoCompletionType.eager);
+                              } else if(value == "Kepala Gudang") {
+                                usernameTextHint = "###-##";
+                                maskFormatter = MaskTextInputFormatter(mask: "###-##", filter: { "#": RegExp(r'[a-zA-Z0-9]') }, type: MaskAutoCompletionType.eager);
+                              } else  {
+                                usernameTextHint = "###-##";
+                                maskFormatter = MaskTextInputFormatter(mask: "###-##", filter: { "#": RegExp(r'[a-zA-Z0-9]') }, type: MaskAutoCompletionType.eager);
+                              }
+                            });
+                          },
+                          items: <String>['Warehouse Manager', 'Kepala Gudang', 'Helper']
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: TextView(value, 4),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      SizedBox(height: 20),
                       Container(
                         child: TextField(
                           key: Key("Username"),
@@ -205,52 +251,6 @@ class LoginState extends State<Login> {
                             passwordFocus.unfocus();
                             submitLoginValidation();
                           },
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      Form(
-                        key: _dropdownFormKey,
-                        child: DropdownButtonFormField(
-                          decoration: InputDecoration(
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: config.grayColor, width: 1.5),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            // filled: true,
-                            // fillColor: Colors.white,
-                            labelText: "Login Sebagai",
-                            labelStyle: TextStyle(fontWeight: FontWeight.bold, fontFamily:'Roboto', fontSize: 16),
-                          ),
-                          hint: TextView('Login Sebagai', 5),
-                          validator: (value) => value == null ? "Select a country" : null,
-                          dropdownColor: Colors.white,
-                          value: selectedDropdownValue,
-                          onChanged: (String value) {
-                            setState(() {
-                              selectedDropdownValue = value;
-                              usernameController.clear();
-                              passwordController.clear();
-                              usernameValid = false;
-                              passwordValid = false;
-                              if(value == "Warehouse Manager") {
-                                usernameTextHint = "###-##-###";
-                                maskFormatter = MaskTextInputFormatter(mask: "###-##-###", filter: { "#": RegExp(r'[a-zA-Z0-9]') }, type: MaskAutoCompletionType.eager);
-                              } else if(value == "Kepala Gudang") {
-                                usernameTextHint = "###-##";
-                                maskFormatter = MaskTextInputFormatter(mask: "###-##", filter: { "#": RegExp(r'[a-zA-Z0-9]') }, type: MaskAutoCompletionType.eager);
-                              } else  {
-                                usernameTextHint = "###-##";
-                                maskFormatter = MaskTextInputFormatter(mask: "###-##", filter: { "#": RegExp(r'[a-zA-Z0-9]') }, type: MaskAutoCompletionType.eager);
-                              }
-                            });
-                          },
-                          items: <String>['Warehouse Manager', 'Kepala Gudang', 'Helper']
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: TextView(value, 4),
-                            );
-                          }).toList(),
                         ),
                       ),
                       SizedBox(height: 30),
