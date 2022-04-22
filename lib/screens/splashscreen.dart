@@ -10,10 +10,10 @@ import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:http/http.dart' show Client, Request;
 import 'package:open_file/open_file.dart';
-import 'package:ota_update/ota_update.dart';
+// import 'package:ota_update/ota_update.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:permission_handler/permission_handler.dart';
+// import 'package:permission_handler/permission_handler.dart';
 import 'package:utility_warehouse/models/result.dart';
 import 'package:utility_warehouse/screens/login.dart';
 import 'package:utility_warehouse/settings/configuration.dart';
@@ -60,7 +60,20 @@ class SplashScreenState extends State<SplashScreen> {
 
     configuration = Configuration.of(context);
 
-    await getAppsReady();
+    print("MASUK KESINI YA");
+    Directory tempDir = await getTemporaryDirectory();
+    String tempPath = tempDir.path;
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    String appDocPath = appDocDir.path;
+    Directory extStrDir = await getExternalStorageDirectory();
+    String extStrPath = extStrDir.path;
+    print("----------------------------------------\n");
+    // print("temp_path "+tempPath);
+    print("app_doc_path "+appDocPath);
+    print("ext_str_path "+extStrPath);
+    print("----------------------------------------\n");
+
+    // await getAppsReady();
   }
 
   getDeviceConfig() async {
@@ -98,9 +111,9 @@ class SplashScreenState extends State<SplashScreen> {
   getAppsReady() async {
     var isNeedOpenSetting = false;
     isPermissionPermanentlyDenied = false;
-    final isPermissionStatusGranted = await checkAppsPermission();
-    
-    if(isPermissionStatusGranted) {
+    // final isPermissionStatusGranted = await checkAppsPermission();
+    var a = 1;
+    if(a==1) {
       await getDeviceConfig();
       doCheckVersion();
     } else {
@@ -109,7 +122,7 @@ class SplashScreenState extends State<SplashScreen> {
 
       while(!isPermissionStatusGranted) {
         if(!isPermissionPermanentlyDenied) {
-          isPermissionStatusGranted = await checkAppsPermission();
+          // isPermissionStatusGranted = await checkAppsPermission();
         } else {
           isNeedOpenSetting = true;
           break;
@@ -135,24 +148,24 @@ class SplashScreenState extends State<SplashScreen> {
     }
   }
 
-  Future<bool> checkAppsPermission() async {
-    setState(() {
-      isPermissionPermanentlyDenied = false;
-    });
-    var status = await Permission.storage.request();
+  // Future<bool> checkAppsPermission() async {
+  //   setState(() {
+  //     isPermissionPermanentlyDenied = false;
+  //   });
+  //   var status = await Permission.storage.request();
 
-    if(status != PermissionStatus.granted) {
-      if(status == PermissionStatus.denied) {
-        setState(() {
-          isPermissionPermanentlyDenied = true;
-        });
-      } else {
-        openAppSettings();
-        return status == PermissionStatus.granted;
-      }
-    }
-    return status == PermissionStatus.granted;
-  }
+  //   if(status != PermissionStatus.granted) {
+  //     if(status == PermissionStatus.denied) {
+  //       setState(() {
+  //         isPermissionPermanentlyDenied = true;
+  //       });
+  //     } else {
+  //       openAppSettings();
+  //       return status == PermissionStatus.granted;
+  //     }
+  //   }
+  //   return status == PermissionStatus.granted;
+  // }
 
   doCheckVersion() async {
     setState(() {
@@ -279,29 +292,29 @@ class SplashScreenState extends State<SplashScreen> {
     }
 
     if(url != "") {
-      final isPermissionStatusGranted = await checkAppsPermission();
-      Client client = Client();
+      // final isPermissionStatusGranted = await checkAppsPermission();
+      // Client client = Client();
 
-      if(isPermissionStatusGranted) {
-        try {
-          OtaUpdate().execute(
-            url,
-            destinationFilename: config.apkName+".apk"
-          ).listen(
-            (OtaEvent event) async{
-              _setState(() {
-                  progressValue = double.parse(event.value)/100;
-                  progressText = event.value;
-              });
-            }, onDone: () => timer.cancel()
-          );
-        } catch (e) {
-            print('Failed to make OTA update. Details: $e');
-            _setState(() {
-              isRetryDownload = true;
-            });
-        }
-      }
+      // if(isPermissionStatusGranted) {
+      //   try {
+      //     OtaUpdate().execute(
+      //       url,
+      //       destinationFilename: config.apkName+".apk"
+      //     ).listen(
+      //       (OtaEvent event) async{
+      //         _setState(() {
+      //             progressValue = double.parse(event.value)/100;
+      //             progressText = event.value;
+      //         });
+      //       }, onDone: () => timer.cancel()
+      //     );
+      //   } catch (e) {
+      //       print('Failed to make OTA update. Details: $e');
+      //       _setState(() {
+      //         isRetryDownload = true;
+      //       });
+      //   }
+      // }
 
     } else {
       //gagal terhubung

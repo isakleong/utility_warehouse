@@ -207,6 +207,9 @@ class SettingState extends State<Setting> {
     Alert(context: context, loading: true, disableBackButton: true);
 
     Directory dir = await getExternalStorageDirectory();
+    Directory extStrDir = await getExternalStorageDirectory();
+    String extStrPath = extStrDir.path;
+    printHelp("dir path "+dir.path.toString());
     String path = '${dir.path}/deviceconfig.xml';
     File file = File(path);
 
