@@ -3,17 +3,18 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:http/http.dart' show Client, Request;
 import 'package:open_file/open_file.dart';
-// import 'package:ota_update/ota_update.dart';
+import 'package:ota_update/ota_update.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-// import 'package:permission_handler/permission_handler.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:utility_warehouse/models/result.dart';
 import 'package:utility_warehouse/screens/login.dart';
 import 'package:utility_warehouse/settings/configuration.dart';
@@ -21,6 +22,7 @@ import 'package:utility_warehouse/tools/function.dart';
 import 'package:utility_warehouse/widget/button.dart';
 import 'package:utility_warehouse/widget/textView.dart';
 import 'package:xml/xml.dart';
+import 'package:intl/intl.dart';
 
 const debug = true;
 
@@ -60,26 +62,14 @@ class SplashScreenState extends State<SplashScreen> {
 
     configuration = Configuration.of(context);
 
-    print("MASUK KESINI YA");
-    Directory tempDir = await getTemporaryDirectory();
-    String tempPath = tempDir.path;
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    String appDocPath = appDocDir.path;
-    Directory extStrDir = await getExternalStorageDirectory();
-    String extStrPath = extStrDir.path;
-    print("----------------------------------------\n");
-    // print("temp_path "+tempPath);
-    print("app_doc_path "+appDocPath);
-    print("ext_str_path "+extStrPath);
-    print("----------------------------------------\n");
-
-    // await getAppsReady();
+    await getAppsReady();
   }
 
   getDeviceConfig() async {
-    // Configuration config = Configuration.of(context);
-    Directory dir = await getExternalStorageDirectory();
-    String path = '${dir.path}/deviceconfig.xml';
+    // Directory dir = await getExternalStorageDirectory();
+    // String path = '${dir.path}/deviceconfig.xml';
+    String path = '/storage/emulated/0/Android/data/com.example.utility_warehouse/files/deviceconfig.xml';
+
     File file = File(path);
 
     if(FileSystemEntity.typeSync(path) != FileSystemEntityType.notFound){
@@ -106,66 +96,77 @@ class SplashScreenState extends State<SplashScreen> {
       // print(document.toString());
       // print(document.toXmlString(pretty: true, indent: '\t'));
     }
+    setState(() {
+      configuration = configuration;
+    });
   }
 
   getAppsReady() async {
     var isNeedOpenSetting = false;
     isPermissionPermanentlyDenied = false;
-    // final isPermissionStatusGranted = await checkAppsPermission();
-    var a = 1;
-    if(a==1) {
-      await getDeviceConfig();
-      doCheckVersion();
-    } else {
-      var isPermissionStatusGranted = false;
-      
 
-      while(!isPermissionStatusGranted) {
-        if(!isPermissionPermanentlyDenied) {
-          // isPermissionStatusGranted = await checkAppsPermission();
+    var androidInfo = await DeviceInfoPlugin().androidInfo;
+    var sdkInt = androidInfo.version.sdkInt;
+
+    if(sdkInt > 19) {
+      final isPermissionStatusGranted = await checkAppsPermission();
+      
+      if(isPermissionStatusGranted) {
+        await getDeviceConfig();
+        doCheckVersion();
+      } else {
+        var isPermissionStatusGranted = false;
+
+        while(!isPermissionStatusGranted) {
+          if(!isPermissionPermanentlyDenied) {
+            isPermissionStatusGranted = await checkAppsPermission();
+          } else {
+            isNeedOpenSetting = true;
+            break;
+          }
+        }
+        if(isNeedOpenSetting) {
+          Alert(
+            context: context,
+            title: "Info,",
+            content: Text("Mohon izinkan aplikasi mengakses file di perangkat"),
+            cancel: false,
+            type: "error",
+            errorBtnTitle: "Pengaturan",
+            defaultAction: () async {
+              isNeedOpenSetting = false;
+              await getAppsReady();
+              Navigator.of(context).pop();
+            }
+          );
         } else {
-          isNeedOpenSetting = true;
-          break;
+          getAppsReady();
         }
       }
-      if(isNeedOpenSetting) {
-        Alert(
-          context: context,
-          title: "Info,",
-          content: Text("Mohon izinkan aplikasi mengakses file di perangkat"),
-          cancel: false,
-          type: "error",
-          errorBtnTitle: "Pengaturan",
-          defaultAction: () async {
-            isNeedOpenSetting = false;
-            await getAppsReady();
-            Navigator.of(context).pop();
-          }
-        );
-      } else {
-        getAppsReady();
-      }
+    } else {
+      await getDeviceConfig();
+      doCheckVersion();
     }
   }
 
-  // Future<bool> checkAppsPermission() async {
-  //   setState(() {
-  //     isPermissionPermanentlyDenied = false;
-  //   });
-  //   var status = await Permission.storage.request();
+  Future<bool> checkAppsPermission() async {
+    setState(() {
+      isPermissionPermanentlyDenied = false;
+    });
+    var status = await Permission.storage.request();
 
-  //   if(status != PermissionStatus.granted) {
-  //     if(status == PermissionStatus.denied) {
-  //       setState(() {
-  //         isPermissionPermanentlyDenied = true;
-  //       });
-  //     } else {
-  //       openAppSettings();
-  //       return status == PermissionStatus.granted;
-  //     }
-  //   }
-  //   return status == PermissionStatus.granted;
-  // }
+    if(status != PermissionStatus.granted) {
+      if(status == PermissionStatus.denied) {
+        setState(() {
+          isPermissionPermanentlyDenied = true;
+        });
+      } else {
+        openAppSettings();
+        return status == PermissionStatus.granted;
+      }
+    }
+    return status == PermissionStatus.granted;
+  }
 
   doCheckVersion() async {
     setState(() {
@@ -180,25 +181,25 @@ class SplashScreenState extends State<SplashScreen> {
     });
 
     if(checkVersion == "OK") {
-      await isReadyToInstall();
       if(getCheckVersion != configuration.apkVersion) {
-        if(!toInstall) {
-          printHelp("getcheckversion "+getCheckVersion);
-          printHelp("apkVersion "+configuration.apkVersion);
-          Alert(
-            context: context,
-            title: "Info,",
-            content: Text("Terdapat pembaruan versi aplikasi. Otomatis mengunduh pembaruan aplikasi setelah tekan OK"),
-            cancel: false,
-            type: "warning",
-            defaultAction: () {
+        printHelp("getcheckversion "+getCheckVersion);
+        printHelp("apkVersion "+configuration.apkVersion);
+        Alert(
+          context: context,
+          title: "Info,",
+          content: Text("Terdapat pembaruan versi aplikasi. Otomatis mengunduh pembaruan aplikasi setelah tekan OK"),
+          cancel: false,
+          type: "warning",
+          defaultAction: () async {
+            await isReadyToInstall();
+            if(toInstall) {
+              String downloadPath = await getFilePath(configuration.apkName+".apk");
+              await OpenFile.open(downloadPath);
+            } else {
               preparingNewVersion();
             }
-          );   
-        } else {
-          String downloadPath = await getFilePath(configuration.apkName+".apk");
-          await OpenFile.open(downloadPath);
-        }        
+          }
+        );
       } else {
         startTimer();
       }
@@ -253,7 +254,17 @@ class SplashScreenState extends State<SplashScreen> {
     }
   }
 
-  Future<void> downloadApps() async {
+  int isInCompleteDownload(String downloadPath) {
+    if(FileSystemEntity.typeSync(downloadPath) != FileSystemEntityType.notFound){
+      var file = File(downloadPath);
+      printHelp("masuk exist "+file.lengthSync().toString());
+      return file.lengthSync();
+    }
+    printHelp("masuk not exist");
+    return 0;
+  }
+
+  Future<void> downloadNewVersion() async {
     setState(() {
       isRetryDownload = false;
     });
@@ -261,17 +272,20 @@ class SplashScreenState extends State<SplashScreen> {
     String url = "";
 
     bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-    String url_address_1 = config.baseUrl + "/" + config.apkName+".apk";
-    String url_address_2 = config.baseUrlAlt + "/" + config.apkName+".apk";
+    String url_address_1 = configuration.getUrlPath + "/config/apk/" + config.apkName+".apk";
+    String url_address_2 = configuration.getUrlPathAlt + "/config/apk/" + config.apkName+".apk";
+
+    printHelp("print "+url_address_1);
 
     try {
 		  final conn_1 = await connectionTest(url_address_1, context);
-      printHelp("GET STATUS 1 apps "+conn_1);
+      printHelp("GET STATUS 1 "+conn_1);
       if(conn_1 == "OK"){
         isUrlAddress_1 = true;
       }
 	  } on SocketException {
       isUrlAddress_1 = false;
+      // isGetVersionSuccess = "Gagal terhubung dengan server";
     }
 
     if(isUrlAddress_1) {
@@ -285,6 +299,7 @@ class SplashScreenState extends State<SplashScreen> {
         }
       } on SocketException {
         isUrlAddress_2 = false;
+        // isGetVersionSuccess = "Gagal terhubung dengan server";
       }
     }
     if(isUrlAddress_2){
@@ -292,29 +307,127 @@ class SplashScreenState extends State<SplashScreen> {
     }
 
     if(url != "") {
-      // final isPermissionStatusGranted = await checkAppsPermission();
-      // Client client = Client();
+      var androidInfo = await DeviceInfoPlugin().androidInfo;
+      var sdkInt = androidInfo.version.sdkInt;
 
-      // if(isPermissionStatusGranted) {
-      //   try {
-      //     OtaUpdate().execute(
-      //       url,
-      //       destinationFilename: config.apkName+".apk"
-      //     ).listen(
-      //       (OtaEvent event) async{
-      //         _setState(() {
-      //             progressValue = double.parse(event.value)/100;
-      //             progressText = event.value;
-      //         });
-      //       }, onDone: () => timer.cancel()
-      //     );
-      //   } catch (e) {
-      //       print('Failed to make OTA update. Details: $e');
-      //       _setState(() {
-      //         isRetryDownload = true;
-      //       });
-      //   }
-      // }
+      if(sdkInt > 19) {
+        try {
+          OtaUpdate().execute(
+            url,
+            destinationFilename: configuration.apkName+".apk"
+          ).listen(
+            (OtaEvent event) async{
+              _setState(() {
+                  progressValue = double.parse(event.value)/100;
+                  progressText = event.value;
+              });
+            },
+            onDone: () => timer.cancel(),
+          );
+        } catch (e) {
+            print('Failed to make OTA update. Details: $e');
+            _setState(() {
+              isRetryDownload = true;
+            });
+        }
+      } else {
+        Client client = Client();
+
+        try {
+          Dio dio = Dio(
+            BaseOptions(
+              baseUrl: url,
+              connectTimeout: 3000,
+              receiveTimeout: 300000,
+            ),
+          );
+
+          String downloadPath = await getFilePath(config.apkName+".apk");
+
+          printHelp("download path "+downloadPath);
+          printHelp("url download "+ url);
+
+          // final response = await client.get(url);
+          // // Response response = await client.get(url);
+          // printHelp("content length "+response.headers.toString());
+
+          var fileSize=0;
+          var totalDownloaded = 0;
+          var totalProgress = 0;
+
+          final request = new Request('HEAD', Uri.parse(url))..followRedirects = false;
+          final response = await client.send(request).timeout(
+            Duration(seconds: 5),
+              onTimeout: () {
+                return null;
+              },
+          );
+          printHelp("full header "+response.headers.toString());
+          printHelp("content length "+response.headers['content-length'].toString());
+
+          fileDownloaded = isInCompleteDownload(downloadPath);
+          printHelp("tes fileDownloaded "+fileDownloaded.toString());
+          if(fileDownloaded > 0) {
+            printHelp("masuk if");
+            totalDownloaded = fileDownloaded;
+            fileSize = fileDownloaded;
+          }
+          fileSize += int.parse(response.headers['content-length']);
+
+          try {
+            dio.download(url, downloadPath,
+              onReceiveProgress: (rcv, total) {
+                print(
+                    'received: ${rcv.toStringAsFixed(0)} out of total WOI: ${total.toStringAsFixed(0)}');
+                _setState(() {
+                  progressValue = (rcv / total * 100)/100;
+                  progressText = ((rcv / total) * 100).toStringAsFixed(0);
+                });
+
+                if (progressText == '100') {
+                  _setState(() {
+                    isDownloadNewVersion = true;
+                  });
+                } else if (double.parse(progressText) < 100) {}
+              },
+              deleteOnError: true,
+            ). onError((error, stackTrace) {
+              _setState(() {
+                isRetryDownload = true;
+              });
+              throw('coba thro');
+            }).then((_) async {
+              _setState(() {
+                if (progressText == '100') {
+                  isDownloadNewVersion = true;
+                }
+
+                isDownloadNewVersion = false;
+              });
+
+              Navigator.of(context).pop();
+
+              setState(() {
+                isLoadingVersion = false;
+                isDownloadNewVersion = false;
+              });
+
+              printHelp("MASUK SELESAI");
+              SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+              OpenFile.open(downloadPath);
+              // exit(0);
+            });
+          } catch (e) {
+            _setState(() {
+              isRetryDownload = true;
+            });
+          }   
+        } catch (e) {
+          _setState(() {
+            isRetryDownload = true;
+          });
+        }
+      }
 
     } else {
       //gagal terhubung
@@ -324,19 +437,109 @@ class SplashScreenState extends State<SplashScreen> {
     }
   }
 
-  void preparingNewVersion() {
+  // Future<void> downloadApps() async {
+  //   setState(() {
+  //     isRetryDownload = false;
+  //   });
+
+  //   String url = "";
+
+  //   bool isUrlAddress_1 = false, isUrlAddress_2 = false;
+    
+  //   String url_address_1 = configuration.getUrlPath + "/config/tes_ip.php";
+  //   String url_address_2 = configuration.getUrlPathAlt + "/config/tes_ip.php";
+
+  //   try {
+	// 	  final conn_1 = await connectionTest(url_address_1, context);
+  //     printHelp("GET STATUS 1 apps "+conn_1);
+  //     if(conn_1 == "OK"){
+  //       isUrlAddress_1 = true;
+  //     }
+	//   } on SocketException {
+  //     isUrlAddress_1 = false;
+  //   }
+
+  //   if(isUrlAddress_1) {
+  //     url = configuration.getUrlPath + "/config/apk/" + configuration.apkName + ".apk";
+  //   } else {
+  //     try {
+  //       final conn_2 = await connectionTest(url_address_2, context);
+  //       printHelp("GET STATUS 2 "+conn_2);
+  //       if(conn_2 == "OK"){
+  //         isUrlAddress_2 = true;
+  //       }
+  //     } on SocketException {
+  //       isUrlAddress_2 = false;
+  //     }
+  //   }
+  //   if(isUrlAddress_2){
+  //     url = configuration.getUrlPathAlt + "/config/apk/" + configuration.apkName + ".apk";
+  //   }
+
+  //   if(url != "") {
+  //     final isPermissionStatusGranted = await checkAppsPermission();
+      
+  //     Client client = Client();
+
+  //     if(isPermissionStatusGranted) {
+  //       try {
+  //         OtaUpdate().execute(
+  //           url,
+  //           destinationFilename: configuration.apkName+".apk"
+  //         ).listen(
+  //           (OtaEvent event) async{
+  //             print("status check "+ event.status.toString());
+  //             _setState(() {
+  //                   progressValue = double.parse(event.value)/100;
+  //                   progressText = event.value;
+  //               });
+  //             // if(!isRetryDownload) {
+  //             //   _setState(() {
+  //             //       progressValue = double.parse(event.value)/100;
+  //             //       progressText = event.value;
+  //             //   });
+  //             // }
+  //           },
+  //           onDone: () => timer.cancel(),
+  //         );
+  //       } catch (e) {
+  //           print('Failed to make OTA update. Details: $e');
+  //           _setState(() {
+  //             isRetryDownload = true;
+  //           });
+  //       }
+  //     }
+
+  //   } else {
+  //     //gagal terhubung
+  //     _setState(() {
+  //       isRetryDownload = true;
+  //     });
+  //   }
+  // }
+
+  void preparingNewVersion() async {
     setState(() {
       isLoadingVersion = false;
       isDownloadNewVersion = true;
     });
-    timer = Timer.periodic(Duration(seconds: 5), (Timer t) => isInternet());
-    downloadApps();
+    var androidInfo = await DeviceInfoPlugin().androidInfo;
+    var sdkInt = androidInfo.version.sdkInt;
+    if(sdkInt > 19) {
+      timer = Timer.periodic(Duration(seconds: 5), (Timer t) => isInternet());
+    }
+    downloadNewVersion();
     showDialog (
       context: context,
       barrierDismissible: false,
       builder: (context){
         return WillPopScope(
-          onWillPop: null,
+          onWillPop: () async {
+            if(isRetryDownload) {
+              timer.cancel();
+            }
+            return false; 
+          },
           child: AlertDialog(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(7.5)),
@@ -357,8 +560,9 @@ class SplashScreenState extends State<SplashScreen> {
                       footer: Padding(
                         padding: EdgeInsets.only(top: 10),
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("Mengunduh pembaruan aplikasi", style: new TextStyle(fontWeight: FontWeight.bold)),
+                            TextView("Mengunduh pembaruan aplikasi", 4, align: TextAlign.center),
                             Visibility(
                               // maintainSize: true, 
                               // maintainAnimation: true,
@@ -369,9 +573,14 @@ class SplashScreenState extends State<SplashScreen> {
                                 width: MediaQuery.of(context).size.width,
                                 child: Button(
                                   // loading: loginLoading,
-                                  child: TextView("Coba Lagi", 3, color: Colors.white),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      TextView("Coba Lagi", 3, color: Colors.white),
+                                    ],
+                                  ),
                                   onTap: () {
-                                    downloadApps();
+                                    downloadNewVersion();
                                   },
                                 ),
                               ),
@@ -403,8 +612,8 @@ class SplashScreenState extends State<SplashScreen> {
     String url = "";
     bool isUrlAddress_1 = false, isUrlAddress_2 = false;
 
-    String url_address_1 = configuration.getUrlPath + "/config/apk/" + config.apkName + ".apk";
-    String url_address_2 = configuration.getUrlPathAlt + "/config/apk/" + config.apkName + ".apk";
+    String url_address_1 = configuration.getUrlPath + "/config/apk/" + configuration.apkName + ".apk";
+    String url_address_2 = configuration.getUrlPathAlt + "/config/apk/" + configuration.apkName + ".apk";
 
     try {
 		  final conn_1 = await connectionTest(url_address_1, context);
@@ -440,7 +649,7 @@ class SplashScreenState extends State<SplashScreen> {
 
       
       try {
-        String downloadPath = await getFilePath(config.apkName+".apk");
+        String downloadPath = await getFilePath(configuration.apkName+".apk");
 
         printHelp("download path "+downloadPath);
         printHelp("url download "+ url);
@@ -458,9 +667,10 @@ class SplashScreenState extends State<SplashScreen> {
         apkSize = int.parse(response.headers['content-length'].toString());
         
         String path = '';
-        String filename = config.apkName + ".apk";
-        Directory dir = await getExternalStorageDirectory();
-        path = '${dir.path}/$filename';
+        String filename = configuration.apkName + ".apk";
+        // Directory dir = await getExternalStorageDirectory();
+        // path = '${dir.path}/$filename';
+        path = '/storage/emulated/0/Android/data/com.example.utility_warehouse/files/$filename';
 
         if(FileSystemEntity.typeSync(path) != FileSystemEntityType.notFound){
           var file = File(path);
@@ -495,9 +705,11 @@ class SplashScreenState extends State<SplashScreen> {
   Future<String> getFilePath(filename) async {
     String path = '';
 
-    Directory dir = await getExternalStorageDirectory();
+    // Directory dir = await getExternalStorageDirectory();
 
-    path = '${dir.path}/$filename';
+    // path = '${dir.path}/$filename';
+
+    path = '/storage/emulated/0/Android/data/com.example.utility_warehouse/files/$filename';
 
     return path;
   }
@@ -580,7 +792,7 @@ class SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.popAndPushNamed(context, "setting");
+          Navigator.popAndPushNamed(context, "setting", arguments: "splashScreen");
         },
         child: Icon(Icons.settings),
         backgroundColor: configuration.darkOpacityBlueColor,

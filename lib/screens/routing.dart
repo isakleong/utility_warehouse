@@ -13,7 +13,7 @@ MaterialPageRoute routing(int mode, int id, List<String> pages, RouteSettings se
       return MaterialPageRoute(builder: (context)=> SplashScreen());
       break;
     case 'setting':
-      return MaterialPageRoute(builder: (context)=> Setting());
+      return MaterialPageRoute(builder: (context)=> Setting(pageName: settings.arguments));
       break;
     case 'login':
       return MaterialPageRoute(builder: (context)=> Login());

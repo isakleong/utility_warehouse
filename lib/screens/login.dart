@@ -104,6 +104,13 @@ class LoginState extends State<Login> {
     double mediaHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, "setting", arguments: "login");
+        },
+        child: Icon(Icons.settings, color: config.darkOpacityBlueColor),
+        backgroundColor: Colors.white,
+      ),
       body: WillPopScope(
         onWillPop: willPopScope,
         child: Stack(

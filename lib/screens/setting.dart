@@ -1,17 +1,9 @@
-import 'dart:async';
 import 'dart:io';
-// import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter/services.dart';
-// import 'package:flutter_svg/flutter_svg.dart';
-import 'package:http/http.dart' show Client;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:utility_warehouse/models/result.dart';
-import 'package:utility_warehouse/models/userModel.dart';
-import 'package:utility_warehouse/resources/userAPI.dart';
 import 'package:utility_warehouse/settings/configuration.dart';
 import 'package:utility_warehouse/tools/function.dart';
 import 'package:utility_warehouse/widget/button.dart';
@@ -19,14 +11,17 @@ import 'package:utility_warehouse/widget/textView.dart';
 import 'package:xml/xml.dart';
 
 class Setting extends StatefulWidget {
+  final String pageName;
 
-  const Setting({Key key}) : super(key: key);
+  const Setting({Key key, this.pageName}) : super(key: key);
 
   @override
   SettingState createState() => SettingState();
 }
 
 class SettingState extends State<Setting> {
+  bool popUpBack = false;
+
   bool loginLoading = false;
 
   bool urlAddressValid_1 = false;
@@ -55,6 +50,15 @@ class SettingState extends State<Setting> {
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
+    if(widget.pageName.contains("splashScreen")) {
+      setState(() {
+        popUpBack = false;
+      });
+    } else {
+      setState(() {
+        popUpBack = true;
+      });      
+    }
   }
   
   @override
@@ -65,8 +69,11 @@ class SettingState extends State<Setting> {
     return Scaffold(
       body: WillPopScope(
         onWillPop: () async {
-          printHelp("BACK PRESS");
-          Navigator.pushReplacementNamed(context, "");
+          if(popUpBack) {
+            Navigator.of(context).pop();
+          } else {
+            Navigator.pushReplacementNamed(context, "");
+          }
          return false; 
         },
         child: Stack(
@@ -76,6 +83,30 @@ class SettingState extends State<Setting> {
               width: mediaWidth,
               // color: Colors.white,
               child: Image.asset("assets/illustration/background.png", fit: BoxFit.fill),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 60),
+              child: SafeArea(
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Container(
+                    height: 50,
+                    width: 50,
+                    color: Colors.transparent,
+                    child: Button(
+                      disable: false,
+                      child: Icon(Icons.arrow_back, color: Colors.white),
+                      onTap: () {
+                        if(popUpBack) {
+                          Navigator.of(context).pop();
+                        } else {
+                          Navigator.pushReplacementNamed(context, "");
+                        }
+                      },
+                    ),
+                  ),
+                ),
+              ),
             ),
             Center(
               child: SingleChildScrollView(
@@ -185,21 +216,23 @@ class SettingState extends State<Setting> {
     String path = '${dir.path}/deviceconfig.xml';
     File file = File(path);
 
-    printHelp("HMMM");
-
     if(FileSystemEntity.typeSync(path) != FileSystemEntityType.notFound){
       final document = XmlDocument.parse(file.readAsStringSync());
       final url_address_1 = document.findAllElements('url_address_1').map((node) => node.text);
       final url_address_2 = document.findAllElements('url_address_2').map((node) => node.text);
       final tempToken = document.findAllElements('token').map((node) => node.text);
 
-      urlAdreessController_1.text = url_address_1.first;
-      urlAdreessController_1.selection = TextSelection.fromPosition(TextPosition(offset: urlAdreessController_1.text.length));
+      try {
+        urlAdreessController_1.text = url_address_1.first;
+        urlAdreessController_1.selection = TextSelection.fromPosition(TextPosition(offset: urlAdreessController_1.text.length));
 
-      urlAdreessController_2.text = url_address_2.first;
-      urlAdreessController_2.selection = TextSelection.fromPosition(TextPosition(offset: urlAdreessController_2.text.length));
+        urlAdreessController_2.text = url_address_2.first;
+        urlAdreessController_2.selection = TextSelection.fromPosition(TextPosition(offset: urlAdreessController_2.text.length));
 
-      token = tempToken.first;
+        token = tempToken.first;
+      } catch (e) {
+        print("Error read device config (setting page) : "+e.toString());
+      }
     }
   }
 
@@ -207,9 +240,6 @@ class SettingState extends State<Setting> {
     Alert(context: context, loading: true, disableBackButton: true);
 
     Directory dir = await getExternalStorageDirectory();
-    Directory extStrDir = await getExternalStorageDirectory();
-    String extStrPath = extStrDir.path;
-    printHelp("dir path "+dir.path.toString());
     String path = '${dir.path}/deviceconfig.xml';
     File file = File(path);
 
