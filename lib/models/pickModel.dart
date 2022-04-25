@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:json_annotation/json_annotation.dart';
 
 part 'pickModel.g.dart';
@@ -18,7 +20,6 @@ class Pick {
   String postcode;
   String county;
   String province;
-  DateTime dtmCreated;
 
   Pick({
     this.pickNo,
@@ -34,8 +35,7 @@ class Pick {
     this.city,
     this.postcode,
     this.county,
-    this.province,
-    this.dtmCreated,
+    this.province
   });
 
   factory Pick.fromJson(Map<String, dynamic> parsedJson) =>

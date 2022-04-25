@@ -8,11 +8,62 @@ import 'package:utility_warehouse/settings/configuration.dart';
 import 'package:utility_warehouse/widget/button.dart';
 import 'package:utility_warehouse/widget/textView.dart';
 import 'package:xml/xml.dart';
+import 'package:encrypt/encrypt.dart' as EncryptionPackage;
+import 'package:crypto/crypto.dart' as CryptoPackage;
+import 'dart:convert' as ConvertPackage;
 
 printHelp(final print) {
   debugPrint("---------------------------------");
   debugPrint(print.toString());
   debugPrint("---------------------------------");
+}
+
+String decryptData(String data) {
+  String strPwd = "snwO+67pWwpuypbyeazkkK6CNAfpsOivLuSwR/rd4uM=";
+  String strIv = 'K8IgRZtkuepdGc1VnOp6eA==';
+  var iv = CryptoPackage.sha256
+      .convert(ConvertPackage.utf8.encode(strIv))
+      .toString()
+      .substring(0, 16); // Consider the first 16 bytes of all 64 bytes
+  var key = CryptoPackage.sha256
+      .convert(ConvertPackage.utf8.encode(strPwd))
+      .toString()
+      .substring(0, 32); // Consider the first 32 bytes of all 64 bytes
+  EncryptionPackage.IV ivObj = EncryptionPackage.IV.fromUtf8(iv);
+  EncryptionPackage.Key keyObj = EncryptionPackage.Key.fromUtf8(key);
+  final encrypter = EncryptionPackage.Encrypter(EncryptionPackage.AES(keyObj,
+      mode: EncryptionPackage.AESMode.cbc)); // Apply CBC mode
+  String firstBase64Decoding = new String.fromCharCodes(
+      ConvertPackage.base64.decode(data)); // First Base64 decoding
+  final decrypted = encrypter.decrypt(
+      EncryptionPackage.Encrypted.fromBase64(firstBase64Decoding),
+      iv: ivObj); // Second Base64 decoding (during decryption)
+  return decrypted;
+}
+
+String encryptData(String data) {
+  // String strPwd = "6P8yHVfeZ5JKaXQ6AyaBge";
+  // String strIv = 'cHaa5y7pQF5uqA2N';
+  String strPwd = "snwO+67pWwpuypbyeazkkK6CNAfpsOivLuSwR/rd4uM=";
+  String strIv = 'K8IgRZtkuepdGc1VnOp6eA==';
+  var iv = CryptoPackage.sha256
+      .convert(ConvertPackage.utf8.encode(strIv))
+      .toString()
+      .substring(0, 16);
+  var key = CryptoPackage.sha256
+      .convert(ConvertPackage.utf8.encode(strPwd))
+      .toString()
+      .substring(0, 32);
+  EncryptionPackage.IV ivObj = EncryptionPackage.IV.fromUtf8(iv);
+  EncryptionPackage.Key keyObj = EncryptionPackage.Key.fromUtf8(key);
+
+  final encrypter = EncryptionPackage.Encrypter(
+      EncryptionPackage.AES(keyObj, mode: EncryptionPackage.AESMode.cbc));
+
+  final encrypted = encrypter.encrypt(data.toString(), iv: ivObj);
+
+  return ConvertPackage.base64
+      .encode(ConvertPackage.utf8.encode(encrypted.base64));
 }
 
 Future<String> connectionTest(String url, BuildContext context) async {
@@ -65,38 +116,6 @@ String fetchAPI(String url, {String parameter = "", bool print = false, bool sec
     debugPrint("url api "+urlAPI);
   return urlAPI;
 }
-
-// getDeviceConfig(context) async {
-//     Configuration config = Configuration.of(context);
-//     Directory dir = await getExternalStorageDirectory();
-//     String path = '${dir.path}/deviceconfig.xml';
-//     File file = File(path);
-
-//     if(FileSystemEntity.typeSync(path) != FileSystemEntityType.notFound){
-//       final document = XmlDocument.parse(file.readAsStringSync());
-//       final url_address_1 = document.findAllElements('url_address_1').map((node) => node.text);
-//       final url_address_2 = document.findAllElements('url_address_2').map((node) => node.text);
-//       config.setBaseUrl(url_address_1.first);
-//       config.setBaseUrlAlt(url_address_2.first);
-//       // print(document.toString());
-//       // print(document.toXmlString(pretty: true, indent: '\t'));
-//     } else {
-//       config.setBaseUrl("http://203.142.77.243/NewUtilityWarehouseDev");
-//       config.setBaseUrlAlt("http://103.76.27.124/NewUtilityWarehouseDev");
-
-//       final builder = XmlBuilder();
-//       builder.processing('xml', 'version="1.0" encoding="UTF-8" standalone="yes"');
-//       builder.element('deviceconfig', nest: () {
-//         builder.element('url_address_1', nest: "http://203.142.77.243/NewUtilityWarehouseDev");
-//         builder.element('url_address_2', nest: "http://103.76.27.124/NewUtilityWarehouseDev");
-//         builder.element('token_id', nest: '');
-//       });
-//       final document = builder.buildDocument();
-//       await file.writeAsString(document.toString());
-//       // print(document.toString());
-//       // print(document.toXmlString(pretty: true, indent: '\t'));
-//     }
-//   }
 
 fieldFocusChange(BuildContext context, FocusNode currentFocus,FocusNode nextFocus) {
   currentFocus.unfocus();

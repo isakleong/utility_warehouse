@@ -5,7 +5,7 @@ part 'detailPickModel.g.dart';
 @JsonSerializable()
 class DetailPick {
   String description;
-  String kemasan;
+  String ukuran;
   String bincode;
   String quantity;
   String qty_real;
@@ -14,7 +14,7 @@ class DetailPick {
 
   DetailPick({
     this.description,
-    this.kemasan,
+    this.ukuran,
     this.bincode,
     this.quantity,
     this.qty_real,
