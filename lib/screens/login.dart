@@ -168,8 +168,8 @@ class LoginState extends State<Login> {
                                 usernameTextHint = "###-##";
                                 maskFormatter = MaskTextInputFormatter(mask: "###-##", filter: { "#": RegExp(r'[a-zA-Z0-9]') }, type: MaskAutoCompletionType.eager);
                               } else  {
-                                usernameTextHint = "###-##";
-                                maskFormatter = MaskTextInputFormatter(mask: "###-##", filter: { "#": RegExp(r'[a-zA-Z0-9]') }, type: MaskAutoCompletionType.eager);
+                                usernameTextHint = "###-##-##";
+                                maskFormatter = MaskTextInputFormatter(mask: "###-##-##", filter: { "#": RegExp(r'[a-zA-Z0-9]') }, type: MaskAutoCompletionType.eager);
                               }
                             });
                           },
@@ -267,11 +267,11 @@ class LoginState extends State<Login> {
                           disable: false,
                           child: TextView('Masuk', 3, color: Colors.white, caps: true),
                           onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => PickPageVertical()),
-                              );
-                              // submitLoginValidation();
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(builder: (context) => PickPageVertical()),
+                              // );
+                              submitLoginValidation();
                             },
                         ),
                       ),
@@ -311,159 +311,26 @@ class LoginState extends State<Login> {
     }
   }
 
-  void doUpdatePassword() async {
-
-  }
-
   void doLogin() async {
+    setState(() {
+      loginLoading = true;
+    });
+    
     FocusScope.of(context).requestFocus(FocusNode());
-
     Alert(context: context, loading: true, disableBackButton: true);
 
-    // await getDeviceConfig(context);
+    final usernameData = encryptData(usernameController.text);
+    final passwordData = encryptData(passwordController.text);
 
-    Result result = await userAPI.login(context, usernameController.text, passwordController.text);
+    Result result = await userAPI.login(context, usernameData, passwordData);
 
     Navigator.of(context).pop();
 
     if(result.code == 200) {
-      // auth validation
-      String tokenID = await getToken(context);
-      // tokenID = "5753";
-      User user = await userAPI.authValidation(context, usernameController.text, tokenID);
-      
-      bool isAuthValid = false;
-      try {
-        if(user.userId != "") {
-          isAuthValid = true;
-        }
-      } catch (e) {
-        isAuthValid = false;
-      }
-
-      if(isAuthValid) {
-        if(DateTime.now().isBefore(user.dtmValid)) {
-          if(passwordController.text.contains("1234")){
-            Navigator.pushReplacementNamed(
-              context,
-              "dashboard"
-            );
-          } else {
-            setState(() {
-              newPasswordController.clear();
-              confirmPasswordController.clear();
-            });
-            Alert(
-              context: context,
-              title: "Silahkan masukkan password baru",
-              content: StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
-                  _setState = setState;
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TextField(
-                        key: Key("NewPassword"),
-                        controller: newPasswordController,
-                        obscureText: unlockNewPassword,
-                        focusNode: newPasswordFocus,
-                        keyboardType: TextInputType.text,
-                        textInputAction: TextInputAction.next,
-                        decoration: InputDecoration(
-                          hintText: "Password",
-                          errorText: newPasswordValid ? "Password tidak boleh kosong" : null,
-                          suffixIcon: InkWell(
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 5),
-                              child: Icon(
-                                Icons.remove_red_eye,
-                                color:  unlockNewPassword ? config.lightGrayColor : config.grayColor,
-                                size: 18,
-                              ),
-                            ),
-                            onTap: () {
-                              setState(() {
-                                unlockNewPassword = !unlockNewPassword;
-                              });
-                            },
-                          ),
-                        ),
-                        onSubmitted: (value) {
-                          fieldFocusChange(context, newPasswordFocus, confirmPasswordFocus);
-                        },
-                      ),
-                      SizedBox(height: 15),
-                      TextField(
-                        key: Key("ConfirmPassword"),
-                        controller: confirmPasswordController,
-                        obscureText: unlockConfirmPassword,
-                        focusNode: confirmPasswordFocus,
-                        keyboardType: TextInputType.text,
-                        textInputAction: TextInputAction.go,
-                        decoration: InputDecoration(
-                          hintText: "Konfirmasi Password",
-                          errorText: confirmPasswordValid ? "Konfirmasi password tidak boleh kosong" : null,
-                          suffixIcon: InkWell(
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 5),
-                              child: Icon(
-                                Icons.remove_red_eye,
-                                color:  unlockConfirmPassword ? config.lightGrayColor : config.grayColor,
-                                size: 18,
-                              ),
-                            ),
-                            onTap: () {
-                              setState(() {
-                                unlockConfirmPassword = !unlockConfirmPassword;
-                              });
-                            },
-                          ),
-                        ),
-                        onSubmitted: (value) {
-                          confirmPasswordFocus.unfocus();
-                          submitUpdatePasswordValidation();
-                        },
-                      ),
-                    ],
-                  );
-                }
-              ),
-              cancel: false,
-              type: "warning",
-              defaultAction: () {
-                submitUpdatePasswordValidation();
-              }
-            );  
-          }
-
-        } else {
-          Alert(
-            context: context,
-            title: "Maaf",
-            content: TextView("Anda tidak lagi memiliki izin untuk mengakses aplikasi ini\nSilahkan hubungi tim SFA untuk info lebih lanjut", 4),
-            cancel: false,
-            type: "error"
-          );  
-        }
-
-      } else {
-        Alert(
-          context: context,
-          title: "Maaf",
-          content: TextView("Perangkat baru terdeteksi\nMohon untuk melakukan registrasi NIK terlebih dahulu", 4),
-          cancel: false,
-          type: "error",
-          defaultAction: () {
-            // Navigator.of(context).pop();
-            Navigator.pushNamed(context, "signUp", arguments: usernameController.text);
-          }
-        );  
-      }
-
-      // Navigator.pushReplacementNamed(
-      //   context,
-      //   "dashboard"
-      // );
+      Navigator.pushReplacementNamed(
+        context,
+        "dashboard"
+      );
     } else {
       Alert(
         context: context,
@@ -474,15 +341,175 @@ class LoginState extends State<Login> {
       );  
     }
 
-    // setState(() {
-    //   loginLoading = false;
-    // });
-
+    setState(() {
+      loginLoading = false;
+    });
   }
 
-  void codeVerification() async {
-    
-  }
+  // void doLogin() async {
+  //   FocusScope.of(context).requestFocus(FocusNode());
+
+  //   Alert(context: context, loading: true, disableBackButton: true);
+
+  //   // await getDeviceConfig(context);
+
+  //   Result result = await userAPI.login(context, usernameController.text, passwordController.text);
+
+  //   Navigator.of(context).pop();
+
+  //   if(result.code == 200) {
+  //     // auth validation
+  //     String tokenID = await getToken(context);
+  //     // tokenID = "5753";
+  //     User user = await userAPI.authValidation(context, usernameController.text, tokenID);
+      
+  //     bool isAuthValid = false;
+  //     try {
+  //       if(user.userId != "") {
+  //         isAuthValid = true;
+  //       }
+  //     } catch (e) {
+  //       isAuthValid = false;
+  //     }
+
+  //     if(isAuthValid) {
+  //       if(DateTime.now().isBefore(user.dtmValid)) {
+  //         if(passwordController.text.contains("1234")){
+  //           Navigator.pushReplacementNamed(
+  //             context,
+  //             "dashboard"
+  //           );
+  //         } else {
+  //           setState(() {
+  //             newPasswordController.clear();
+  //             confirmPasswordController.clear();
+  //           });
+  //           Alert(
+  //             context: context,
+  //             title: "Silahkan masukkan password baru",
+  //             content: StatefulBuilder(
+  //               builder: (BuildContext context, StateSetter setState) {
+  //                 _setState = setState;
+  //                 return Column(
+  //                   mainAxisSize: MainAxisSize.min,
+  //                   children: [
+  //                     TextField(
+  //                       key: Key("NewPassword"),
+  //                       controller: newPasswordController,
+  //                       obscureText: unlockNewPassword,
+  //                       focusNode: newPasswordFocus,
+  //                       keyboardType: TextInputType.text,
+  //                       textInputAction: TextInputAction.next,
+  //                       decoration: InputDecoration(
+  //                         hintText: "Password",
+  //                         errorText: newPasswordValid ? "Password tidak boleh kosong" : null,
+  //                         suffixIcon: InkWell(
+  //                           child: Container(
+  //                             padding: EdgeInsets.symmetric(horizontal: 5),
+  //                             child: Icon(
+  //                               Icons.remove_red_eye,
+  //                               color:  unlockNewPassword ? config.lightGrayColor : config.grayColor,
+  //                               size: 18,
+  //                             ),
+  //                           ),
+  //                           onTap: () {
+  //                             setState(() {
+  //                               unlockNewPassword = !unlockNewPassword;
+  //                             });
+  //                           },
+  //                         ),
+  //                       ),
+  //                       onSubmitted: (value) {
+  //                         fieldFocusChange(context, newPasswordFocus, confirmPasswordFocus);
+  //                       },
+  //                     ),
+  //                     SizedBox(height: 15),
+  //                     TextField(
+  //                       key: Key("ConfirmPassword"),
+  //                       controller: confirmPasswordController,
+  //                       obscureText: unlockConfirmPassword,
+  //                       focusNode: confirmPasswordFocus,
+  //                       keyboardType: TextInputType.text,
+  //                       textInputAction: TextInputAction.go,
+  //                       decoration: InputDecoration(
+  //                         hintText: "Konfirmasi Password",
+  //                         errorText: confirmPasswordValid ? "Konfirmasi password tidak boleh kosong" : null,
+  //                         suffixIcon: InkWell(
+  //                           child: Container(
+  //                             padding: EdgeInsets.symmetric(horizontal: 5),
+  //                             child: Icon(
+  //                               Icons.remove_red_eye,
+  //                               color:  unlockConfirmPassword ? config.lightGrayColor : config.grayColor,
+  //                               size: 18,
+  //                             ),
+  //                           ),
+  //                           onTap: () {
+  //                             setState(() {
+  //                               unlockConfirmPassword = !unlockConfirmPassword;
+  //                             });
+  //                           },
+  //                         ),
+  //                       ),
+  //                       onSubmitted: (value) {
+  //                         confirmPasswordFocus.unfocus();
+  //                         submitUpdatePasswordValidation();
+  //                       },
+  //                     ),
+  //                   ],
+  //                 );
+  //               }
+  //             ),
+  //             cancel: false,
+  //             type: "warning",
+  //             defaultAction: () {
+  //               submitUpdatePasswordValidation();
+  //             }
+  //           );  
+  //         }
+
+  //       } else {
+  //         Alert(
+  //           context: context,
+  //           title: "Maaf",
+  //           content: TextView("Anda tidak lagi memiliki izin untuk mengakses aplikasi ini\nSilahkan hubungi tim SFA untuk info lebih lanjut", 4),
+  //           cancel: false,
+  //           type: "error"
+  //         );  
+  //       }
+
+  //     } else {
+  //       Alert(
+  //         context: context,
+  //         title: "Maaf",
+  //         content: TextView("Perangkat baru terdeteksi\nMohon untuk melakukan registrasi NIK terlebih dahulu", 4),
+  //         cancel: false,
+  //         type: "error",
+  //         defaultAction: () {
+  //           // Navigator.of(context).pop();
+  //           Navigator.pushNamed(context, "signUp", arguments: usernameController.text);
+  //         }
+  //       );  
+  //     }
+
+  //     // Navigator.pushReplacementNamed(
+  //     //   context,
+  //     //   "dashboard"
+  //     // );
+  //   } else {
+  //     Alert(
+  //       context: context,
+  //       title: "Maaf",
+  //       content: Text(result.error_message),
+  //       cancel: false,
+  //       type: "error"
+  //     );  
+  //   }
+
+  //   // setState(() {
+  //   //   loginLoading = false;
+  //   // });
+
+  // }
 
   void submitUpdatePasswordValidation() {
     _setState(() {
@@ -491,7 +518,7 @@ class LoginState extends State<Login> {
     });
 
     if(!newPasswordValid && !confirmPasswordValid){
-      doUpdatePassword();
+      // doUpdatePassword();
     }
   }
 
@@ -502,12 +529,12 @@ class LoginState extends State<Login> {
     });
 
     if(!usernameValid && !passwordValid){
-      //doLogin();
+      doLogin();
       // direct by pass to dashboard (development purpose)
-      Navigator.pushReplacementNamed(
-          context,
-          "dashboard"
-      );
+      // Navigator.pushReplacementNamed(
+      //     context,
+      //     "dashboard"
+      // );
     }
   }
 

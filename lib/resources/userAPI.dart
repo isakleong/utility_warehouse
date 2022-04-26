@@ -14,9 +14,13 @@ class UserAPI {
     User user;
     String url = "";
 
+    Configuration configuration = await getUrlConfig(context);
+
+    printHelp("from here "+configuration.getUrlPath);
+
     bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-    String url_address_1 = fetchAPI("users/login.php", context: context);
-    String url_address_2 = fetchAPI("users/login.php", context: context, secondary: true);
+    String url_address_1 = fetchAPI("users/login.php", context, print: true);
+    String url_address_2 = fetchAPI("users/login.php", context, secondary: true, print: true);
 
     // final body = jsonEncode({
     //   "userID":username,
@@ -59,7 +63,9 @@ class UserAPI {
 
     try {
       final response = await client.post(url, headers: {"Content-Type": "application/x-www-form-urlencoded"}, body: body);
-      var parsedJson = jsonDecode(response.body);
+      printHelp("get response data "+response.body.toString());
+      var responseData = decryptData(response.body.toString());
+      var parsedJson = jsonDecode(responseData);
       result = Result.fromJson(parsedJson);
 
       // if(result.code == 200) {
@@ -82,8 +88,8 @@ class UserAPI {
     String url = "";
 
     bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-    String url_address_1 = fetchAPI("users/auth_validation.php", context: context);
-    String url_address_2 = fetchAPI("users/auth_validation.php", context: context, secondary: true);
+    String url_address_1 = fetchAPI("users/auth_validation.php", context);
+    String url_address_2 = fetchAPI("users/auth_validation.php", context, secondary: true);
 
     final body =  <String, String>{
       'userID' : username,
@@ -142,8 +148,8 @@ class UserAPI {
     String url = "";
 
     bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-    String url_address_1 = fetchAPI("users/check_nik_validation.php", context: context);
-    String url_address_2 = fetchAPI("users/check_nik_validation.php", context: context, secondary: true);
+    String url_address_1 = fetchAPI("users/check_nik_validation.php", context);
+    String url_address_2 = fetchAPI("users/check_nik_validation.php", context, secondary: true);
 
     final body =  <String, String>{
       'nik' : nik
@@ -196,8 +202,8 @@ class UserAPI {
     String url = "";
 
     bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-    String url_address_1 = fetchAPI("users/generate_otp.php", context: context);
-    String url_address_2 = fetchAPI("users/generate_otp.php", context: context, secondary: true);
+    String url_address_1 = fetchAPI("users/generate_otp.php", context);
+    String url_address_2 = fetchAPI("users/generate_otp.php", context, secondary: true);
 
     final body =  <String, String>{
       'phoneNumber' : phoneNumber
@@ -250,8 +256,8 @@ class UserAPI {
     String url = "";
 
     bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-    String url_address_1 = fetchAPI("users/registration.php", context: context);
-    String url_address_2 = fetchAPI("users/registration.php", context: context, secondary: true);
+    String url_address_1 = fetchAPI("users/registration.php", context);
+    String url_address_2 = fetchAPI("users/registration.php", context, secondary: true);
 
     print("DATA FETCH 1 "+username);
     print("DATA FETCH 2 "+token);
@@ -310,8 +316,8 @@ class UserAPI {
     String url = "";
 
     bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-    String url_address_1 = fetchAPI("users/update_password.php", context: context);
-    String url_address_2 = fetchAPI("users/update_password.php", context: context, secondary: true);
+    String url_address_1 = fetchAPI("users/update_password.php", context);
+    String url_address_2 = fetchAPI("users/update_password.php", context, secondary: true);
 
     final body =  <String, String>{
       'userID' : username,
@@ -367,8 +373,8 @@ class UserAPI {
   //   String url = "";
 
   //   bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-  //   String url_address_1 = fetchAPI("users/getUserCoba.php", context: context, parameter: parameter);
-  //   String url_address_2 = fetchAPI("users/getUserCoba.php", context: context, secondary: true, parameter: parameter);
+  //   String url_address_1 = fetchAPI("users/getUserCoba.php", context, parameter: parameter);
+  //   String url_address_2 = fetchAPI("users/getUserCoba.php", context, secondary: true, parameter: parameter);
 
   //   try {
 	// 	  final conn_1 = await connectionTest(url_address_1, context);

@@ -18,6 +18,39 @@ printHelp(final print) {
   debugPrint("---------------------------------");
 }
 
+getUrlConfig(context) async {
+  Configuration configuration = Configuration.of(context);
+
+  String path = '/storage/emulated/0/Android/data/com.example.utility_warehouse/files/deviceconfig.xml';
+
+  File file = File(path);
+
+  if(FileSystemEntity.typeSync(path) != FileSystemEntityType.notFound){
+    final document = XmlDocument.parse(file.readAsStringSync());
+    final url_address_1 = document.findAllElements('url_address_1').map((node) => node.text);
+    final url_address_2 = document.findAllElements('url_address_2').map((node) => node.text);
+    configuration.setUrlPath = url_address_1.first;
+    configuration.setUrlPathAlt = url_address_2.first;
+  }
+
+  return configuration;
+}
+
+String fetchAPI(String url, BuildContext context, {String parameter = "", bool print = false, bool secondary = false}) {
+  Configuration configuration = Configuration.of(context);
+
+  String urlAPI;
+  if(secondary) {
+    urlAPI = configuration.urlPathAlt + "/" + url + (parameter == "" ? "" : "&" + parameter);
+  } else {
+    urlAPI = configuration.urlPath + "/" + url + (parameter == "" ? "" : "&" + parameter);
+  }
+  
+  if(print)
+    debugPrint("url api print "+urlAPI);
+  return urlAPI;
+}
+
 String decryptData(String data) {
   String strPwd = "snwO+67pWwpuypbyeazkkK6CNAfpsOivLuSwR/rd4uM=";
   String strIv = 'K8IgRZtkuepdGc1VnOp6eA==';
@@ -102,20 +135,6 @@ class MyHttpOverrides extends HttpOverrides {
 }
 
 // String url_address_1 = config.baseUrl + "/config/" + "getVersion.php" + (parameter == "" ? "" : "?" + parameter);
-
-String fetchAPI(String url, {String parameter = "", bool print = false, bool secondary = false, BuildContext context}) {
-  Configuration config;
-  if (context != null) {
-    config = Configuration.of(context);
-  } else {
-    config = config;
-  }
-
-  String urlAPI = config.baseUrl + "/" + url + (parameter == "" ? "" : "&" + parameter);
-  if(print)
-    debugPrint("url api "+urlAPI);
-  return urlAPI;
-}
 
 fieldFocusChange(BuildContext context, FocusNode currentFocus,FocusNode nextFocus) {
   currentFocus.unfocus();
