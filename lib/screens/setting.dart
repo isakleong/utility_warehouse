@@ -212,8 +212,9 @@ class SettingState extends State<Setting> {
 
   getDeviceConfig() async {
     // Configuration config = Configuration.of(context);
-    Directory dir = await getExternalStorageDirectory();
-    String path = '${dir.path}/deviceconfig.xml';
+    // Directory dir = await getExternalStorageDirectory();
+    // String path = '${dir.path}/deviceconfig.xml';
+    String path = '/storage/emulated/0/Android/data/com.example.utility_warehouse/files/deviceconfig.xml';
     File file = File(path);
 
     if(FileSystemEntity.typeSync(path) != FileSystemEntityType.notFound){
