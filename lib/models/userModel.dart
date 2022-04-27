@@ -4,16 +4,12 @@ part 'userModel.g.dart';
 
 @JsonSerializable()
 class User {
-  @JsonKey(name: 'userId', defaultValue: "")
+  @JsonKey(name: 'UserId', defaultValue: "")
   final String userId;
-  @JsonKey(name: 'nik', defaultValue: "")
-  String nik;
-  @JsonKey(name: 'tokenId', defaultValue: "")
-  final String tokenId;
-  @JsonKey(name: 'dtmValid', defaultValue: "")
-  final DateTime dtmValid;
+  @JsonKey(name: 'ModuleId', defaultValue: null)
+  List<String> moduleId;
 
-  User({this.userId, this.nik, this.tokenId, this.dtmValid});
+  User({this.userId, this.moduleId});
 
   factory User.fromJson(Map<String, dynamic> parsedJson) => _$UserFromJson(parsedJson);
   Map<String, dynamic> toJson() => _$UserToJson(this);

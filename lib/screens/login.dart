@@ -315,7 +315,7 @@ class LoginState extends State<Login> {
     setState(() {
       loginLoading = true;
     });
-    
+
     FocusScope.of(context).requestFocus(FocusNode());
     Alert(context: context, loading: true, disableBackButton: true);
 
@@ -329,7 +329,8 @@ class LoginState extends State<Login> {
     if(result.code == 200) {
       Navigator.pushReplacementNamed(
         context,
-        "dashboard"
+        "dashboard",
+        arguments: result.data
       );
     } else {
       Alert(

@@ -63,17 +63,15 @@ class UserAPI {
 
     try {
       final response = await client.post(url, headers: {"Content-Type": "application/x-www-form-urlencoded"}, body: body);
-      printHelp("get response data "+response.body.toString());
       var responseData = decryptData(response.body.toString());
       var parsedJson = jsonDecode(responseData);
       result = Result.fromJson(parsedJson);
-
-      // if(result.code == 200) {
-      //   // User user = User.fromJson(result.data);
-      //   result = new Result(code: result.code, message: result.message, data: result.data);
-      // } else {
-      //   printHelp("cek res "+result.error_message.toString());
-      // }
+      
+      if(result.code == 200) {
+        var parsedResult = jsonDecode(result.data.toString());
+        User user = User.fromJson(parsedResult[0]);
+        result = new Result(code: result.code, message: result.message, data: user);
+      }
     } catch (e) {
       result = new Result(code: 500, message: "Gagal terhubung dengan server");
       print(e);

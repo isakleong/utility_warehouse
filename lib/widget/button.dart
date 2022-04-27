@@ -8,8 +8,9 @@ class Button extends StatelessWidget {
   Key key;
   bool loading, disable;
   VoidCallback onTap;
+  Color colorUsed;
 
-  Button({this.child, this.onTap, this.key, this.loading = false, this.disable = false});
+  Button({this.child, this.onTap, this.key, this.loading = false, this.disable = false, this.colorUsed});
 
   @override
   Widget build(BuildContext context){
@@ -27,7 +28,7 @@ class Button extends StatelessWidget {
           LinearGradient(
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
-            colors: [Color(0xFF1A2980), Color(0xFF3476aa), Color(0xFF26D0CE)]
+            colors: colorUsed != null ? [colorUsed, colorUsed, colorUsed] : [Color(0xFF1A2980), Color(0xFF3476aa), Color(0xFF26D0CE)]
           ),
           borderRadius: BorderRadius.circular(5),
           boxShadow: <BoxShadow>[

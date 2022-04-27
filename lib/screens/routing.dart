@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:utility_warehouse/screens/dashboard.dart';
 import 'package:utility_warehouse/screens/login.dart';
 import 'package:utility_warehouse/screens/otpVerification.dart';
+import 'package:utility_warehouse/screens/pick_page_vertical.dart';
 import 'package:utility_warehouse/screens/processOpnameData.dart';
 import 'package:utility_warehouse/screens/setting.dart';
 import 'package:utility_warehouse/screens/signUp.dart';
@@ -25,10 +26,13 @@ MaterialPageRoute routing(int mode, int id, List<String> pages, RouteSettings se
       return MaterialPageRoute(builder: (context)=> OTPVerification(model: settings.arguments));
       break;
     case 'dashboard':
-      return MaterialPageRoute(builder: (context)=> Dashboard());
+      return MaterialPageRoute(builder: (context)=> Dashboard(userModel: settings.arguments));
       break;
     case 'processOpnameData':
       return MaterialPageRoute(builder: (context)=> ProcessOpnameData());
+      break;
+    case 'pick':
+      return MaterialPageRoute(builder: (context)=> PickPageVertical());
       break;
     // case 'examplePage 1':
     //   return MaterialPageRoute(builder: (context)=> Page1(result: settings.arguments));

@@ -761,7 +761,8 @@ class SplashScreenState extends State<SplashScreen> {
       try {
         var parsedUrl = Uri.parse(url);
         response = await client.get(parsedUrl);
-        var parsedJson = jsonDecode(response.body.toString());
+        var responseData = decryptData(response.body.toString());
+        var parsedJson = jsonDecode(responseData);
         var result = Result.fromJson(parsedJson);
 
         if(result.code == 200) {
