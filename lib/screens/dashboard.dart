@@ -52,7 +52,8 @@ class DashboardState extends State<Dashboard> {
               pinned: false,
               snap: false,
               floating: false,
-              expandedHeight: 480,
+              // expandedHeight: 480,
+              expandedHeight: mediaHeight*0.4,
               shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(bottomLeft: Radius.circular(80), bottomRight: Radius.circular(80)),
             ),
             leading: Button(

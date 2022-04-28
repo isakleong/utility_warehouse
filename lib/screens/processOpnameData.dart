@@ -249,38 +249,38 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(height: 30),
-                    // Row(
-                    //   children: [
-                    //     Container(
-                    //       child: TextView("Data Type", 2, color: Colors.white),
-                    //     ),
-                    //     SizedBox(width: 15),
-                    //     Expanded(
-                    //       child: Container(
-                    //         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    //         decoration: BoxDecoration(
-                    //           color: Colors.white, borderRadius: BorderRadius.circular(10)
-                    //         ),
-                    //         child: DropdownButton<String>(
-                    //           isExpanded: true,
-                    //           value: selectedDataType,
-                    //           onChanged: (String newValue) =>
-                    //             setState(() => selectedDataType = newValue),
-                    //           items: <String>['Stock Opname','Stock Opname Difference']
-                    //               .map<DropdownMenuItem<String>>(
-                    //                   (String value) => DropdownMenuItem<String>(
-                    //                         value: value,
-                    //                         child: TextView(value, 4, color: Colors.black),
-                    //                       ))
-                    //               .toList(),
-                    //           icon: Icon(Icons.keyboard_arrow_down),
-                    //           iconSize: 30,
-                    //           underline: SizedBox(),
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
+                    Row(
+                      children: [
+                        Container(
+                          child: TextView("Data Type", 2, color: Colors.white),
+                        ),
+                        SizedBox(width: 15),
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: Colors.white, borderRadius: BorderRadius.circular(10)
+                            ),
+                            child: DropdownButton<String>(
+                              isExpanded: true,
+                              value: selectedDataType,
+                              onChanged: (String newValue) =>
+                                setState(() => selectedDataType = newValue),
+                              items: <String>['Stock Opname','Stock Opname Difference']
+                                  .map<DropdownMenuItem<String>>(
+                                      (String value) => DropdownMenuItem<String>(
+                                            value: value,
+                                            child: TextView(value, 4, color: Colors.black),
+                                          ))
+                                  .toList(),
+                              icon: Icon(Icons.keyboard_arrow_down),
+                              iconSize: 30,
+                              underline: SizedBox(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                     SizedBox(height: 30),
                     Center(
                       child: Container(
@@ -362,129 +362,153 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                child: TextView("", 4),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(vertical: 10),
-                                child: Container(
-                                  child: TextView("Kepala Gudang", 4),
-                                ),
-                              ),
-                            ],
+                          Container(
+                            child: TextView("Kepala Gudang", 4),
                           ),
                           SizedBox(width: 30),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                child: TextView("", 4),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(vertical: 10),
-                                child: Container(
-                                  child: TextView(":", 4),
-                                ),
-                              ),
-                            ],
+                          Container(
+                            child: TextView(":", 4),
                           ),
                           SizedBox(width: 30),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                child: TextView("", 4),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(vertical: 10),
-                                child: Container(
-                                  child: TextView("Rahman Yuliansyah", 4),
-                                ),
-                              ),
-                            ],
+                          Expanded(
+                            child: Container(
+                              child: TextView("Rahman Yuliansyah", 4),
+                            ),
                           ),
                         ],
                       ),
+
+                      // comment because overflow (1)
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //   mainAxisSize: MainAxisSize.min,
+                      //   children: [
+                      //     Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         Container(
+                      //           child: TextView("", 4),
+                      //         ),
+                      //         Padding(
+                      //           padding: EdgeInsets.symmetric(vertical: 10),
+                      //           child: Container(
+                      //             child: TextView("Kepala Gudang", 4),
+                      //           ),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //     SizedBox(width: 30),
+                      //     Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         Container(
+                      //           child: TextView("", 4),
+                      //         ),
+                      //         Padding(
+                      //           padding: EdgeInsets.symmetric(vertical: 10),
+                      //           child: Container(
+                      //             child: TextView(":", 4),
+                      //           ),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //     SizedBox(width: 30),
+                      //     Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         Container(
+                      //           child: TextView("", 4),
+                      //         ),
+                      //         Padding(
+                      //           padding: EdgeInsets.symmetric(vertical: 10),
+                      //           child: Container(
+                      //             child: TextView("Rahman Yuliansyah", 4),
+                      //           ),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ],
+                      // ),
                       
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.symmetric(vertical: 10),
-                                child: Container(
-                                  child: TextView("Tipe Data", 4),
-                                ),
-                              ),
-                              Container(
-                                child: TextView("Kepala Gudang", 4, color: Colors.transparent),
-                              ),
-                            ],
-                          ),
-                          SizedBox(width: 30),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.symmetric(vertical: 10),
-                                child: Container(
-                                  child: TextView(":", 4),
-                                ),
-                              ),
-                              Container(
-                                child: TextView(":", 4, color: Colors.transparent),
-                              ),
-                            ],
-                          ),
-                          SizedBox(width: 30),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.symmetric(vertical: 10),
-                                child: Container(
-                                  height: 40,
-                                  child: DropdownButtonHideUnderline(
-                                    child: ButtonTheme(
-                                      alignedDropdown: true,
-                                      child: DropdownButton<String>(
-                                        dropdownColor: Colors.white,
-                                        value: selectedDataType,
-                                        icon: Icon(Icons.keyboard_arrow_down, color: config.grayColor),
-                                        onChanged: (newValue) {
-                                          setState(() {
-                                            selectedDataType = newValue;
-                                          });
-                                        },
-                                        items: <String>['Stock Opname','Stock Opname Difference']
-                                        .map<DropdownMenuItem<String>>((String value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value,
-                                            child: TextView(value, 4),
-                                          );
-                                        }).toList(),
-                                      ),
-                                    ),
-                                  ),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: config.darkOpacityBlueColor, width: 1.5),
-                                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                child: TextView("Rahman Yuliansyah", 4, color: Colors.transparent),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                      // comment because overflow (2)
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //   mainAxisSize: MainAxisSize.min,
+                      //   children: [
+                      //     Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         Padding(
+                      //           padding: EdgeInsets.symmetric(vertical: 10),
+                      //           child: Container(
+                      //             child: TextView("Tipe Data", 4),
+                      //           ),
+                      //         ),
+                      //         Container(
+                      //           child: TextView("Kepala Gudang", 4, color: Colors.transparent),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //     SizedBox(width: 30),
+                      //     Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         Padding(
+                      //           padding: EdgeInsets.symmetric(vertical: 10),
+                      //           child: Container(
+                      //             child: TextView(":", 4),
+                      //           ),
+                      //         ),
+                      //         Container(
+                      //           child: TextView(":", 4, color: Colors.transparent),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //     SizedBox(width: 30),
+                      //     Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         Padding(
+                      //           padding: EdgeInsets.symmetric(vertical: 10),
+                      //           child: Container(
+                      //             height: 40,
+                      //             child: DropdownButtonHideUnderline(
+                      //               child: ButtonTheme(
+                      //                 alignedDropdown: true,
+                      //                 child: DropdownButton<String>(
+                      //                   dropdownColor: Colors.white,
+                      //                   value: selectedDataType,
+                      //                   icon: Icon(Icons.keyboard_arrow_down, color: config.grayColor),
+                      //                   onChanged: (newValue) {
+                      //                     setState(() {
+                      //                       selectedDataType = newValue;
+                      //                     });
+                      //                   },
+                      //                   items: <String>['Stock Opname','Stock Opname Difference']
+                      //                   .map<DropdownMenuItem<String>>((String value) {
+                      //                     return DropdownMenuItem<String>(
+                      //                       value: value,
+                      //                       child: TextView(value, 4),
+                      //                     );
+                      //                   }).toList(),
+                      //                 ),
+                      //               ),
+                      //             ),
+                      //             decoration: BoxDecoration(
+                      //               border: Border.all(color: config.darkOpacityBlueColor, width: 1.5),
+                      //               borderRadius: BorderRadius.all(Radius.circular(8)),
+                      //             ),
+                      //           ),
+                      //         ),
+                      //         Container(
+                      //           child: TextView("Rahman Yuliansyah", 4, color: Colors.transparent),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ],
+                      // ),
+
+                      SizedBox(height: 30),
                       Center(
                         child: Button(
                           disable: false,
@@ -508,52 +532,160 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: List.generate(selectedHelperList.length,(index){
                           return Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                             child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.baseline,
+                              textBaseline: TextBaseline.ideographic,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      child: TextView("Helper "+(index+1).toString(), 4),
-                                    ),
-                                    Container(
-                                      child: TextView("Kepala Gudang", 4, color: Colors.transparent),
-                                    ),
-                                  ],
+                                Container(
+                                  child: TextView("Helper "+(index+1).toString(), 4),
                                 ),
                                 SizedBox(width: 30),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      child: TextView(":", 4),
-                                    ),
-                                    Container(
-                                      child: TextView("", 4),
-                                    ),
-                                  ],
+                                Container(
+                                  child: TextView(":", 4),
                                 ),
                                 SizedBox(width: 30),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      child: TextView(selectedHelperList[index], 4),
-                                    ),
-                                    Container(
-                                      child: TextView("", 4),
-                                    ),
-                                  ],
+                                Expanded(
+                                  // flex: 2,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                        child: TextView(selectedHelperList[index], 4),
+                                      ),
+                                    ],
+                                  ),
                                 ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      RawMaterialButton(
+                                        onPressed: () {},
+                                        elevation: 2.0,
+                                        fillColor: config.darkOpacityBlueColor,
+                                        child: Icon(Icons.close, color: Colors.white),
+                                        padding: EdgeInsets.all(3),
+                                        shape: CircleBorder(),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                // Expanded(child: Container())
                               ],
                             ),
                           );
                         }),
                       )
+
+                      // comment because overflow (3)
+                      // Column(
+                      //   crossAxisAlignment: CrossAxisAlignment.start,
+                      //   children: List.generate(selectedHelperList.length,(index){
+                      //     return Padding(
+                      //       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      //       child: Row(
+                      //         crossAxisAlignment: CrossAxisAlignment.baseline,
+                      //         textBaseline: TextBaseline.ideographic,
+                      //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //         mainAxisSize: MainAxisSize.min,
+                      //         children: [
+                      //           // TextView("Helper "+(index+1).toString(), 4),
+                      //           // SizedBox(width: 30),
+                      //           // TextView(":", 4),
+                      //           // SizedBox(width: 30),
+                      //           // Expanded(
+                      //           //   flex: 2,
+                      //           //   child: TextView(selectedHelperList[index]+"Imanuel Putra Radja Arigagaadasdasdadsdadsdadsfsfsfsfsfsfsfsfsdaweqweasdadh", 4)
+                      //           // ),
+                      //           // Container(
+                      //           //   decoration: BoxDecoration(
+                      //           //     border: Border.all(color: Colors.red[500]),
+                      //           //     borderRadius: BorderRadius.all(Radius.circular(20))
+                      //           //   ),
+                      //           //   child: Icon(Icons.close, color: Colors.redAccent),
+                      //           // ),
+                      //           // Expanded(child: Container())
+                                
+                      //           Column(
+                      //             crossAxisAlignment: CrossAxisAlignment.start,
+                      //             mainAxisSize: MainAxisSize.min,
+                      //             children: [
+                      //               Container(
+                      //                 child: TextView("Helper "+(index+1).toString(), 4),
+                      //               ),
+                      //               Container(
+                      //                 child: TextView("Kepala Gudang", 4, color: Colors.transparent),
+                      //               ),
+                      //             ],
+                      //           ),
+                      //           SizedBox(width: 30),
+                      //           Column(
+                      //             crossAxisAlignment: CrossAxisAlignment.start,
+                      //             mainAxisSize: MainAxisSize.min,
+                      //             children: [
+                      //               Container(
+                      //                 child: TextView(":", 4),
+                      //               ),
+                      //             ],
+                      //           ),
+                      //           SizedBox(width: 30),
+                      //           Expanded(
+                      //             flex: 2,
+                      //             child: Column(
+                      //               crossAxisAlignment: CrossAxisAlignment.start,
+                      //               mainAxisSize: MainAxisSize.min,
+                      //               children: [
+                      //                 Container(
+                      //                   child: TextView(selectedHelperList[index], 4),
+                      //                 ),
+                      //               ],
+                      //             ),
+                      //           ),
+                      //           Column(
+                      //             crossAxisAlignment: CrossAxisAlignment.start,
+                      //             mainAxisSize: MainAxisSize.min,
+                      //             children: [
+                      //               RawMaterialButton(
+                      //                 onPressed: () {},
+                      //                 elevation: 2.0,
+                      //                 fillColor: config.darkOpacityBlueColor,
+                      //                 child: Icon(Icons.close, color: Colors.white),
+                      //                 padding: EdgeInsets.all(3),
+                      //                 shape: CircleBorder(),
+                      //               )
+                      //               // ClipOval(
+                      //               //   child: Material(
+                      //               //     color: config.darkOpacityBlueColor,
+                      //               //     child: InkWell(
+                      //               //       splashColor: Colors.white,
+                      //               //       onTap: () {},
+                      //               //       child: Icon(Icons.close),
+                      //               //     ),
+                      //               //   ),
+                      //               // )  
+                                      
+                      //               // InkWell(
+                      //               //   child: Container(
+                      //               //     decoration: BoxDecoration(
+                      //               //       border: Border.all(color: Colors.red[500]),
+                      //               //       borderRadius: BorderRadius.all(Radius.circular(20))
+                      //               //     ),
+                      //               //     child: Icon(Icons.close, color: Colors.redAccent),
+                      //               //   ),
+                      //               // ),
+                      //             ],
+                      //           ),
+                      //           Expanded(child: Container())
+                      //         ],
+                      //       ),
+                      //     );
+                      //   }),
+                      // )
                       :
                       Center(
                         child: Column(
