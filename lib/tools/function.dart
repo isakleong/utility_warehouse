@@ -106,7 +106,7 @@ Future<String> connectionTest(String url, BuildContext context) async {
   final request = new Request('HEAD', Uri.parse(url))..followRedirects = false;
   try {
     final response = await client.send(request).timeout(
-      Duration(seconds: 10),
+      Duration(seconds: 3),
         onTimeout: () {
           // time has run out, do what you wanted to do
           return null;

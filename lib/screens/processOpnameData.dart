@@ -239,103 +239,125 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
             width: mediaWidth,
             color: Color(0xFF1A2980),
           ),
-          Container(
-            height: mediaHeight*0.5,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 25),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(height: 30),
-                    Row(
-                      children: [
-                        Container(
-                          child: TextView("Data Type", 2, color: Colors.white),
-                        ),
-                        SizedBox(width: 15),
-                        Expanded(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                            decoration: BoxDecoration(
-                              color: Colors.white, borderRadius: BorderRadius.circular(10)
-                            ),
-                            child: DropdownButton<String>(
-                              isExpanded: true,
-                              value: selectedDataType,
-                              onChanged: (String newValue) =>
-                                setState(() => selectedDataType = newValue),
-                              items: <String>['Stock Opname','Stock Opname Difference']
-                                  .map<DropdownMenuItem<String>>(
-                                      (String value) => DropdownMenuItem<String>(
-                                            value: value,
-                                            child: TextView(value, 4, color: Colors.black),
-                                          ))
-                                  .toList(),
-                              icon: Icon(Icons.keyboard_arrow_down),
-                              iconSize: 30,
-                              underline: SizedBox(),
+          SafeArea(
+            child: Container(
+              height: mediaHeight*0.5,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        child: Material(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(50)
+                            )
+                          ),
+                          child: InkWell(
+                            onTap: (){
+                              Navigator.of(context).pop();
+                            },
+                            highlightColor: Colors.blue.withOpacity(0.4),
+                            splashColor: Colors.green.withOpacity(0.5),
+                            borderRadius: BorderRadius.circular(50),
+                            child: Padding(
+                              padding: EdgeInsets.all(8),
+                              child: Icon(Icons.arrow_back, color: Colors.black, size: 30),
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                    SizedBox(height: 30),
-                    Center(
-                      child: Container(
-                        child: TextView("Urutan Hari Ke", 2, color: Colors.white),
                       ),
-                    ),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: List.generate(20, (index){
-                          return Container(
-                            key: _key[index],
-                            height: 200,
-                            width: 100,
-                            margin: EdgeInsets.only(top: 15, left: 10, right: 10),
-                            decoration: new BoxDecoration(
-                              color: selectedDay[index],
-                              border: Border.all(color: Colors.black, width: 0.0),
-                              borderRadius: new BorderRadius.all(Radius.elliptical(100, 100)),
-                            ),
-                            child: InkWell(
-                              onTap: (){
-                                setState(() {
-                                  for(int i = 0; i < 20; i++){
-                                    if(i!=index) {
-                                      selectedDay[i] = Color(0xFF0066ff);
-                                    }
-                                  }
-                                  selectedDay[index] = Colors.white;
-                                  Scrollable.ensureVisible(_key[index].currentContext);
-                                });
-                              },
-                              child: Column(
-                                children: [
-                                  (index+1) >= 10 ? SizedBox(height: 7) : Container(),
-                                  Container(
-                                    padding: (index+1) >= 10 ? EdgeInsets.all(18) : EdgeInsets.all(20),
-                                    decoration: new BoxDecoration(
-                                      color: Colors.white,
-                                      shape: BoxShape.circle,
-                                      border: Border.all(color: Colors.black, width: 0.0),
-                                    ),
-                                    child: Text((index+1).toString(), style: TextStyle(fontSize: (index+1) >= 10 ? 14 : 20)),
-                                  ),
-                                  // Container(
-                                  //   child: TextView("Sudah".toString(), 1, color: Colors.white)
-                                  // )
-                                ],
+                      SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Container(
+                            child: TextView("Data Type", 2, color: Colors.white),
+                          ),
+                          SizedBox(width: 15),
+                          Expanded(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                color: Colors.white, borderRadius: BorderRadius.circular(10)
                               ),
-                            )
-                          );
-                        }),
+                              child: DropdownButton<String>(
+                                isExpanded: true,
+                                value: selectedDataType,
+                                onChanged: (String newValue) =>
+                                  setState(() => selectedDataType = newValue),
+                                items: <String>['Stock Opname','Stock Opname Difference']
+                                    .map<DropdownMenuItem<String>>(
+                                        (String value) => DropdownMenuItem<String>(
+                                              value: value,
+                                              child: TextView(value, 4, color: Colors.black),
+                                            ))
+                                    .toList(),
+                                icon: Icon(Icons.keyboard_arrow_down),
+                                iconSize: 30,
+                                underline: SizedBox(),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+                      SizedBox(height: 30),
+                      Center(
+                        child: Container(
+                          child: TextView("Urutan Hari Ke", 2, color: Colors.white),
+                        ),
+                      ),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: List.generate(20, (index){
+                            return Container(
+                              key: _key[index],
+                              height: 200,
+                              width: 100,
+                              margin: EdgeInsets.only(top: 15, left: 10, right: 10),
+                              decoration: new BoxDecoration(
+                                color: selectedDay[index],
+                                border: Border.all(color: Colors.black, width: 0.0),
+                                borderRadius: new BorderRadius.all(Radius.elliptical(100, 100)),
+                              ),
+                              child: InkWell(
+                                onTap: (){
+                                  setState(() {
+                                    for(int i = 0; i < 20; i++){
+                                      if(i!=index) {
+                                        selectedDay[i] = Color(0xFF0066ff);
+                                      }
+                                    }
+                                    selectedDay[index] = Colors.white;
+                                    Scrollable.ensureVisible(_key[index].currentContext);
+                                  });
+                                },
+                                child: Column(
+                                  children: [
+                                    (index+1) >= 10 ? SizedBox(height: 7) : Container(),
+                                    Container(
+                                      padding: (index+1) >= 10 ? EdgeInsets.all(18) : EdgeInsets.all(20),
+                                      decoration: new BoxDecoration(
+                                        color: Colors.white,
+                                        shape: BoxShape.circle,
+                                        border: Border.all(color: Colors.black, width: 0.0),
+                                      ),
+                                      child: Text((index+1).toString(), style: TextStyle(fontSize: (index+1) >= 10 ? 14 : 20)),
+                                    ),
+                                    // Container(
+                                    //   child: TextView("Sudah".toString(), 1, color: Colors.white)
+                                    // )
+                                  ],
+                                ),
+                              )
+                            );
+                          }),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
