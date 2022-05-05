@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 // import 'package:flutter/services.dart';
 
 import 'package:utility_warehouse/screens/routing.dart';
@@ -13,6 +14,11 @@ void main() async {
   //     DeviceOrientation.portraitUp,
   //     DeviceOrientation.portraitDown,
   //   ]);
+
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    //ensures portrait at all times. you can override this if necessary
+  ]);
 
   HttpOverrides.global = MyHttpOverrides();
   

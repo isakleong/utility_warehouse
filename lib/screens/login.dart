@@ -50,7 +50,7 @@ class LoginState extends State<Login> {
   final confirmPasswordController = TextEditingController();
 
   String dropdownValue = 'One';
-  String selectedDropdownValue = "Warehouse Manager";
+  String selectedDropdownValue = "Kepala Gudang";
   List<DropdownMenuItem<String>> userTypeList = [];
   final _dropdownFormKey = GlobalKey<FormState>();
 
@@ -63,6 +63,10 @@ class LoginState extends State<Login> {
 
   @override
   void initState() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     super.initState();
     // SystemChrome.setPreferredOrientations([
     //   DeviceOrientation.landscapeRight,
@@ -84,8 +88,8 @@ class LoginState extends State<Login> {
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
-    // usernameController.text = "000-WH-MG9";
-    // passwordController.text = "Gustiawan22";
+    usernameController.text = "23A-KG";
+    passwordController.text = "23A.0422";
 
     setState(() {
       userTypeList = [

@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:utility_warehouse/models/userModel.dart';
 import 'package:utility_warehouse/settings/configuration.dart';
 import 'package:utility_warehouse/tools/function.dart';
@@ -24,6 +25,10 @@ class DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     setState(() {
       userModel = widget.userModel;
     });
@@ -153,7 +158,7 @@ class DashboardState extends State<Dashboard> {
                             } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="stockopname") {
                               // Navigator.pushNamed(context, "stockopname");
                             } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="stockopnamedifference") {
-                              // Navigator.pushNamed(context, "stockopnamedifference");
+                              Navigator.pushNamed(context, "stockOpnameDifference");
                             }
                           },
                           child: Padding(

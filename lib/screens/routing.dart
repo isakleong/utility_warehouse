@@ -7,6 +7,7 @@ import 'package:utility_warehouse/screens/processOpnameData.dart';
 import 'package:utility_warehouse/screens/setting.dart';
 import 'package:utility_warehouse/screens/signUp.dart';
 import 'package:utility_warehouse/screens/splashscreen.dart';
+import 'package:utility_warehouse/screens/stockOpnameDifference.dart';
 
 MaterialPageRoute routing(int mode, int id, List<String> pages, RouteSettings settings) {
   switch (pages[0]) {
@@ -30,6 +31,9 @@ MaterialPageRoute routing(int mode, int id, List<String> pages, RouteSettings se
       break;
     case 'processOpnameData':
       return MaterialPageRoute(builder: (context)=> ProcessOpnameData());
+      break;
+    case 'stockOpnameDifference':
+      return MaterialPageRoute(builder: (context)=> StockOpnameDifference());
       break;
     case 'pick':
       return MaterialPageRoute(builder: (context)=> PickPageVertical());

@@ -51,6 +51,10 @@ class SplashScreenState extends State<SplashScreen> {
   Timer timer;
   @override
   void initState() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     super.initState();
     // SystemChrome.setPreferredOrientations([
     //   DeviceOrientation.landscapeRight,
