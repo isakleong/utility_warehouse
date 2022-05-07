@@ -8,6 +8,7 @@ import 'package:http/http.dart' show Client;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 // import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:path_provider/path_provider.dart';
@@ -73,10 +74,11 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
     super.initState();
     this._sizer = ColumnSizer();
     SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
     ]);
     employees = getEmployeeData();
     employeeDataSource = EmployeeDataSource(employeeData: employees);
+    // employeeDataSource = EmployeeDataSource(employees, 5);
   }
 
   @override
@@ -94,195 +96,23 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
 
   List<Employee> getEmployeeData() {
     return [
-      Employee("AGEM005K010", "GARIES GOLD Emulsion 010", "1.2.1.1", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
+      Employee("AGEM005K010 LOREM LOREM LOREM LOREM LOREM IPSUM", "ARIES GOLD Emulsion 110", "1.2.1.1", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
       Employee("AGEM005K102", "ARIES GOLD Emulsion 102", "1.2.1.1", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
-      Employee("GIMO005K220", "GIANT Mortar 220", "1.2.1.1", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
-      Employee("GIMO005K220", "GIANT Mortar 220", "1.2.1.1", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
-      Employee("GIMO005K220", "GIANT Mortar 220", "1.2.1.1", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
-      Employee("GIMO005K220", "GIANT Mortar 220", "1.2.1.1", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
-      Employee("GIMO005K220", "GIANT Mortar 220", "1.2.1.1", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
-      Employee("GIMO005K220", "GIANT Mortar 220", "1.2.1.1", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
-      Employee("GIMO005K220", "GIANT Mortar 220", "1.2.1.1", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
-      Employee("GIMO005K220", "GIANT Mortar 220", "1.2.1.1", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
-      Employee("GIMO005K220", "GIANT Mortar 220", "1.2.1.1", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
-      Employee("GIMO005K220", "GIANT Mortar 220", "1.2.1.1", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
-      Employee("GIMO005K220", "GIANT Mortar 220", "1.2.1.1", 6, "SAK", "ISAK", "107", "5", "", "", "", ""),
+      Employee("GIMO005K220", "GIANT Mortar 220 pck", "1.2.1.1", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
+      Employee("GIMO005K220", "GIANT Mortar 220 alk", "1.2.1.1", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
+      Employee("GIMO005K220", "GIANT Mortar 220 bro", "1.2.1.1", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
+      Employee("GIMO005K220", "GIANT Mortar 220 der", "1.2.1.1", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
+      Employee("GIMO005K220", "GIANT Mortar 220 van", "1.2.1.1", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
+      Employee("GIMO005K220", "GIANT Mortar 220 hmm", "1.2.1.1", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
+      Employee("GIMO005K220", "GIANT Mortar 220 huhu", "1.2.1.1", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
+      Employee("GIMO005K220", "GIANT Mortar 220 haha", "1.2.1.1", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
+      Employee("GIMO005K220", "GIANT Mortar 220 wew", "1.2.1.1", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
+      Employee("GIMO005K220", "GIANT Mortar 220 end", "1.2.1.1", 6, "SAK", "ISAK", "107", "5", "", "", "", ""),
     ];
-  }
-
-  Widget _buildDataGrid(BoxConstraints constraint) {
-    return  SfDataGrid(
-      source: employeeDataSource,
-      columnWidthMode: ColumnWidthMode.fitByColumnName,
-      columnSizer: this._sizer,
-      gridLinesVisibility: GridLinesVisibility.horizontal,
-      headerGridLinesVisibility: GridLinesVisibility.horizontal,
-      onQueryRowHeight: (RowHeightDetails details) {
-        if (details.rowIndex == 0)
-          return details.rowHeight;
-        else
-          return details.getIntrinsicRowHeight(details.rowIndex);
-      },
-      shrinkWrapColumns: true,
-      shrinkWrapRows: true,
-      columns: <GridColumn>[
-        GridColumn(
-          autoFitPadding: EdgeInsets.all(0),
-          columnName: 'itemNo',
-          // columnWidthMode: ColumnWidthMode.fitByCellValue,
-          label: Container(
-            alignment: Alignment.center,
-            child: Text('Item\nNo', softWrap: true, overflow: TextOverflow.visible),
-          )
-        ),
-        GridColumn(
-          autoFitPadding: EdgeInsets.all(0),
-          columnName: 'binCode',
-          label: Container(
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              border: Border(
-                left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
-              )
-            ),
-            child: Text('Bin Code', softWrap: true, overflow: TextOverflow.visible)
-          )
-        ),
-        GridColumn(
-          autoFitPadding: EdgeInsets.all(0),
-          columnName: 'itemDescription',
-          label: Container(
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              border: Border(
-                left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
-              )
-            ),
-            child: Text('Item\nDescription',  softWrap: true, overflow: TextOverflow.visible),
-          )
-        ),
-        GridColumn(
-          autoFitPadding: EdgeInsets.all(0),
-          columnName: 'coli',
-          label: Container(
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              border: Border(
-                left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
-              )
-            ),
-            child: Text('Coli', softWrap: true, overflow: TextOverflow.visible)
-          )
-        ),
-        GridColumn(
-          autoFitPadding: EdgeInsets.all(0),
-          columnName: 'uom',
-          label: Container(
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              border: Border(
-                left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
-              )
-            ),
-            child: Text('Uom', softWrap: true, overflow: TextOverflow.visible)
-          )
-        ),
-        GridColumn(
-          autoFitPadding: EdgeInsets.all(0),
-          columnName: 'namaPIC',
-          label: Container(
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              border: Border(
-                left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
-              )
-            ),
-            child: Text('Nama', softWrap: true, overflow: TextOverflow.visible)
-          )
-        ),
-        GridColumn(
-          autoFitPadding: EdgeInsets.all(0),
-          columnName: 'qtySTODs',
-          label: Container(
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              border: Border(
-                left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
-              )
-            ),
-            child: Text('Qty\nSTO\nDS', softWrap: true, overflow: TextOverflow.visible)
-          )
-        ),
-        GridColumn(
-          autoFitPadding: EdgeInsets.all(0),
-          columnName: 'qtySTOUom',
-          label: Container(
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              border: Border(
-                left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
-              )
-            ),
-            child: Text('Qty\nSTO\nUom', softWrap: true, overflow: TextOverflow.visible)
-          )
-        ),
-        GridColumn(
-          autoFitPadding: EdgeInsets.all(0),
-          columnName: 'qtySTODs2',
-          label: Container(
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              border: Border(
-                left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
-              )
-            ),
-            child: Text('Qty\nSTO\nDS 2', softWrap: true, overflow: TextOverflow.visible)
-          )
-        ),
-        GridColumn(
-          autoFitPadding: EdgeInsets.all(0),
-          columnName: 'qtySTOUom2',
-          label: Container(
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              border: Border(
-                left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
-              )
-            ),
-            child: Text('Qty\nSTO\nUom 2', softWrap: true, overflow: TextOverflow.visible)
-          )
-        ),
-        GridColumn(
-          autoFitPadding: EdgeInsets.all(0),
-          columnName: 'qtySTODsFinal',
-          label: Container(
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              border: Border(
-                left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
-              )
-            ),
-            child: Text('Qty\nSTO\nDS Final', softWrap: true, overflow: TextOverflow.visible)
-          )
-        ),
-        GridColumn(
-          autoFitPadding: EdgeInsets.all(0),
-          columnName: 'qtySTOUomFinal',
-          label: Container(
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              border: Border(
-                left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
-              )
-            ),
-            child: Text('Qty\nSTO\nUom Final', softWrap: true, overflow: TextOverflow.visible)
-          )
-        ),
-      ],
-    );
   }
   
   final CustomColumnSizer _customColumnSizer = CustomColumnSizer();
+
   @override
   Widget build(BuildContext context) {
     Configuration config = Configuration.of(context);
@@ -291,6 +121,15 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
     double mediaHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      bottomNavigationBar: Container(
+        width: mediaWidth,
+        child: Button(
+          disable: false,
+          child: TextView('Masuk', 3, color: Colors.white, caps: true),
+          onTap: () {
+          },
+        ),
+      ),
       body: WillPopScope(
         onWillPop: (){
           Navigator.of(context).pop();
@@ -306,27 +145,201 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
 
             // SafeArea(
             //   child: Card(
-            //     margin: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
             //     child: LayoutBuilder(builder: (context, constraint) {
             //       return Column(
             //         children: [
             //           SizedBox(
-            //               height: constraint.maxHeight - 60,
-            //               width: constraint.maxWidth,
-            //               child: _buildDataGrid(constraint)),
+            //             height: constraint.maxHeight - 60,
+            //             width: constraint.maxWidth,
+            //             child: SingleChildScrollView(
+            //               scrollDirection: Axis.horizontal,
+            //               child: SfDataGrid(
+            //                 source: employeeDataSource,
+            //                 columnWidthMode: ColumnWidthMode.auto,
+            //                 columnSizer: this._sizer,
+            //                 gridLinesVisibility: GridLinesVisibility.horizontal,
+            //                 headerGridLinesVisibility: GridLinesVisibility.horizontal,
+            //                 onQueryRowHeight: (RowHeightDetails details) {
+            //                   if (details.rowIndex == 0)
+            //                     return details.rowHeight;
+            //                   else
+            //                     return details.getIntrinsicRowHeight(details.rowIndex);
+            //                 },
+            //                 shrinkWrapColumns: true,
+            //                 shrinkWrapRows: true,
+            //                 columns: <GridColumn>[
+            //                   GridColumn(
+            //                     autoFitPadding: EdgeInsets.all(0),
+            //                     columnName: 'itemNo',
+            //                     // columnWidthMode: ColumnWidthMode.fitByCellValue,
+            //                     label: Container(
+            //                       alignment: Alignment.center,
+            //                       child: TextView('Item\nNo', 6, align: TextAlign.center),
+            //                     )
+            //                   ),
+            //                   GridColumn(
+            //                     autoFitPadding: EdgeInsets.all(0),
+            //                     columnName: 'binCode',
+            //                     label: Container(
+            //                       alignment: Alignment.center,
+            //                       decoration: BoxDecoration(
+            //                         border: Border(
+            //                           left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
+            //                         )
+            //                       ),
+            //                       child: TextView('Bin Code', 6, align: TextAlign.center)
+            //                     )
+            //                   ),
+            //                   GridColumn(
+            //                     autoFitPadding: EdgeInsets.all(0),
+            //                     columnName: 'itemDescription',
+            //                     label: Container(
+            //                       alignment: Alignment.center,
+            //                       decoration: BoxDecoration(
+            //                         border: Border(
+            //                           left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
+            //                         )
+            //                       ),
+            //                       child: TextView('Item\nDescription',  6, align: TextAlign.center)
+            //                     )
+            //                   ),
+            //                   GridColumn(
+            //                     autoFitPadding: EdgeInsets.all(0),
+            //                     columnName: 'coli',
+            //                     label: Container(
+            //                       alignment: Alignment.center,
+            //                       decoration: BoxDecoration(
+            //                         border: Border(
+            //                           left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
+            //                         )
+            //                       ),
+            //                       child: TextView('Coli', 6, align: TextAlign.center)
+            //                     )
+            //                   ),
+            //                   GridColumn(
+            //                     autoFitPadding: EdgeInsets.all(0),
+            //                     columnName: 'uom',
+            //                     label: Container(
+            //                       alignment: Alignment.center,
+            //                       decoration: BoxDecoration(
+            //                         border: Border(
+            //                           left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
+            //                         )
+            //                       ),
+            //                       child: TextView('Uom', 6, align: TextAlign.center)
+            //                     )
+            //                   ),
+            //                   GridColumn(
+            //                     autoFitPadding: EdgeInsets.all(0),
+            //                     columnName: 'namaPIC',
+            //                     label: Container(
+            //                       alignment: Alignment.center,
+            //                       decoration: BoxDecoration(
+            //                         border: Border(
+            //                           left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
+            //                         )
+            //                       ),
+            //                       child: TextView('Nama', 6, align: TextAlign.center)
+            //                     )
+            //                   ),
+            //                   GridColumn(
+            //                     autoFitPadding: EdgeInsets.all(0),
+            //                     columnName: 'qtySTODs',
+            //                     label: Container(
+            //                       alignment: Alignment.center,
+            //                       decoration: BoxDecoration(
+            //                         border: Border(
+            //                           left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
+            //                         )
+            //                       ),
+            //                       child: TextView('Qty\nSTO\nDS', 6, align: TextAlign.center)
+            //                     )
+            //                   ),
+            //                   GridColumn(
+            //                     autoFitPadding: EdgeInsets.all(0),
+            //                     columnName: 'qtySTOUom',
+            //                     label: Container(
+            //                       alignment: Alignment.center,
+            //                       decoration: BoxDecoration(
+            //                         border: Border(
+            //                           left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
+            //                         )
+            //                       ),
+            //                       child: TextView('Qty\nSTO\nUom', 6, align: TextAlign.center)
+            //                     )
+            //                   ),
+            //                   GridColumn(
+            //                     autoFitPadding: EdgeInsets.all(0),
+            //                     columnName: 'qtySTODs2',
+            //                     label: Container(
+            //                       alignment: Alignment.center,
+            //                       decoration: BoxDecoration(
+            //                         border: Border(
+            //                           left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
+            //                         )
+            //                       ),
+            //                       child: TextView('Qty\nSTO\nDS 2', 6, align: TextAlign.center)
+            //                     )
+            //                   ),
+            //                   GridColumn(
+            //                     autoFitPadding: EdgeInsets.all(0),
+            //                     columnName: 'qtySTOUom2',
+            //                     label: Container(
+            //                       alignment: Alignment.center,
+            //                       decoration: BoxDecoration(
+            //                         border: Border(
+            //                           left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
+            //                         )
+            //                       ),
+            //                       child: TextView('Qty\nSTO\nUom 2', 6, align: TextAlign.center)
+            //                     )
+            //                   ),
+            //                   GridColumn(
+            //                     autoFitPadding: EdgeInsets.all(0),
+            //                     columnName: 'qtySTODsFinal',
+            //                     label: Container(
+            //                       alignment: Alignment.center,
+            //                       decoration: BoxDecoration(
+            //                         border: Border(
+            //                           left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
+            //                         )
+            //                       ),
+            //                       child: TextView('Qty\nSTO\nDS Final', 6, align: TextAlign.center)
+            //                     )
+            //                   ),
+            //                   GridColumn(
+            //                     autoFitPadding: EdgeInsets.all(0),
+            //                     columnName: 'qtySTOUomFinal',
+            //                     label: Container(
+            //                       alignment: Alignment.center,
+            //                       decoration: BoxDecoration(
+            //                         border: Border(
+            //                           left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
+            //                         )
+            //                       ),
+            //                       child: TextView('Qty\nSTO\nUom Final', 6, align: TextAlign.center)
+            //                     )
+            //                   ),
+            //                 ]
+            //               ),
+            //             )
+            //           ),
             //           Container(
-            //               height: 60,
-            //               child: SfDataPager(
-            //                 delegate: employeeDataSource,
-            //                 pageCount: employees.length / 3,
-            //                 direction: Axis.horizontal,
-            //               ))
-            //         ]
+            //             // height: 60,
+            //             color: Colors.white,
+            //             child: SfDataPager(
+            //               delegate: employeeDataSource,
+            //               direction: Axis.horizontal,
+            //               pageCount: (employees.length / 5).round().toDouble(),
+            //             ),
+            //           )
+            //         ],
             //       );
             //     }),
             //   ),
             // ),
-
+            
+            ///original
             SafeArea(
               child: Card(
                 margin: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
@@ -338,7 +351,7 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
                   child: SfDataGrid(
                     source: employeeDataSource,
                     columnWidthMode: ColumnWidthMode.fitByColumnName,
-                    // columnWidthMode: ColumnWidthMode.fitByCellValue,
+                    // columnWidthMode: ColumnWidthMode.auto,
                     columnSizer: this._sizer,
                     gridLinesVisibility: GridLinesVisibility.horizontal,
                     headerGridLinesVisibility: GridLinesVisibility.horizontal,
@@ -348,25 +361,33 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
                       else
                         return details.getIntrinsicRowHeight(details.rowIndex);
                     },
-                    // onQueryRowHeight: (details) {
-                    //   return details.getIntrinsicRowHeight(details.rowIndex);
-                    //   //  return _sizer.getAutoRowHeight(details.rowIndex);
-                    //   //  return details.rowHeight;
-                    // },
-                    shrinkWrapColumns: true,
+                    // shrinkWrapColumns: true,
                     shrinkWrapRows: true,
+                    footerFrozenRowsCount: 1,
+                    footer: Container(
+                      color: Colors.grey[400],
+                      child: Center(
+                        child: Button(
+                          disable: false,
+                          child: TextView('Upload', 3, color: Colors.white, caps: true),
+                          onTap: () {
+
+                          },
+                        ),
+                      )
+                    ),
                     columns: <GridColumn>[
                       GridColumn(
-                        autoFitPadding: EdgeInsets.all(0),
+                        autoFitPadding: EdgeInsets.all(8),
                         columnName: 'itemNo',
                         // columnWidthMode: ColumnWidthMode.fitByCellValue,
                         label: Container(
                           alignment: Alignment.center,
-                          child: Text('Item\nNo', softWrap: true, overflow: TextOverflow.visible),
+                          child: TextView('Item\nNo', 6, align: TextAlign.center),
                         )
                       ),
                       GridColumn(
-                        autoFitPadding: EdgeInsets.all(0),
+                        autoFitPadding: EdgeInsets.all(8),
                         columnName: 'binCode',
                         label: Container(
                           alignment: Alignment.center,
@@ -375,11 +396,11 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: Text('Bin Code', softWrap: true, overflow: TextOverflow.visible)
+                          child: TextView('Bin Code', 6, align: TextAlign.center)
                         )
                       ),
                       GridColumn(
-                        autoFitPadding: EdgeInsets.all(0),
+                        autoFitPadding: EdgeInsets.all(8),
                         columnName: 'itemDescription',
                         label: Container(
                           alignment: Alignment.center,
@@ -388,11 +409,11 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: Text('Item\nDescription',  softWrap: true, overflow: TextOverflow.visible),
+                          child: TextView('Item\nDescription',  6, align: TextAlign.center)
                         )
                       ),
                       GridColumn(
-                        autoFitPadding: EdgeInsets.all(0),
+                        autoFitPadding: EdgeInsets.all(8),
                         columnName: 'coli',
                         label: Container(
                           alignment: Alignment.center,
@@ -401,11 +422,11 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: Text('Coli', softWrap: true, overflow: TextOverflow.visible)
+                          child: TextView('Coli', 6, align: TextAlign.center)
                         )
                       ),
                       GridColumn(
-                        autoFitPadding: EdgeInsets.all(0),
+                        autoFitPadding: EdgeInsets.all(8),
                         columnName: 'uom',
                         label: Container(
                           alignment: Alignment.center,
@@ -414,11 +435,11 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: Text('Uom', softWrap: true, overflow: TextOverflow.visible)
+                          child: TextView('Uom', 6, align: TextAlign.center)
                         )
                       ),
                       GridColumn(
-                        autoFitPadding: EdgeInsets.all(0),
+                        autoFitPadding: EdgeInsets.all(8),
                         columnName: 'namaPIC',
                         label: Container(
                           alignment: Alignment.center,
@@ -427,11 +448,11 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: Text('Nama', softWrap: true, overflow: TextOverflow.visible)
+                          child: TextView('Nama', 6, align: TextAlign.center)
                         )
                       ),
                       GridColumn(
-                        autoFitPadding: EdgeInsets.all(0),
+                        autoFitPadding: EdgeInsets.all(8),
                         columnName: 'qtySTODs',
                         label: Container(
                           alignment: Alignment.center,
@@ -440,11 +461,11 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: Text('Qty\nSTO\nDS', softWrap: true, overflow: TextOverflow.visible)
+                          child: TextView('Qty\nSTO\nDS', 6, align: TextAlign.center)
                         )
                       ),
                       GridColumn(
-                        autoFitPadding: EdgeInsets.all(0),
+                        autoFitPadding: EdgeInsets.all(8),
                         columnName: 'qtySTOUom',
                         label: Container(
                           alignment: Alignment.center,
@@ -453,11 +474,11 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: Text('Qty\nSTO\nUom', softWrap: true, overflow: TextOverflow.visible)
+                          child: TextView('Qty\nSTO\nUom', 6, align: TextAlign.center)
                         )
                       ),
                       GridColumn(
-                        autoFitPadding: EdgeInsets.all(0),
+                        autoFitPadding: EdgeInsets.all(8),
                         columnName: 'qtySTODs2',
                         label: Container(
                           alignment: Alignment.center,
@@ -466,11 +487,11 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: Text('Qty\nSTO\nDS 2', softWrap: true, overflow: TextOverflow.visible)
+                          child: TextView('Qty\nSTO\nDS 2', 6, align: TextAlign.center)
                         )
                       ),
                       GridColumn(
-                        autoFitPadding: EdgeInsets.all(0),
+                        autoFitPadding: EdgeInsets.all(8),
                         columnName: 'qtySTOUom2',
                         label: Container(
                           alignment: Alignment.center,
@@ -479,11 +500,11 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: Text('Qty\nSTO\nUom 2', softWrap: true, overflow: TextOverflow.visible)
+                          child: TextView('Qty\nSTO\nUom 2', 6, align: TextAlign.center)
                         )
                       ),
                       GridColumn(
-                        autoFitPadding: EdgeInsets.all(0),
+                        autoFitPadding: EdgeInsets.all(8),
                         columnName: 'qtySTODsFinal',
                         label: Container(
                           alignment: Alignment.center,
@@ -492,11 +513,11 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: Text('Qty\nSTO\nDS Final', softWrap: true, overflow: TextOverflow.visible)
+                          child: TextView('Qty\nSTO\nDS Final', 6, align: TextAlign.center)
                         )
                       ),
                       GridColumn(
-                        autoFitPadding: EdgeInsets.all(0),
+                        autoFitPadding: EdgeInsets.all(8),
                         columnName: 'qtySTOUomFinal',
                         label: Container(
                           alignment: Alignment.center,
@@ -505,7 +526,7 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: Text('Qty\nSTO\nUom Final', softWrap: true, overflow: TextOverflow.visible)
+                          child: TextView('Qty\nSTO\nUom Final', 6, align: TextAlign.center)
                         )
                       ),
                     ],
@@ -906,15 +927,6 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
   }
 }
 
-// class Employee {
-//   Employee(this.id, this.name, this.designation, this.salary);
-
-//   final int id;
-//   final String name;
-//   final String designation;
-//   final int salary;
-// }
-
 class Employee {
   Employee(this.itemNo, this.binCode, this.itemDesc, this.coli, this.uom, this.nama,
   this.qtySTODs, this.qtySTOUom, this.qtySTODs2, this.qtySTOUom2, this.qtySTODFinal, this.qtySTOUomFinal);
@@ -973,10 +985,84 @@ class EmployeeDataSource extends DataGridSource {
         alignment: Alignment.center,
         padding: EdgeInsets.all(0),
         // child: Text(e.value.toString(), softWrap: true, overflow: TextOverflow.visible),
-        child: Text(e.value.toString(),),
+        child: TextView(e.value.toString(), 6),
       );
     }).toList());
   }
+
+  ///////////////////////// new
+  // EmployeeDataSource(this.employeeData, this.rowsPerPage) {
+  //   buildPaginateDataGridRows();
+  // }
+  
+  // void buildPaginateDataGridRows() {
+  //   _paginatedEmployees = _employeeRows
+  //       .map<DataGridRow>((e) => DataGridRow(cells: [
+  //             DataGridCell<String>(columnName: 'itemNo', value: e.itemNo),
+  //             DataGridCell<String>(columnName: 'itemDesc', value: e.itemDesc),
+  //             DataGridCell<String>(columnName: 'binCode', value: e.binCode),
+  //             DataGridCell<int>(columnName: 'coli', value: e.coli),
+  //             DataGridCell<String>(columnName: 'uom', value: e.uom),
+  //             DataGridCell<String>(columnName: 'nama', value: e.nama),
+  //             DataGridCell<String>(columnName: 'qtySTODs', value: e.qtySTODs),
+  //             DataGridCell<String>(columnName: 'qtySTOUom', value: e.qtySTOUom),
+  //             DataGridCell<String>(columnName: 'qtySTODs2', value: e.qtySTODs2),
+  //             DataGridCell<String>(columnName: 'qtySTOUom2', value: e.qtySTOUom2),
+  //             DataGridCell<String>(columnName: 'qtySTODsFinal', value: e.qtySTODs),
+  //             DataGridCell<String>(columnName: 'qtySTOUomFinal', value: e.qtySTOUom),
+  //           ]))
+  //       .toList();
+  // }
+
+  // List<Employee> employeeData = [];
+
+  // List<DataGridRow> _paginatedEmployees = [];
+  // List<Employee> _employeeRows = [];
+  // int rowsPerPage = 0;
+
+  // @override
+  // List<DataGridRow> get rows => _paginatedEmployees;
+
+  // @override
+  // DataGridRowAdapter buildRow(DataGridRow row) {
+  //   return DataGridRowAdapter(
+  //       cells: row.getCells().map<Widget>((e) {
+  //     return Container(
+  //       alignment: Alignment.center,
+  //       decoration: BoxDecoration(
+  //           border: Border(
+  //         left: e.columnName == 'itemNo'
+  //             ? BorderSide.none
+  //             : BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45)),
+  //       )),
+  //       padding: EdgeInsets.all(0),
+  //       child: Text(e.value.toString()),
+  //     );
+  //   }).toList());
+  // }
+
+  // @override
+  // Future<bool> handlePageChange(int oldPageIndex, int newPageIndex) async {
+  //   final int startIndex = newPageIndex * rowsPerPage;
+  //   int endIndex = startIndex + rowsPerPage;
+  //   if (endIndex <= employeeData.length && startIndex < employeeData.length) {
+  //     _employeeRows =
+  //         employeeData.getRange(startIndex, endIndex).toList(growable: false);
+  //   } else {
+  //     if (startIndex < employeeData.length && endIndex > employeeData.length) {
+  //       endIndex = employeeData.length;
+  //       _employeeRows =
+  //           employeeData.getRange(startIndex, endIndex).toList(growable: false);
+  //     } else {
+  //       employeeData = [];
+  //     }
+  //   }
+
+  //   buildPaginateDataGridRows();
+  //   notifyListeners();
+  //   return true;
+  // }
+
 }
 
 class CustomColumnSizer extends ColumnSizer {
@@ -986,35 +1072,3 @@ class CustomColumnSizer extends ColumnSizer {
     return super.computeCellWidth(column, row, cellValue, textStyle);
   }
 }
-
-// class EmployeeDataSource extends DataGridSource {
-//   EmployeeDataSource({List<Employee> employeeData}) {
-//     _employeeData = employeeData
-//         .map<DataGridRow>((e) => DataGridRow(
-//           cells: [
-//               DataGridCell<int>(columnName: 'id', value: e.id),
-//               DataGridCell<String>(columnName: 'name', value: e.name),
-//               DataGridCell<String>(
-//                   columnName: 'designation', value: e.designation),
-//               DataGridCell<int>(columnName: 'salary', value: e.salary),
-//             ]))
-//         .toList();
-//   }
-
-//   List<DataGridRow> _employeeData = [];
-
-//   @override
-//   List<DataGridRow> get rows => _employeeData;
-
-//   @override
-//   DataGridRowAdapter buildRow(DataGridRow row) {
-//     return DataGridRowAdapter(
-//         cells: row.getCells().map<Widget>((e) {
-//       return Container(
-//         alignment: Alignment.center,
-//         padding: EdgeInsets.all(8.0),
-//         child: Text(e.value.toString()),
-//       );
-//     }).toList());
-//   }
-// }
