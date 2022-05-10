@@ -71,13 +71,13 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
   // final List<GlobalObjectKey<FormState>> textWidgetKey = List.generate(12, (index) => GlobalObjectKey<FormState>(index));
   // Size textWidgetSize;
 
-  final FocusNode nikFocus = FocusNode();
-  final FocusNode whatsappNoFocus = FocusNode();
-  final nikController = TextEditingController();
-  final whatsappNoController = TextEditingController();
+  final FocusNode qtyOpnDsFocus = FocusNode();
+  final FocusNode qtyOpnUomFocus = FocusNode();
+  final qtyOpnDsController = TextEditingController();
+  final qtyOpnUomController = TextEditingController();
 
-  bool nikValid = false;
-  bool whatsappNoValid = false;
+  bool qtyOpnDsValid = false;
+  bool qtyOpnUomValid = false;
 
   final double _padding = 16.0;
   final double _buttonFontSize = 24.0;
@@ -113,30 +113,30 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
     sbValueQtyOpnUom.write("0");
     operator = "";
     setState(() {
-      nikController.text = "0";
-      whatsappNoController.text = "0";
+      qtyOpnDsController.text = "0";
+      qtyOpnUomController.text = "0";
     });
-    nikFocus.addListener(_onFocusChange);
-    whatsappNoFocus.addListener(_onFocusChange);
+    qtyOpnDsFocus.addListener(_onFocusChange);
+    qtyOpnUomFocus.addListener(_onFocusChange);
     
   }
 
   void _onFocusChange() {
-    debugPrint("Focus nik : ${nikFocus.hasFocus.toString()}");
-    debugPrint("Focus whatsappNoFocus : ${whatsappNoFocus.hasFocus.toString()}");
-    if(whatsappNoFocus.hasFocus) {
+    debugPrint("Focus nik : ${qtyOpnDsFocus.hasFocus.toString()}");
+    debugPrint("Focus qtyOpnUomFocus : ${qtyOpnUomFocus.hasFocus.toString()}");
+    if(qtyOpnUomFocus.hasFocus) {
       setState(() {
         // sbValue.clear();
         // sbValue.write(sbValueQtyOpnUom.toString());
-        // whatsappNoController.text = sbValue.toString();
-        whatsappNoController.text = sbValueQtyOpnUom.toString();
+        // qtyOpnUomController.text = sbValue.toString();
+        qtyOpnUomController.text = sbValueQtyOpnUom.toString();
       });
-    } else if(nikFocus.hasFocus) {
+    } else if(qtyOpnDsFocus.hasFocus) {
       setState(() {
         // sbValue.clear();
         // sbValue.write(sbValueQtyOpnDs.toString());
-        // nikController.text = sbValue.toString();
-        nikController.text = sbValueQtyOpnDs.toString();
+        // qtyOpnDsController.text = sbValue.toString();
+        qtyOpnDsController.text = sbValueQtyOpnDs.toString();
       });
     }
   }
@@ -217,12 +217,12 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
             }
           }
         }
-        if(whatsappNoFocus.hasFocus) {
+        if(qtyOpnUomFocus.hasFocus) {
           sbValueQtyOpnUom = sbValue;
-          whatsappNoController.text = sbValueQtyOpnUom.toString();
-        } else if(nikFocus.hasFocus) {
+          qtyOpnUomController.text = sbValueQtyOpnUom.toString();
+        } else if(qtyOpnDsFocus.hasFocus) {
           sbValueQtyOpnDs = sbValue;
-          nikController.text = sbValueQtyOpnDs.toString();
+          qtyOpnDsController.text = sbValueQtyOpnDs.toString();
         }
       });
 
@@ -239,12 +239,12 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
           strValue = strValue.substring(0, strValue.length - 1);
           sbValue.clear();
           sbValue.write(strValue.length == 0 ? "0" : strValue);
-          if(whatsappNoFocus.hasFocus) {
+          if(qtyOpnUomFocus.hasFocus) {
             sbValueQtyOpnUom = sbValue;
-            whatsappNoController.text = sbValueQtyOpnUom.toString();
-          } else if(nikFocus.hasFocus) {
+            qtyOpnUomController.text = sbValueQtyOpnUom.toString();
+          } else if(qtyOpnDsFocus.hasFocus) {
             sbValueQtyOpnDs = sbValue;
-            nikController.text = sbValueQtyOpnDs.toString();
+            qtyOpnDsController.text = sbValueQtyOpnDs.toString();
           }
         }
       });
@@ -253,12 +253,12 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
     operator = "";
     sbValue.clear();
     sbValue.write("0");
-    if(whatsappNoFocus.hasFocus) {
+    if(qtyOpnUomFocus.hasFocus) {
       sbValueQtyOpnUom = sbValue;
-      whatsappNoController.text = sbValue.toString();
-    } else if(nikFocus.hasFocus) {
+      qtyOpnUomController.text = sbValue.toString();
+    } else if(qtyOpnDsFocus.hasFocus) {
       sbValueQtyOpnDs = sbValue;
-      nikController.text = sbValue.toString();
+      qtyOpnDsController.text = sbValue.toString();
     }
   });
 
@@ -277,22 +277,67 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
 
   List<Employee> getEmployeeData() {
     return [
-      Employee("GIMO005K220", "GIANT Mortar 220", "1.15.24.1", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
-      Employee("GIMO005K220", "GIANT Mortar 220", "1.15.25.1", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
-      Employee("GIMO005K220", "GIANT Mortar 220", "1.15.26.1", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
-      Employee("GIMO005K220", "GIANT Mortar 220", "1.15.27.1", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
-      Employee("GIMO005K260", "GIANT Mortar 260", "1.3.18.1", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
-      Employee("GIMO005K270", "GIANT Mortar 270", "1.3.18.2", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
-      Employee("GIMO005K270", "GIANT Mortar 270", "1.3.18.2", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
-      Employee("NEXAMT00C00901", "Nexa CFT 91 Columbia Nussebaum", "3.3.25.2", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
-      Employee("NEXAMT00S00701", "Nexa CFT 90 Sonoma Oak", "3.3.25.2", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
-      Employee("NEXART00N00401", "Nexa RTV 80 Natural Oak - Tsugawood Ash", "3.3.5.5", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
-      Employee("NEXART00S00701", "Nexa RTV 123 Sonoma Oak", "3.3.23.4", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
-      Employee("NEXART00W00102", "Nexa 1200 Wenge", "3.3.25.2", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
-      Employee("NEXART00W00104", "Nexa 1522 Wenge", "3.1.23.3", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
-      Employee("NEXART00W00401", "Nexa 600 R Wenge", "3.3.23.3", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
-      Employee("NEXART00W01501", "Nexa RTV 124 White Glossy - Silver", "3.3.5.2", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
-      Employee("NEXART00W01601", "Nexa RTV 160 White Glossy", "3.2.21.1", 6, "SAK", "ANDI", "107", "5", "", "", "", ""),
+      Employee('AVEM025KP751','AVITEX Emulsion 751','1.1.12.3',1,'PL','John','0','0','','','',''),
+      Employee('WOWO001K109','WOOD-ECO Woodstain 109','1.1.14.6',24,'DS','John','0','0','','','',''),
+      Employee('WOWO001K110','WOOD-ECO Woodstain 110','1.1.15.1',24,'DS','John','0','0','','','',''),
+      Employee('WOWO001K112','WOOD-ECO Woodstain 112','1.1.15.3',24,'DS','John','0','0','','','',''),
+      Employee('WOWO001K115','WOOD-ECO Woodstain 115','1.1.15.6',24,'DS','John','0','0','','','',''),
+      Employee('WOWO001KCG','WOOD-ECO Woodstain CG','1.1.16.1',24,'DS','John','0','0','','','',''),
+      Employee('WOWO001KCM','WOOD-ECO Woodstain CM','1.1.16.2',24,'DS','John','0','0','','','',''),
+      Employee('AVSY002KBY','AVIAN Synthetic Base Y','1.1.17.3',8,'DS','John','0','0','','','',''),
+      Employee('AVSY002KBA','AVIAN Synthetic Base A','1.1.17.4',8,'DS','John','0','0','','','',''),
+      Employee('AVSY002KBB','AVIAN Synthetic Base B','1.1.17.5',8,'DS','John','0','0','','','',''),
+      Employee('AVSY002KBC','AVIAN Synthetic Base C','1.1.17.6',8,'DS','John','0','0','','','',''),
+      Employee('POFIJJD0T001','Pow Fit Tee D4','1.1.19.1',8,'DS','John','0','0','','','',''),
+      Employee('POFIJIAWRS01','Pow Fit Reduce Sock AW 4x3','1.1.26.5',18,'DS','John','0','0','','','',''),
+      Employee('POFIHHD0E001','Pow Fit Elbow D 2 1/2','1.1.38.1',45,'DS','John','0','0','','','',''),
+      Employee('AVEM005K725','AVITEX Emulsion 725','1.1.7.3',4,'DS','John','0','0','','','',''),
+      Employee('GLSY001KSB','GLOVIN Synthetic SB','1.1.R',24,'DS','John','0','0','','','',''),
+      Employee('AGEM020KPSW','ARIES GOLD Emulsion SW','1.10.1.1',1,'PL','John','0','0','','','',''),
+      Employee('BOVE001KSW600','BOYO Politur Vernis Water 600','1.10.11.5',24,'DS','John','0','0','','','',''),
+      Employee('AVTH001KASP','AVIA Thinner A Special','1.10.15.1',24,'DS','John','0','0','','','',''),
+      Employee('NOEM002KBA','NO ODOR Emulsion BA','1.10.3.1',8,'DS','John','0','0','','','',''),
+      Employee('AQEM005KBC','AQUAMATT Emulsion BC','1.10.5.3',4,'DS','John','0','0','','','',''),
+      Employee('NODR001K019','NO DROP 019','1.10.8.2',24,'DS','John','0','0','','','',''),
+      Employee('AREM005K686','ARIES Emulsion 686','1.11.13.3',4,'DS','John','0','0','','','',''),
+      Employee('AGEM020KPSB','ARIES GOLD Emulsion SB','1.11.16.4',1,'PL','John','0','0','','','',''),
+      Employee('AVSY004K657','AVIAN Synthetic 657','1.11.20.5',4,'DS','John','0','0','','','',''),
+      Employee('AVSY004K190','AVIAN Synthetic 190','1.11.22.1',4,'DS','John','0','0','','','',''),
+      Employee('AVSY004K192','AVIAN Synthetic 192','1.11.22.2',4,'DS','John','0','0','','','',''),
+      Employee('AVSY004K194','AVIAN Synthetic 194','1.11.22.6',4,'DS','John','0','0','','','',''),
+      Employee('AREM020KPSW','ARIES Emulsion SW','1.11.3.1',1,'PL','John','0','0','','','',''),
+      Employee('YORO020KP74','YOKO Roof 74','1.11.3.7',1,'PL','John','0','0','','','',''),
+      Employee('SGAL020KPBB','SUNGUARD Em All in One BB','1.11.39.1',1,'PL','John','0','0','','','',''),
+      Employee('AQEM005KBA','AQUAMATT Emulsion BA','1.11.49.1',4,'DS','John','0','0','','','',''),
+      Employee('POFIDCAWFS01','Pow Fit Faucet Sock AW 1X3/4','1.11.8.5',130,'DS','John','0','0','','','',''),
+      Employee('AGEM020KPSW','ARIES GOLD Emulsion SW','1.12.1.1',1,'PL','John','0','0','','','',''),
+      Employee('AGEM020KP305','ARIES GOLD Emulsion 305','1.12.19.3',1,'PL','John','0','0','','','',''),
+      Employee('AGEM020KPSW','ARIES GOLD Emulsion SW','1.12.2.1',1,'PL','John','0','0','','','',''),
+      Employee('BOVE001KSPOL','BOYO Politur Vernis S','1.12.22.1',24,'DS','John','0','0','','','',''),
+      Employee('HCPRBF90P','Budget Paint Roller 9 Inci','1.12.23.1',24,'DS','John','0','0','','','',''),
+      Employee('AVSY001KSWM','AVIAN Synthetic SWM','1.12.26.5',24,'DS','John','0','0','','','',''),
+      Employee('AVSY001KSWM','AVIAN Synthetic SWM','1.12.26.6',24,'DS','John','0','0','','','',''),
+      Employee('AGEM020KPSW','ARIES GOLD Emulsion SW','1.12.3.1',1,'PL','John','0','0','','','',''),
+      Employee('AGEM020KPSW','ARIES GOLD Emulsion SW','1.12.4.1',1,'PL','John','0','0','','','',''),
+      Employee('AVHA001K007','AVIAN Hammertone 007','1.12.41.1',24,'DS','John','0','0','','','',''),
+      Employee('AGEM020KPSW','ARIES GOLD Emulsion SW','1.12.5.1',1,'PL','John','0','0','','','',''),
+      Employee('JAEM020KPMW','Jasmine Emulsion MW','1.13.2.3',1,'PL','John','0','0','','','',''),
+      Employee('YOSY001K798','YOKO Synthetic 798','1.14.26.4',24,'DS','John','0','0','','','',''),
+      Employee('NODR020KPBA','NO DROP Base A','1.15.19.1',1,'PL','John','0','0','','','',''),
+      Employee('POFIHHD0E001','Pow Fit Elbow D2 1/2','1.15.2.2',45,'DS','John','0','0','','','',''),
+      Employee('SPEM002KSW','SUPERSILK Emulsion SW','1.17.44.4',8,'DS','John','0','0','','','',''),
+      Employee('SGAL002KSW','SUNGUARD Emulsion All in One SW','1.17.5.2',8,'DS','John','0','0','','','',''),
+      Employee('POFIDCAWT001','Pow Fit Tee AW1x3/4','1.2.22.7',65,'DS','John','0','0','','','',''),
+      Employee('POFIDDAWFS01','Pow Fit Faucet Sock AW1','1.2.28.3',120,'DS','John','0','0','','','',''),
+      Employee("NEXAMT00C00901", "Nexa CFT 91 Columbia Nussebaum", "3.3.25.2", 4, "UNT", "ANDI", "0", "0", "", "", "", ""),
+      Employee("NEXAMT00S00701", "Nexa CFT 90 Sonoma Oak", "3.3.25.2", 4, "UNT", "ANDI", "0", "0", "", "", "", ""),
+      Employee("NEXART00N00401", "Nexa RTV 80 Natural Oak - Tsugawood Ash", "3.3.5.5", 4, "UNT", "ANDI", "0", "0", "", "", "", ""),
+      Employee("NEXART00S00701", "Nexa RTV 123 Sonoma Oak", "3.3.23.4", 4, "UNT", "ANDI", "0", "0", "", "", "", ""),
+      Employee("NEXART00W00102", "Nexa 1200 Wenge", "3.3.25.2", 4, "UNT", "ANDI", "0", "0", "", "", "", ""),
+      Employee("NEXART00W00104", "Nexa 1522 Wenge", "3.1.23.3", 4, "UNT", "ANDI", "0", "0", "", "", "", ""),
+      Employee("NEXART00W00401", "Nexa 600 R Wenge", "3.3.23.3", 4, "UNT", "ANDI", "0", "0", "", "", "", ""),
+      Employee("NEXART00W01501", "Nexa RTV 124 White Glossy - Silver", "3.3.5.2", 4, "UNT", "ANDI", "0", "0", "", "", "", ""),
+      Employee("NEXART00W01601", "Nexa RTV 160 White Glossy", "3.2.21.1", 4, "UNT", "ANDI", "0", "0", "", "", "", ""),
     ];
   }
   
@@ -303,543 +348,87 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
     String itemNoDetailData = employees[_dataGridController.selectedIndex].itemNo;
     String itemDescDetailData = employees[_dataGridController.selectedIndex].itemDesc;
     String coliDetailData = employees[_dataGridController.selectedIndex].coli.toString();
+    qtyOpnDsController.text = employees[_dataGridController.selectedIndex].qtySTODs;
+    qtyOpnUomController.text = employees[_dataGridController.selectedIndex].qtySTOUom;
     
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Dialog(
-          insetPadding: EdgeInsets.all(20),
-          backgroundColor: Colors.white,
-          insetAnimationDuration:
-              const Duration(milliseconds: 100),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20)),
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.all(15),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                child: TextView("Bin Code", 4),
-                              ),
-                              Container(
-                                child: TextView("Item No", 4),
-                              ),
-                              Container(
-                                child: TextView("Item Desc", 4),
-                              ),
-                              Container(
-                                child: TextView("Isi/DS", 4),
-                              ),
-                            ],
-                          ),
-                          SizedBox(width: 30),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                child: TextView(":", 4),
-                              ),
-                              Container(
-                                child: TextView(":", 4),
-                              ),
-                              Container(
-                                child: TextView(":", 4),
-                              ),
-                              Container(
-                                child: TextView(":", 4),
-                              ),
-                            ],
-                          ),
-                          SizedBox(width: 30),
-                          Expanded(
-                            child: Column(
+
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+          _setState = setState;
+          return Dialog(
+            insetPadding: EdgeInsets.all(20),
+            backgroundColor: Colors.white,
+            insetAnimationDuration:
+                const Duration(milliseconds: 100),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20)),
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              padding: EdgeInsets.all(15),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
-                                  child: TextView(binCodeDetailData, 4),
+                                  child: TextView("Bin Code", 4),
                                 ),
                                 Container(
-                                  child: TextView(itemNoDetailData, 4),
+                                  child: TextView("Item No", 4),
                                 ),
                                 Container(
-                                  child: TextView(itemDescDetailData, 4),
+                                  child: TextView("Item Desc", 4),
                                 ),
                                 Container(
-                                  child: TextView(coliDetailData, 4),
+                                  child: TextView("Isi/DS", 4),
                                 ),
                               ],
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    child: TextView("Qty\nOpname Dus", 4),
-                                  ),
-                                  SizedBox(height: 30),
-                                  Container(
-                                    child: TextView("Qty\nOpname Uom", 4),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(width: 30),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    child: TextView(":", 4),
-                                  ),
-                                  SizedBox(height: 30),
-                                  Container(
-                                    child: TextView(":", 4),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(width: 30),
-                              Flexible(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    TextField(
-                                      key: Key("QtyOpnDs"),
-                                      controller: nikController,
-                                      keyboardType: TextInputType.number,
-                                      textInputAction: TextInputAction.next,
-                                      focusNode: nikFocus,
-                                      readOnly: true,
-                                      showCursor: true,
-                                      decoration: InputDecoration(
-                                        errorText: nikValid ? "NIK tidak boleh kosong" : null,
-                                      ),
-                                      textCapitalization: TextCapitalization.characters,
-                                      onSubmitted: (value) {
-                                        fieldFocusChange(context, nikFocus, whatsappNoFocus);
-                                      },
-                                    ),
-                                    TextField(
-                                      key: Key("QtyOpnUom"),
-                                      controller: whatsappNoController,
-                                      keyboardType: TextInputType.number,
-                                      textInputAction: TextInputAction.next,
-                                      focusNode: whatsappNoFocus,
-                                      readOnly: true,
-                                      showCursor: true,
-                                      decoration: InputDecoration(
-                                        errorText: whatsappNoValid ? "NIK tidak boleh kosong" : null,
-                                      ),
-                                      textCapitalization: TextCapitalization.characters,
-                                      onSubmitted: (value) {
-                                        whatsappNoFocus.unfocus();
-                                      },
-                                    ),
-                                  ],
+                            SizedBox(width: 30),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  child: TextView(":", 4),
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 15),
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //   children: [
-                          //     Container(
-                          //       child: Button(
-                          //         disable: false,
-                          //         child: TextView('Cancel', 3, color: Colors.white, caps: true),
-                          //         onTap: () {
-                          //         },
-                          //       ),
-                          //     ),
-                          //     Container(
-                          //       child: Button(
-                          //         disable: false,
-                          //         child: TextView('Save', 3, color: Colors.white, caps: true),
-                          //         onTap: () {
-                          //         },
-                          //       ),
-                          //     ),
-                          //   ],
-                          // ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-            
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Column(
-                      //   children: [
-                      //     Container(
-                      //       child: Button(
-                      //         disable: false,
-                      //         child: TextView('Prev', 3, color: Colors.white, caps: true),
-                      //         onTap: () {
-                      //         },
-                      //       ),
-                      //     ),
-                      //     SizedBox(width: 15),
-                      //     Container(
-                      //       child: Button(
-                      //         disable: false,
-                      //         child: TextView('Next', 3, color: Colors.white, caps: true),
-                      //         onTap: () {
-                      //         },
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
-                      // SizedBox(width: 15),
-                      Expanded(
-                        key: Key("expanded_bagian_bawah"),
-                        flex: 1,
-                        child: Column(
-                          key: Key("expanded_column_bagian_bawah"),
-                          children: <Widget>[
-                            Expanded(
-                              flex: 1,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: <Widget>[
-                                  Expanded(
-                                    flex: 2,
-                                    child: RaisedButton(
-                                      color: _buttonColorWhite,
-                                      highlightColor: _buttonHighlightColor,
-                                      child: Text(
-                                        "C",
-                                        style: TextStyle(
-                                            color: _primarySwatchColor,
-                                            fontSize: _buttonFontSize),
-                                      ),
-                                      onPressed: () {
-                                        clearValue();
-                                      },
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: RaisedButton(
-                                      color: _buttonColorWhite,
-                                      highlightColor: _buttonHighlightColor,
-                                      child: Icon(
-                                        Icons.backspace,
-                                        color: _buttonColorGrey,
-                                      ),
-                                      onPressed: () {
-                                        deleteValue();
-                                      },
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: RaisedButton(
-                                      color: _buttonColorWhite,
-                                      highlightColor: _buttonHighlightColor,
-                                      child: Text(
-                                        "/",
-                                        style: TextStyle(
-                                          color: _buttonColorGrey,
-                                          fontSize: _buttonFontSize,
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        appendValue("/");
-                                      },
-                                    ),
-                                  )
-                                ],
-                              ),
+                                Container(
+                                  child: TextView(":", 4),
+                                ),
+                                Container(
+                                  child: TextView(":", 4),
+                                ),
+                                Container(
+                                  child: TextView(":", 4),
+                                ),
+                              ],
                             ),
+                            SizedBox(width: 30),
                             Expanded(
-                              flex: 1,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: <Widget>[
-                                  Expanded(
-                                    flex: 1,
-                                    child: RaisedButton(
-                                      color: _buttonColorWhite,
-                                      highlightColor: _buttonHighlightColor,
-                                      child: Text(
-                                        "7",
-                                        style: TextStyle(
-                                          color: _buttonColorGrey,
-                                          fontSize: _buttonFontSize,
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        appendValue("7");
-                                      },
-                                    ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    child: TextView(binCodeDetailData, 4),
                                   ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: RaisedButton(
-                                      color: _buttonColorWhite,
-                                      highlightColor: _buttonHighlightColor,
-                                      child: Text(
-                                        "8",
-                                        style: TextStyle(
-                                          color: _buttonColorGrey,
-                                          fontSize: _buttonFontSize,
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        appendValue("8");
-                                      },
-                                    ),
+                                  Container(
+                                    child: TextView(itemNoDetailData, 4),
                                   ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: RaisedButton(
-                                      color: _buttonColorWhite,
-                                      highlightColor: _buttonHighlightColor,
-                                      child: Text(
-                                        "9",
-                                        style: TextStyle(
-                                          color: _buttonColorGrey,
-                                          fontSize: _buttonFontSize,
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        appendValue("9");
-                                      },
-                                    ),
+                                  Container(
+                                    child: TextView(itemDescDetailData, 4),
                                   ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: RaisedButton(
-                                      color: _buttonColorWhite,
-                                      highlightColor: _buttonHighlightColor,
-                                      child: Text(
-                                        "x",
-                                        style: TextStyle(
-                                          color: _buttonColorGrey,
-                                          fontSize: _buttonFontSize,
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        appendValue("x");
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: <Widget>[
-                                  Expanded(
-                                    flex: 1,
-                                    child: RaisedButton(
-                                      color: _buttonColorWhite,
-                                      highlightColor: _buttonHighlightColor,
-                                      child: Text(
-                                        "4",
-                                        style: TextStyle(
-                                          color: _buttonColorGrey,
-                                          fontSize: _buttonFontSize,
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        appendValue("4");
-                                      },
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: RaisedButton(
-                                      color: _buttonColorWhite,
-                                      highlightColor: _buttonHighlightColor,
-                                      child: Text(
-                                        "5",
-                                        style: TextStyle(
-                                          color: _buttonColorGrey,
-                                          fontSize: _buttonFontSize,
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        appendValue("5");
-                                      },
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: RaisedButton(
-                                      color: _buttonColorWhite,
-                                      highlightColor: _buttonHighlightColor,
-                                      child: Text(
-                                        "6",
-                                        style: TextStyle(
-                                          color: _buttonColorGrey,
-                                          fontSize: _buttonFontSize,
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        appendValue("6");
-                                      },
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: RaisedButton(
-                                      color: _buttonColorWhite,
-                                      highlightColor: _buttonHighlightColor,
-                                      child: Text(
-                                        "-",
-                                        style: TextStyle(
-                                          color: _buttonColorGrey,
-                                          fontSize: _buttonFontSize,
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        appendValue("-");
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: <Widget>[
-                                  Expanded(
-                                    flex: 1,
-                                    child: RaisedButton(
-                                      color: _buttonColorWhite,
-                                      highlightColor: _buttonHighlightColor,
-                                      child: Text(
-                                        "1",
-                                        style: TextStyle(
-                                          color: _buttonColorGrey,
-                                          fontSize: _buttonFontSize,
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        appendValue("1");
-                                      },
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: RaisedButton(
-                                      color: _buttonColorWhite,
-                                      highlightColor: _buttonHighlightColor,
-                                      child: Text(
-                                        "2",
-                                        style: TextStyle(
-                                          color: _buttonColorGrey,
-                                          fontSize: _buttonFontSize,
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        appendValue("2");
-                                      },
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: RaisedButton(
-                                      color: _buttonColorWhite,
-                                      highlightColor: _buttonHighlightColor,
-                                      child: Text(
-                                        "3",
-                                        style: TextStyle(
-                                          color: _buttonColorGrey,
-                                          fontSize: _buttonFontSize,
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        appendValue("3");
-                                      },
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: RaisedButton(
-                                      color: _buttonColorWhite,
-                                      highlightColor: _buttonHighlightColor,
-                                      child: Text(
-                                        "+",
-                                        style: TextStyle(
-                                          color: _buttonColorGrey,
-                                          fontSize: _buttonFontSize,
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        appendValue("+");
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: <Widget>[
-                                  Expanded(
-                                    flex: 3,
-                                    child: RaisedButton(
-                                      color: _buttonColorWhite,
-                                      highlightColor: _buttonHighlightColor,
-                                      child: Text(
-                                        "0",
-                                        style: TextStyle(
-                                          color: _buttonColorGrey,
-                                          fontSize: _buttonFontSize,
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        appendValue("0");
-                                      },
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: RaisedButton(
-                                      color: _primarySwatchColor,
-                                      highlightColor: _buttonHighlightColor,
-                                      child: Text(
-                                        "=",
-                                        style: TextStyle(
-                                          color: _textColorWhite,
-                                          fontSize: _buttonFontSize,
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        appendValue("=");
-                                      },
-                                    ),
+                                  Container(
+                                    child: TextView(coliDetailData, 4),
                                   ),
                                 ],
                               ),
@@ -847,72 +436,546 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
                           ],
                         ),
                       ),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      child: TextView("Qty\nOpname Dus", 4),
+                                    ),
+                                    SizedBox(height: 30),
+                                    Container(
+                                      child: TextView("Qty\nOpname Uom", 4),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(width: 30),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      child: TextView(":", 4),
+                                    ),
+                                    SizedBox(height: 30),
+                                    Container(
+                                      child: TextView(":", 4),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(width: 30),
+                                Flexible(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      TextField(
+                                        key: Key("QtyOpnDs"),
+                                        controller: qtyOpnDsController,
+                                        keyboardType: TextInputType.number,
+                                        textInputAction: TextInputAction.next,
+                                        focusNode: qtyOpnDsFocus,
+                                        readOnly: true,
+                                        showCursor: true,
+                                        decoration: InputDecoration(
+                                          errorText: qtyOpnDsValid ? "NIK tidak boleh kosong" : null,
+                                        ),
+                                        textCapitalization: TextCapitalization.characters,
+                                        onSubmitted: (value) {
+                                          fieldFocusChange(context, qtyOpnDsFocus, qtyOpnUomFocus);
+                                        },
+                                      ),
+                                      TextField(
+                                        key: Key("QtyOpnUom"),
+                                        controller: qtyOpnUomController,
+                                        keyboardType: TextInputType.number,
+                                        textInputAction: TextInputAction.next,
+                                        focusNode: qtyOpnUomFocus,
+                                        readOnly: true,
+                                        showCursor: true,
+                                        decoration: InputDecoration(
+                                          errorText: qtyOpnUomValid ? "NIK tidak boleh kosong" : null,
+                                        ),
+                                        textCapitalization: TextCapitalization.characters,
+                                        onSubmitted: (value) {
+                                          qtyOpnUomFocus.unfocus();
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 15),
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            //   children: [
+                            //     Container(
+                            //       child: Button(
+                            //         disable: false,
+                            //         child: TextView('Cancel', 3, color: Colors.white, caps: true),
+                            //         onTap: () {
+                            //         },
+                            //       ),
+                            //     ),
+                            //     Container(
+                            //       child: Button(
+                            //         disable: false,
+                            //         child: TextView('Save', 3, color: Colors.white, caps: true),
+                            //         onTap: () {
+                            //         },
+                            //       ),
+                            //     ),
+                            //   ],
+                            // ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                ),
-                SizedBox(height: 15),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                     Expanded(
-                      child: Container(
-                        child: Button(
-                          disable: false,
-                          child: TextView('Prevs', 3, color: Colors.white, caps: true),
-                          onTap: () {
-                            _setState(() {
-                              _dataGridController.selectedIndex = _dataGridController.selectedIndex - 1;
-                              printHelp("CEK IDN "+_dataGridController.selectedIndex.toString());
-                              binCodeDetailData = "hehee";
-                              // itemNoDetailData = employees[_dataGridController.selectedIndex].itemNo;
-                              // itemDescDetailData = employees[_dataGridController.selectedIndex].itemDesc;
-                              // coliDetailData = employees[_dataGridController.selectedIndex].coli.toString();
-                            });
-                          },
+              
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Column(
+                        //   children: [
+                        //     Container(
+                        //       child: Button(
+                        //         disable: false,
+                        //         child: TextView('Prev', 3, color: Colors.white, caps: true),
+                        //         onTap: () {
+                        //         },
+                        //       ),
+                        //     ),
+                        //     SizedBox(width: 15),
+                        //     Container(
+                        //       child: Button(
+                        //         disable: false,
+                        //         child: TextView('Next', 3, color: Colors.white, caps: true),
+                        //         onTap: () {
+                        //         },
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+                        // SizedBox(width: 15),
+                        Expanded(
+                          key: Key("expanded_bagian_bawah"),
+                          flex: 1,
+                          child: Column(
+                            key: Key("expanded_column_bagian_bawah"),
+                            children: <Widget>[
+                              Expanded(
+                                flex: 1,
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: <Widget>[
+                                    Expanded(
+                                      flex: 2,
+                                      child: RaisedButton(
+                                        color: _buttonColorWhite,
+                                        highlightColor: _buttonHighlightColor,
+                                        child: Text(
+                                          "C",
+                                          style: TextStyle(
+                                              color: _primarySwatchColor,
+                                              fontSize: _buttonFontSize),
+                                        ),
+                                        onPressed: () {
+                                          clearValue();
+                                        },
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: RaisedButton(
+                                        color: _buttonColorWhite,
+                                        highlightColor: _buttonHighlightColor,
+                                        child: Icon(
+                                          Icons.backspace,
+                                          color: _buttonColorGrey,
+                                        ),
+                                        onPressed: () {
+                                          deleteValue();
+                                        },
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: RaisedButton(
+                                        color: _buttonColorWhite,
+                                        highlightColor: _buttonHighlightColor,
+                                        child: Text(
+                                          "/",
+                                          style: TextStyle(
+                                            color: _buttonColorGrey,
+                                            fontSize: _buttonFontSize,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          appendValue("/");
+                                        },
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: <Widget>[
+                                    Expanded(
+                                      flex: 1,
+                                      child: RaisedButton(
+                                        color: _buttonColorWhite,
+                                        highlightColor: _buttonHighlightColor,
+                                        child: Text(
+                                          "7",
+                                          style: TextStyle(
+                                            color: _buttonColorGrey,
+                                            fontSize: _buttonFontSize,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          appendValue("7");
+                                        },
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: RaisedButton(
+                                        color: _buttonColorWhite,
+                                        highlightColor: _buttonHighlightColor,
+                                        child: Text(
+                                          "8",
+                                          style: TextStyle(
+                                            color: _buttonColorGrey,
+                                            fontSize: _buttonFontSize,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          appendValue("8");
+                                        },
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: RaisedButton(
+                                        color: _buttonColorWhite,
+                                        highlightColor: _buttonHighlightColor,
+                                        child: Text(
+                                          "9",
+                                          style: TextStyle(
+                                            color: _buttonColorGrey,
+                                            fontSize: _buttonFontSize,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          appendValue("9");
+                                        },
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: RaisedButton(
+                                        color: _buttonColorWhite,
+                                        highlightColor: _buttonHighlightColor,
+                                        child: Text(
+                                          "x",
+                                          style: TextStyle(
+                                            color: _buttonColorGrey,
+                                            fontSize: _buttonFontSize,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          appendValue("x");
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: <Widget>[
+                                    Expanded(
+                                      flex: 1,
+                                      child: RaisedButton(
+                                        color: _buttonColorWhite,
+                                        highlightColor: _buttonHighlightColor,
+                                        child: Text(
+                                          "4",
+                                          style: TextStyle(
+                                            color: _buttonColorGrey,
+                                            fontSize: _buttonFontSize,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          appendValue("4");
+                                        },
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: RaisedButton(
+                                        color: _buttonColorWhite,
+                                        highlightColor: _buttonHighlightColor,
+                                        child: Text(
+                                          "5",
+                                          style: TextStyle(
+                                            color: _buttonColorGrey,
+                                            fontSize: _buttonFontSize,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          appendValue("5");
+                                        },
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: RaisedButton(
+                                        color: _buttonColorWhite,
+                                        highlightColor: _buttonHighlightColor,
+                                        child: Text(
+                                          "6",
+                                          style: TextStyle(
+                                            color: _buttonColorGrey,
+                                            fontSize: _buttonFontSize,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          appendValue("6");
+                                        },
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: RaisedButton(
+                                        color: _buttonColorWhite,
+                                        highlightColor: _buttonHighlightColor,
+                                        child: Text(
+                                          "-",
+                                          style: TextStyle(
+                                            color: _buttonColorGrey,
+                                            fontSize: _buttonFontSize,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          appendValue("-");
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: <Widget>[
+                                    Expanded(
+                                      flex: 1,
+                                      child: RaisedButton(
+                                        color: _buttonColorWhite,
+                                        highlightColor: _buttonHighlightColor,
+                                        child: Text(
+                                          "1",
+                                          style: TextStyle(
+                                            color: _buttonColorGrey,
+                                            fontSize: _buttonFontSize,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          appendValue("1");
+                                        },
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: RaisedButton(
+                                        color: _buttonColorWhite,
+                                        highlightColor: _buttonHighlightColor,
+                                        child: Text(
+                                          "2",
+                                          style: TextStyle(
+                                            color: _buttonColorGrey,
+                                            fontSize: _buttonFontSize,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          appendValue("2");
+                                        },
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: RaisedButton(
+                                        color: _buttonColorWhite,
+                                        highlightColor: _buttonHighlightColor,
+                                        child: Text(
+                                          "3",
+                                          style: TextStyle(
+                                            color: _buttonColorGrey,
+                                            fontSize: _buttonFontSize,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          appendValue("3");
+                                        },
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: RaisedButton(
+                                        color: _buttonColorWhite,
+                                        highlightColor: _buttonHighlightColor,
+                                        child: Text(
+                                          "+",
+                                          style: TextStyle(
+                                            color: _buttonColorGrey,
+                                            fontSize: _buttonFontSize,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          appendValue("+");
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: <Widget>[
+                                    Expanded(
+                                      flex: 3,
+                                      child: RaisedButton(
+                                        color: _buttonColorWhite,
+                                        highlightColor: _buttonHighlightColor,
+                                        child: Text(
+                                          "0",
+                                          style: TextStyle(
+                                            color: _buttonColorGrey,
+                                            fontSize: _buttonFontSize,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          appendValue("0");
+                                        },
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: RaisedButton(
+                                        color: _primarySwatchColor,
+                                        highlightColor: _buttonHighlightColor,
+                                        child: Text(
+                                          "=",
+                                          style: TextStyle(
+                                            color: _textColorWhite,
+                                            fontSize: _buttonFontSize,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          appendValue("=");
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                    SizedBox(width: 15),
-                    Expanded(
-                      child: Container(
-                        child: Button(
-                          disable: false,
-                          child: TextView('Next', 3, color: Colors.white, caps: true),
-                          onTap: () {
-                            _dataGridController.selectedIndex = _dataGridController.selectedIndex + 1;
-                          },
+                  ),
+                  SizedBox(height: 15),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Container(
+                          child: Button(
+                            disable: false,
+                            child: TextView('Prevs', 3, color: Colors.white, caps: true),
+                            onTap: () {
+                              _setState(() {
+                                _dataGridController.selectedIndex = _dataGridController.selectedIndex - 1;
+                                printHelp("CEK IDN "+_dataGridController.selectedIndex.toString());
+                                binCodeDetailData = employees[_dataGridController.selectedIndex].binCode;
+                                itemNoDetailData = employees[_dataGridController.selectedIndex].itemNo;
+                                itemDescDetailData = employees[_dataGridController.selectedIndex].itemDesc;
+                                coliDetailData = employees[_dataGridController.selectedIndex].coli.toString();
+                                qtyOpnDsController.text = employees[_dataGridController.selectedIndex].qtySTODs;
+                                qtyOpnUomController.text = employees[_dataGridController.selectedIndex].qtySTOUom;
+                              });
+                            },
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(width: 15),
-                    Expanded(
-                      child: Container(
-                        child: Button(
-                          disable: false,
-                          child: TextView('Cancel', 3, color: Colors.white, caps: true),
-                          onTap: () {
-                            Navigator.of(context).pop();
-                          },
+                      SizedBox(width: 15),
+                      Expanded(
+                        child: Container(
+                          child: Button(
+                            disable: false,
+                            child: TextView('Next', 3, color: Colors.white, caps: true),
+                            onTap: () {
+                              _setState(() {
+                                _dataGridController.selectedIndex = _dataGridController.selectedIndex + 1;
+                                printHelp("CEK IDN "+_dataGridController.selectedIndex.toString());
+                                binCodeDetailData = employees[_dataGridController.selectedIndex].binCode;
+                                itemNoDetailData = employees[_dataGridController.selectedIndex].itemNo;
+                                itemDescDetailData = employees[_dataGridController.selectedIndex].itemDesc;
+                                coliDetailData = employees[_dataGridController.selectedIndex].coli.toString();
+                                qtyOpnDsController.text = employees[_dataGridController.selectedIndex].qtySTODs;
+                                qtyOpnUomController.text = employees[_dataGridController.selectedIndex].qtySTOUom;
+                              });
+                            },
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(width: 15),
-                    Expanded(
-                      child: Container(
-                        child: Button(
-                          disable: false,
-                          child: TextView('Save', 3, color: Colors.white, caps: true),
-                          onTap: () {
-                          },
+                      SizedBox(width: 15),
+                      Expanded(
+                        child: Container(
+                          child: Button(
+                            disable: false,
+                            child: TextView('Cancel', 3, color: Colors.white, caps: true),
+                            onTap: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
                         ),
                       ),
-                    )
-                  ],
-                )
-              ],
+                      SizedBox(width: 15),
+                      Expanded(
+                        child: Container(
+                          child: Button(
+                            disable: false,
+                            child: TextView('Save', 3, color: Colors.white, caps: true),
+                            onTap: () {
+                            },
+                          ),
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              ),
             ),
-          ),
-        );
+          );
+        });
       },
     );
   }
@@ -962,6 +1025,7 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
                     source: employeeDataSource,
                     columnWidthMode: ColumnWidthMode.fitByColumnName,
                     // columnWidthMode: ColumnWidthMode.auto,
+                    // columnWidthCalculationRange: ColumnWidthCalculationRange.allRows,
                     columnSizer: this._sizer,
                     gridLinesVisibility: GridLinesVisibility.horizontal,
                     headerGridLinesVisibility: GridLinesVisibility.horizontal,
@@ -1219,7 +1283,7 @@ class EmployeeDataSource extends DataGridSource {
                 : BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45)),
           )),
         alignment: Alignment.center,
-        padding: EdgeInsets.all(0),
+        padding: EdgeInsets.all(8),
         // child: Text(e.value.toString(), softWrap: true, overflow: TextOverflow.visible),
         child: TextView(e.value.toString(), 6),
       );
