@@ -159,6 +159,7 @@ class DashboardState extends State<Dashboard> {
                               // Navigator.pushNamed(context, "stockopname");
                             } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="stockopnamedifference") {
                               Navigator.pushNamed(context, "stockOpnameDifference");
+                              // Navigator.pushNamed(context, "coba");
                             }
                           },
                           child: Padding(

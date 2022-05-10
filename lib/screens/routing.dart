@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:utility_warehouse/screens/coba.dart';
 import 'package:utility_warehouse/screens/dashboard.dart';
 import 'package:utility_warehouse/screens/login.dart';
 import 'package:utility_warehouse/screens/otpVerification.dart';
@@ -37,6 +38,9 @@ MaterialPageRoute routing(int mode, int id, List<String> pages, RouteSettings se
       break;
     case 'pick':
       return MaterialPageRoute(builder: (context)=> PickPageVertical());
+      break;
+    case 'coba':
+      return MaterialPageRoute(builder: (context)=> Coba());
       break;
     // case 'examplePage 1':
     //   return MaterialPageRoute(builder: (context)=> Page1(result: settings.arguments));
