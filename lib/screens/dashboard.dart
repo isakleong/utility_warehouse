@@ -156,9 +156,10 @@ class DashboardState extends State<Dashboard> {
                             } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="reportstockopname") {
                               // Navigator.pushNamed(context, "reportstockopname");
                             } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="stockopname") {
-                              // Navigator.pushNamed(context, "stockopname");
+                              Navigator.pushNamed(context, "stockopname");
                             } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="stockopnamedifference") {
-                              Navigator.pushNamed(context, "stockOpnameDifference");
+                              // Navigator.pushNamed(context, "stockOpnameDifference");
+                              Navigator.pushNamed(context, "stockOpname");
                               // Navigator.pushNamed(context, "coba");
                             }
                           },
