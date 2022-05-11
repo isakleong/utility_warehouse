@@ -16,8 +16,6 @@ class UserAPI {
 
     Configuration configuration = await getUrlConfig(context);
 
-    printHelp("from here "+configuration.getUrlPath);
-
     bool isUrlAddress_1 = false, isUrlAddress_2 = false;
     String url_address_1 = fetchAPI("users/login.php", context, print: true);
     String url_address_2 = fetchAPI("users/login.php", context, secondary: true, print: true);

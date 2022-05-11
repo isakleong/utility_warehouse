@@ -13,6 +13,7 @@ import 'package:intl/intl.dart';
 import 'package:utility_warehouse/models/detailPickModel.dart';
 import 'package:utility_warehouse/models/pickModel.dart';
 import 'package:utility_warehouse/models/result.dart';
+import 'package:utility_warehouse/models/userModel.dart';
 import 'package:utility_warehouse/resources/pickAPI.dart';
 import 'package:utility_warehouse/resources/userAPI.dart';
 import 'package:utility_warehouse/settings/configuration.dart';
@@ -25,11 +26,17 @@ import 'package:path_provider/path_provider.dart';
 import 'package:xml/xml.dart';
 
 class PickPageVertical extends StatefulWidget {
+  final User model;
+
+  const PickPageVertical({Key key, this.model}) : super(key: key);
+
   @override
   _PickPageVerticalState createState() => _PickPageVerticalState();
 }
 
 class _PickPageVerticalState extends State<PickPageVertical> {
+  User userModel;
+
   List<Pick> pickNos = [];
   List<DetailPick> detailPicks = [];
 
@@ -53,20 +60,24 @@ class _PickPageVerticalState extends State<PickPageVertical> {
   String county = "";
   String province = "";
   String postcode = "";
+  String cityPostcode = "";
 
   String gudang = "";
   String source = "";
   String tanggal = "";
   String berat = "";
+  String beratKg = "";
   String userId = "";
   String wsNo = "";
   String sales = "";
   String selectedDropdownValue = "Pilih nomor pick";
-  String pickChangedNoPick = "";
+  String selectedNoPick = ""; 
+  int pickDone;
 
-  String choosenPick = "";
+  String choosenPick = ""; //pick yang dipilih
   String tempChoosenPick = "";
-  String branchId = encryptData("17A");
+  // Result res;
+  String branchId = "";
 
   static const int sortName = 0;
   static const int sortStatus = 1;
@@ -78,18 +89,14 @@ class _PickPageVerticalState extends State<PickPageVertical> {
 
   Configuration configuration;
   void initState() {
+    userModel = widget.model;
+    branchId = encryptData(userModel.userId.substring(0, 3));
+
     detailPicks = [];
     detailPicksChoosen = [];
     super.initState();
-    const tenSec = Duration(seconds: 10);
-    Timer.periodic(tenSec, (Timer t) => getNomorPick());
-    // Alert(
-    //     context: context,
-    //     title: "Anda belum memilih nomor pick,",
-    //     content: Text("Pilih nomor pick terlebih dahulu"),
-    //     cancel: false,
-    //     type: "error"
-    //   );
+    // const tenSec = Duration(seconds: 10);
+    // Timer.periodic(tenSec, (Timer t) => getNomorPick());
     // SystemChrome.setPreferredOrientations([
     //   DeviceOrientation.landscapeRight,
     //   // DeviceOrientation.landscapeLeft,
@@ -106,27 +113,34 @@ class _PickPageVerticalState extends State<PickPageVertical> {
   getDeviceConfig() async {
     // Directory dir = await getExternalStorageDirectory();
     // String path = '${dir.path}/deviceconfig.xml';
-    String path = '/storage/emulated/0/Android/data/com.example.utility_warehouse/files/deviceconfig.xml';
+    String path =
+        '/storage/emulated/0/Android/data/com.example.utility_warehouse/files/deviceconfig.xml';
 
     File file = File(path);
 
-    if(FileSystemEntity.typeSync(path) != FileSystemEntityType.notFound){
+    if (FileSystemEntity.typeSync(path) != FileSystemEntityType.notFound) {
       final document = XmlDocument.parse(file.readAsStringSync());
-      final url_address_1 = document.findAllElements('url_address_1').map((node) => node.text);
-      final url_address_2 = document.findAllElements('url_address_2').map((node) => node.text);
+      final url_address_1 =
+          document.findAllElements('url_address_1').map((node) => node.text);
+      final url_address_2 =
+          document.findAllElements('url_address_2').map((node) => node.text);
       configuration.setUrlPath = url_address_1.first;
       configuration.setUrlPathAlt = url_address_2.first;
       // print(document.toString());
       // print(document.toXmlString(pretty: true, indent: '\t'));
     } else {
       configuration.setUrlPath = "http://203.142.77.243/NewUtilityWarehouseDev";
-      configuration.setUrlPathAlt = "http://103.76.27.124/NewUtilityWarehouseDev";
+      configuration.setUrlPathAlt =
+          "http://103.76.27.124/NewUtilityWarehouseDev";
 
       final builder = XmlBuilder();
-      builder.processing('xml', 'version="1.0" encoding="UTF-8" standalone="yes"');
+      builder.processing(
+          'xml', 'version="1.0" encoding="UTF-8" standalone="yes"');
       builder.element('deviceconfig', nest: () {
-        builder.element('url_address_1', nest: "http://203.142.77.243/NewUtilityWarehouseDev");
-        builder.element('url_address_2', nest: "http://103.76.27.124/NewUtilityWarehouseDev");
+        builder.element('url_address_1',
+            nest: "http://203.142.77.243/NewUtilityWarehouseDev");
+        builder.element('url_address_2',
+            nest: "http://103.76.27.124/NewUtilityWarehouseDev");
         builder.element('token_id', nest: '');
       });
       final document = builder.buildDocument();
@@ -140,36 +154,65 @@ class _PickPageVerticalState extends State<PickPageVertical> {
   }
 
   getNomorPick() async {
-    if (choosenPick.contains("Pilih nomor pick")) {
+    List<Pick> temp_pickNos = [];
+    pickNos = [];
+    Result res;
+
+    if (choosenPick.contains("Pilih nomor pick") || choosenPick == "") {
       tempChoosenPick = "";
     } else {
-      tempChoosenPick = await PickAPIs.getPickInserted(context, choosenPick);
-      // print("print temp choosenpick " + tempChoosenPick);
+      print("choosenpick di getnomorpick"+choosenPick);
+      // Alert(context: context, loading: true, disableBackButton: true);
+      res = await PickAPIs.getPickInserted(context, choosenPick);
+      // tempChoosenPick = res.data;
+      // print("tempchoosenpick " + tempChoosenPick.toString());
+      // print("ini tempchoosenpickk " + res.data.toString());
+
+      if (res.data == "1") {
+        // Navigator.of(context, rootNavigator: true).pop();
+        // choosenPick = "Pilih nomor pick";
+        // changedPick("Pilih nomor pick");
+        await Alert(
+            context: context,
+            title: "Maaf,",
+            content:
+                Text("Helper lain sedang mengerjakan nomor pick ini. Silahkan memilih nomor pick lain."),
+            cancel: false,
+            type: "error");
+      }else if(res.code == 500 || res.code == 0){
+        // Navigator.of(context, rootNavigator: true).pop();
+        await Alert(
+            context: context,
+            title: "Maaf,",
+            content:
+                Text(res.message),
+            cancel: false,
+            type: "error");
+      }
     }
 
     Configuration config = Configuration.of(context);
-    List<Pick> temp_pickNos = [];
-    pickNos = [];
-    temp_pickNos = await PickAPIs.getPickNo(context, branchId);
+    Alert(context: context, loading: true, disableBackButton: true);
+    Result result = await PickAPIs.getPickNo(context, branchId);
+    // print("aaa " + result.code.toString());
 
-    // temp_pickNos = await PickAPIs.getPickNo(context);
-
-    pickNos.add(Pick(pickNo: "Pilih nomor pick"));
-    pickNos.addAll(temp_pickNos);
-
-    // print("debug ye " + pickNos[0].pickNo);
-
-    final pickNosLength = pickNos.length;
-
-    if (tempChoosenPick.contains("1")) {
-      choosenPick = "Pilih nomor pick";
-      // printHelp("print ye");
-      changedPick("Pilih nomor pick");
+    if (result.code == 1) {
+      var parsedJson = jsonDecode(result.data);
+      parsedJson["MF_PickNo"].map((item) {
+        temp_pickNos.add(Pick.fromJson(item));
+      }).toList();
+      pickNos = [];
+      pickNos.add(Pick(pickNo: "Pilih nomor pick"));
+      pickNos.addAll(temp_pickNos);
+      setPick(pickNos);
+      final pickNosLength = pickNos.length;
+      Navigator.of(context, rootNavigator: true).pop();
+    } else {
+      Navigator.of(context, rootNavigator: true).pop();
       await Alert(
           context: context,
-          title: "Maaf,",
-          content:
-              Text("Ada helper lain yang sedang mengerjakan nomor pick ini."),
+          title: "Error",
+          content: Text(result.message),
           cancel: false,
           type: "error");
     }
@@ -182,25 +225,39 @@ class _PickPageVerticalState extends State<PickPageVertical> {
     Configuration config = Configuration.of(context);
 
     final nomorPick = encryptData(data);
+    // final nomorPick = data;
 
-    printHelp("nomor pick data "+nomorPick);
-    printHelp("branch id data "+branchId);
+    printHelp("nomor pick data " + nomorPick);
+    printHelp("branch id data " + branchId);
+    Alert(context: context, loading: true, disableBackButton: true);
+    Result result = await PickAPIs.getPickDetail(context, branchId, nomorPick);
+    detailPicks = [];
+    // printHelp("print result.dataa1 : " + result.data.toString());
 
-    detailPicks = await PickAPIs.getPickDetail(context, branchId, nomorPick);
-    // Result result = await PickAPIs.getPickDetail(context, branchId, nomorPick);
-
-    // String res = result.data;
-
-    // print("decryptt " + res);
-    // final decryptResponse = decryptData(result.data);
-    // print(decryptResponse);
-
-    // var parsedJson = jsonDecode(decryptResponse);
-    // result.data = parsedJson;
-
-    // result.data.map((item) {
-    //   detailPicks.add(DetailPick.fromJson(item));
-    // }).toList();
+    if (result.code == 0) {
+      Navigator.of(context, rootNavigator: true).pop();
+      await Alert(
+          context: context,
+          title: "Error",
+          content: Text(result.message),
+          cancel: false,
+          type: "error");
+    } else if (result.code == 1) {
+      var parsedJson = jsonDecode(result.data);
+      parsedJson["MF_PickDetail"].map((item) {
+        detailPicks.add(DetailPick.fromJson(item));
+      }).toList();
+      Navigator.of(context, rootNavigator: true).pop();
+    } else {
+      Navigator.of(context, rootNavigator: true).pop();
+      await Alert(
+          context: context,
+          title: "Error",
+          content: Text(result.message),
+          cancel: false,
+          type: "error");
+    }
+    
 
     if (detailPicks.length > 0) {}
     setState(() {
@@ -230,13 +287,14 @@ class _PickPageVerticalState extends State<PickPageVertical> {
   insertPick(picksChoosen, detailPicksChoosen) async {
     Configuration config = Configuration.of(context);
 
+    Alert(context: context, loading: true, disableBackButton: true);
     Result result =
         await PickAPIs.insertPick(context, picksChoosen, detailPicksChoosen);
     setState(() {
       result = result;
     });
     if (result.code == 1) {
-      print("sudah insertttt " + result.message.toString());
+      print("sudah insertttt pick " + result.message.toString());
       Alert(
         context: context,
         title: "Berhasil!",
@@ -250,78 +308,92 @@ class _PickPageVerticalState extends State<PickPageVertical> {
         },
       );
       changedPick("Pilih nomor pick");
-    } else {
-      print("error insertttt " + result.message.toString());
-      if (result.code == -1) {
-        Alert(
-            context: context,
-            title: "Maaf,",
-            content: Text("Gagal terhubung dengan server"),
-            cancel: false,
-            type: "error");
-      } else if (result.code == 0) {
-        Alert(
-            context: context,
-            title: "Gagal,",
-            content: Text("Data pick sudah pernah diinput"),
-            cancel: false,
-            type: "error");
-      } else {
-        Alert(
-            context: context,
-            title: "Maaf,",
-            content: Text("Data gagal diupdate"),
-            cancel: false,
-            type: "error");
-      }
+    } else if(result.code == 2){
+      Alert(
+          context: context,
+          title: "Maaf ,",
+          content: Text(result.message),
+          cancel: false,
+          type: "error");
+      pickDone = 1;
     }
-    await refresh();
+    else {
+      print("error insertttt pick " + result.message.toString());
+      Alert(
+          context: context,
+          title: "Error ,",
+          content: Text(result.message),
+          cancel: false,
+          type: "error");
+    }
+    
+    Navigator.of(context, rootNavigator: true).pop();
+    // await refresh();
   }
 
   insertOnchangePick(pickChanged) async {
+    pickDone = 0;
     Configuration config = Configuration.of(context);
-
-    Result result =
-        await PickAPIs.insertPickSelected(context, pickChanged);
+    // Alert(context: context, loading: true, disableBackButton: true);
+    Result result = await PickAPIs.insertPickSelected(context, pickChanged);
     setState(() {
       result = result;
     });
     if (result.code == 1) {
       print("sudah insertttt " + result.message.toString());
-    } else {
+      // Navigator.of(context, rootNavigator: true).pop();
+    } else if (pickChanged != "Pilih nomor pick"){
+      // Navigator.of(context, rootNavigator: true).pop();
       print("error insertttt " + result.message.toString());
+      Alert(
+          context: context,
+          title: "Error,",
+          content: Text(result.message),
+          cancel: false,
+          type: "error");
     }
-    await refresh();
+    // await refresh();
   }
 
   deleteOnchangePick(pickChanged) async {
+
     Configuration config = Configuration.of(context);
 
-    printHelp("pickChanged DATA "+ pickChanged);
-    if(pickChanged != ""){
+    printHelp("pickChanged DATA " + pickChanged);
+    if (pickChanged != "") {
       final pickChangedEncrypted = encryptData(pickChanged);
-      printHelp("pickChangedEncrypted DATA "+ pickChangedEncrypted);
-
+      printHelp("pickChangedEncrypted DATA " + pickChanged);
+      // Alert(context: context, loading: true, disableBackButton: true);
       Result result =
           await PickAPIs.deletePickChanged(context, pickChangedEncrypted);
       setState(() {
         result = result;
       });
       if (result.code == 1) {
+        // Navigator.of(context, rootNavigator: true).pop();
         print("sudah deletee " + result.message.toString());
       } else {
+        // Navigator.of(context, rootNavigator: true).pop();
         print("error deletee " + result.message.toString());
+        Alert(
+            context: context,
+            title: "Error ,",
+            content: Text(result.message),
+            cancel: false,
+            type: "error");
       }
     }
 
-    await refresh();
+    // await refresh();
   }
+
 // textfield or checkbox onchange
   void onchangedData() {
     try {
-        // printHelp("this is choosenpick "+choosenPick);
+      // printHelp("this is choosenpick " + choosenPick);
+
       for (int i = 0; i < pickNos.length; i++) {
-        if (pickNos[i].pickNo.contains(choosenPick)) {
+        if (pickNos[i].pickNo.toString() == choosenPick.toString()) {
           pickChanged = [];
           Pick temp;
           temp = pickNos[i];
@@ -342,13 +414,13 @@ class _PickPageVerticalState extends State<PickPageVertical> {
               sales: pickNos[i].sales));
 
           setState(() {
-            pickChangedNoPick = pickNos[i].pickNo;
-            print('set val pickchanged'+ pickChangedNoPick);
+            selectedNoPick = pickNos[i].pickNo;
+            // print('set val pickchangedd ' + selectedNoPick);
           });
-          
 
-          insertOnchangePick(pickChanged);
-
+          if(pickDone != 1){
+            insertOnchangePick(pickChanged);
+          }
           // print("pick choosen piro : " + picksChoosen.length.toString());
         }
       }
@@ -357,13 +429,8 @@ class _PickPageVerticalState extends State<PickPageVertical> {
     }
   }
 
-  submitted() async {
-    refresh();
-  }
-
   refresh() async {
     Alert(context: context, loading: true, disableBackButton: true);
-
     getNomorPick();
     Navigator.of(context, rootNavigator: true).pop();
   }
@@ -382,12 +449,15 @@ class _PickPageVerticalState extends State<PickPageVertical> {
                   children: [
                     dropdownSearch("Pilih nomor pick"),
                     Padding(
-                      padding: EdgeInsets.only(right: 10),
-                      child: ElevatedButton(
-                          onPressed: () {
-                            refresh();
-                          },
-                          child: const Text('Refresh')),
+                      padding: EdgeInsets.only(right: 10, left: 30),
+                      child: Button(
+                        disable: false,
+                        child: TextView('Refresh', 3,
+                            color: Colors.white, caps: true),
+                        onTap: () {
+                          refresh();
+                        },
+                      ),
                     ),
                   ],
                 ),
@@ -431,8 +501,7 @@ class _PickPageVerticalState extends State<PickPageVertical> {
                                   children: <Widget>[
                                     TextView(custName, 3, fontSize: 17),
                                     TextView(contactName, 3, fontSize: 17),
-                                    TextView(city + ", " + postcode, 3,
-                                        fontSize: 17),
+                                    TextView(cityPostcode, 3, fontSize: 17),
                                     TextView(county, 3, fontSize: 17),
                                     TextView(province, 3, fontSize: 17),
                                   ],
@@ -443,67 +512,80 @@ class _PickPageVerticalState extends State<PickPageVertical> {
                         ),
                       ),
                       Container(
+                        // width: 40,
+                        // height: 40,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.only(right: 10),
-                                  child: Container(
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.15,
+                              height: MediaQuery.of(context).size.width * 0.29,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: EdgeInsets.only(right: 10),
+                                    child: Container(
+                                        child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                          TextView('Gudang', 4, fontSize: 17),
+                                          TextView('Source', 4, fontSize: 17),
+                                          TextView('Tanggal', 4, fontSize: 17),
+                                          TextView('Berat', 4, fontSize: 17),
+                                          TextView('User ID', 4, fontSize: 17),
+                                          TextView('WS No.', 4, fontSize: 17),
+                                        ])),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.01,
+                              height: MediaQuery.of(context).size.width * 0.29,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Container(
                                       child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: <Widget>[
-                                        TextView('Gudang', 4, fontSize: 17),
-                                        TextView('Source', 4, fontSize: 17),
-                                        TextView('Tanggal', 4, fontSize: 17),
-                                        TextView('Berat', 4, fontSize: 17),
-                                        TextView('User ID', 4, fontSize: 17),
-                                        TextView('WS No.', 4, fontSize: 17),
+                                        TextView(':', 4, fontSize: 17),
+                                        TextView(':', 4, fontSize: 17),
+                                        TextView(':', 4, fontSize: 17),
+                                        TextView(':', 4, fontSize: 17),
+                                        TextView(':', 4, fontSize: 17),
+                                        TextView(':', 4, fontSize: 17),
                                       ])),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Container(
-                                    child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                      TextView(':', 4, fontSize: 17),
-                                      TextView(':', 4, fontSize: 17),
-                                      TextView(':', 4, fontSize: 17),
-                                      TextView(':', 4, fontSize: 17),
-                                      TextView(':', 4, fontSize: 17),
-                                      TextView(':', 4, fontSize: 17),
-                                    ])),
-                              ],
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.only(left: 10),
-                                  child: Container(
-                                      child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                        TextView(gudang, 3, fontSize: 17),
-                                        TextView(source, 3, fontSize: 17),
-                                        TextView(tanggal + " " + sales, 3,
-                                            fontSize: 17),
-                                        TextView(berat + " KG", 3,
-                                            fontSize: 17),
-                                        TextView(userId, 3, fontSize: 17),
-                                        TextView(wsNo, 3, fontSize: 17),
-                                      ])),
-                                ),
-                              ],
+                            Container(
+                              width: 250,
+                              height: MediaQuery.of(context).size.width * 0.29,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 10),
+                                    child: Container(
+                                        child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                          TextView(gudang, 3, fontSize: 17),
+                                          TextView(source, 3, fontSize: 17),
+                                          TextView(tanggal + " " + sales, 3,
+                                              fontSize: 17),
+                                          TextView(beratKg, 3, fontSize: 17),
+                                          TextView(userId, 3, fontSize: 17),
+                                          TextView(wsNo, 3, fontSize: 17),
+                                        ])),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -589,92 +671,130 @@ class _PickPageVerticalState extends State<PickPageVertical> {
   //   // _refreshJournals();
   // }
 
-  void submitValidation()async {
-    bool isDataValid = true;
-    print("yaaa");
-    printHelp(choosenPick);
-    await deleteOnchangePick(choosenPick);
-
-    setState(() {
-      for (int i = 0; i < qtyRealController.length; i++) {
-        if (qtyRealController[i].text.isEmpty && !isCheckboxSelected[i]) {
-          isDataValid = false;
-          break;
-        }
-      }
-    });
-
-    if (!isDataValid) {
+  void submitValidation() async {
+    if (choosenPick == "Pilih nomor pick") {
       Alert(
           context: context,
           title: "Maaf,",
-          content: Text("Masih ada data yang kosong. Silahkan dicek kembali"),
+          content: Text("Pilih nomor pick terlebih dahulu."),
           cancel: false,
           type: "error");
     } else {
-      DateTime now = DateTime.now();
-      String formattedDate = DateFormat('dd-MM-yyyy kk:mm:ss').format(now);
-      try {
-            
-        // for (int i = 0; i < pickNos.length; i++) {
-        //   if (pickNos[i].pickNo.contains(choosenPick)) {
-        //     printHelp("???????? ");
-        //     picksChoosen = [];
-        //     Pick temp;
-        //     temp = pickNos[i];
-        //     picksChoosen.add(Pick(
-        //         pickNo: pickNos[i].pickNo,
-        //         custName: pickNos[i].custName,
-        //         contactName: pickNos[i].contactName,
-        //         city: pickNos[i].city,
-        //         county: pickNos[i].county,
-        //         postcode: pickNos[i].postcode,
-        //         province: pickNos[i].province,
-        //         gudang: pickNos[i].gudang,
-        //         source: pickNos[i].source,
-        //         date: pickNos[i].date,
-        //         weight: pickNos[i].weight,
-        //         userId: pickNos[i].userId,
-        //         wsNo: pickNos[i].wsNo,
-        //         sales: pickNos[i].sales));
+      bool isDataValid = true;
+      // await deleteOnchangePick(choosenPick);
 
-        //     // print("pick choosen piro : " + picksChoosen.length.toString());
-        //   }
-        // }
-
-        //submit data
-        
-          detailPicksChoosen = [];
-        for (int i = 0; i < detailPicks.length; i++) {
-          print(detailPicksChoosen.length);
-          int pilih;
-          if (isCheckboxSelected[i] == true) {
-            pilih = 1;
-          } else {
-            pilih = 0;
+      setState(() {
+        for (int i = 0; i < qtyRealController.length; i++) {
+          if (qtyRealController[i].text.isEmpty && !isCheckboxSelected[i]) {
+            isDataValid = false;
+            break;
           }
-          detailPicksChoosen.add(DetailPick(
-              description: detailPicks[i].description,
-              ukuran: detailPicks[i].ukuran,
-              bincode: detailPicks[i].bincode,
-              quantity: detailPicks[i].quantity,
-              qty_real: qtyRealController[i].text,
-              uom: detailPicks[i].uom,
-              ada: pilih));
         }
-        printHelp("isi pick yg dipilih : " + pickChanged.length.toString());
-        printHelp("isi det pick yg dipilih : " + detailPicksChoosen.length.toString());
-        insertPick(pickChanged, detailPicksChoosen);
-      } catch (e) {
-        print("catch" + e);
+      });
+
+      if (!isDataValid) {
+        Alert(
+            context: context,
+            title: "Maaf,",
+            content: Text("Masih ada data yang kosong. Silahkan dicek kembali"),
+            cancel: false,
+            type: "error");
+      } else {
+        DateTime now = DateTime.now();
+        String formattedDate = DateFormat('dd-MM-yyyy kk:mm:ss').format(now);
+        try {
+          for (int i = 0; i < pickNos.length; i++) {
+            if (pickNos[i].pickNo.contains(choosenPick)) {
+              pickChanged = [];
+              Pick temp;
+              temp = pickNos[i];
+              pickChanged.add(Pick(
+                  pickNo: pickNos[i].pickNo,
+                  custName: pickNos[i].custName,
+                  contactName: pickNos[i].contactName,
+                  city: pickNos[i].city,
+                  county: pickNos[i].county,
+                  postcode: pickNos[i].postcode,
+                  province: pickNos[i].province,
+                  gudang: pickNos[i].gudang,
+                  source: pickNos[i].source,
+                  date: pickNos[i].date,
+                  weight: pickNos[i].weight,
+                  userId: pickNos[i].userId,
+                  wsNo: pickNos[i].wsNo,
+                  sales: pickNos[i].sales));
+
+              setState(() {
+                selectedNoPick = pickNos[i].pickNo;
+                // print('set val pickchanged' + selectedNoPick);
+              });
+
+              // insertOnchangePick(pickChanged);
+
+              // print("pick choosen piro : " + picksChoosen.length.toString());
+            }
+          }
+          detailPicksChoosen = [];
+          for (int i = 0; i < detailPicks.length; i++) {
+            int pilih;
+            if (isCheckboxSelected[i] == true) {
+              pilih = 1;
+            } else {
+              pilih = 0;
+            }
+            detailPicksChoosen.add(DetailPick(
+                description: detailPicks[i].description,
+                ukuran: detailPicks[i].ukuran,
+                bincode: detailPicks[i].bincode,
+                quantity: detailPicks[i].quantity,
+                qty_real: qtyRealController[i].text,
+                uom: detailPicks[i].uom,
+                ada: pilih));
+          }
+          printHelp("isi pick yg dipilih : " + pickChanged.length.toString());
+          printHelp("isi det pick yg dipilih : " +
+              detailPicksChoosen.length.toString());
+          insertPick(pickChanged, detailPicksChoosen);
+        } catch (e) {
+          print("catch" + e);
+        }
       }
     }
   }
 
-  void changedPick(data) async {
-    await getNomorPick();
+  setPick(pickNos) {
+    // printHelp("choosenpickkkkkk " + choosenPick);
+    onchangedData();
+    for (int i = 0; i < pickNos.length; i++) {
+      if (pickNos[i].pickNo.toString() == choosenPick) {
+        if (choosenPick != "Pilih nomor pick") {
+          setState(() {
+            //clear detail data
+            custName = pickNos[i].custName;
+            contactName = pickNos[i].contactName;
+            city = pickNos[i].city;
+            county = pickNos[i].county;
+            postcode = pickNos[i].postcode;
+            province = pickNos[i].province;
+            cityPostcode = city + ", " + postcode;
 
-    // kalo pilih iya
+            gudang = pickNos[i].gudang;
+            source = pickNos[i].source;
+            tanggal = pickNos[i].date.toString();
+            berat = pickNos[i].weight.toString();
+            beratKg = berat + " KG";
+            userId = pickNos[i].userId;
+            wsNo = pickNos[i].wsNo;
+            sales = pickNos[i].sales;
+          });
+        }
+      }
+    }
+    // printHelp("lengthnya picknoss " + pickNos.length.toString());
+  }
+
+  void changedPick(data) async {
+    // await getNomorPick();
     setState(() {
       choosenPick = data;
       selectedDropdownValue = data;
@@ -684,7 +804,32 @@ class _PickPageVerticalState extends State<PickPageVertical> {
       //     selectedDropdownValue);
     });
 
-    if (data != "Pilih nomor pick") {
+    // default value
+    if (data.contains("Pilih nomor pick")) {
+      // getNomorPick();
+      detailPicks = [];
+      custName = "";
+      contactName = "";
+      city = "";
+      county = "";
+      postcode = "";
+      province = "";
+      cityPostcode = "";
+
+      gudang = "";
+      source = "";
+      tanggal = "";
+      berat = "";
+      beratKg = "";
+      userId = "";
+      wsNo = "";
+      sales = "";
+      dropdownSearch("Pilih nomor pick");
+    } else {
+      print("length picknoss " + pickNos.length.toString());
+      // if(pickDone != 1){
+        deleteOnchangePick(selectedNoPick);
+      // }
       getDetailPick(data);
       setState(() {
         for (int i = 0; i < isCheckboxSelected.length; i++) {
@@ -693,70 +838,35 @@ class _PickPageVerticalState extends State<PickPageVertical> {
           isQtyEnabled[i] = true;
         }
       });
-
-      for (int i = 0; i < pickNos.length; i++) {
-        if (pickNos[i].pickNo == data) {
-          setState(() {
-            //clear detail data
-
-            custName = pickNos[i].custName;
-            contactName = pickNos[i].contactName;
-            city = pickNos[i].city;
-            county = pickNos[i].county;
-            postcode = pickNos[i].postcode;
-            province = pickNos[i].province;
-
-            gudang = pickNos[i].gudang;
-            source = pickNos[i].source;
-            tanggal = pickNos[i].date.toString();
-            berat = pickNos[i].weight.toString();
-            userId = pickNos[i].userId;
-            wsNo = pickNos[i].wsNo;
-            sales = pickNos[i].sales;
-          });
-        }
-      }
+      // print("ini data" + data);
+      // print("ini length picknosss " + pickNos.length.toString());
     }
-    // else pilih nomor pick
-    else if (data == "Pilih nomor pick") {
-      getNomorPick();
-      detailPicks = [];
-      custName = "";
-      contactName = "";
-      city = "";
-      county = "";
-      postcode = "";
-      province = "";
-
-      gudang = "";
-      source = "";
-      tanggal = "";
-      berat = "";
-      userId = "";
-      wsNo = "";
-      sales = "";
-      dropdownSearch("Pilih nomor pick");
-    }
+    getNomorPick();
   }
 
   showAlertDialog(BuildContext context, String data) {
+    String temp = selectedDropdownValue;
     Widget cancelButton = TextButton(
       child: Text("TIDAK"),
       onPressed: () {
         Navigator.of(context, rootNavigator: true).pop();
-        printHelp("ini choosenpick blkaba selected" + selectedDropdownValue);
+        printHelp("ini choosenpick blkaba selected" +
+            selectedDropdownValue +
+            " dan ini temp " +
+            temp);
         setState(() {
-          changedPick(selectedDropdownValue);
-          selectedDropdownValue = selectedDropdownValue;
+          selectedDropdownValue = temp.trim();
         });
+        print("ini selecteddropdown val = " + selectedDropdownValue);
+        // changedPick(selectedDropdownValue);
       },
     );
     Widget continueButton = TextButton(
       child: Text("YA"),
       onPressed: () {
-        changedPick(data);
         Navigator.of(context, rootNavigator: true).pop();
-        deleteOnchangePick(pickChangedNoPick);
+        changedPick(data);
+        choosenPick = data;
       },
     );
 
@@ -795,15 +905,16 @@ class _PickPageVerticalState extends State<PickPageVertical> {
               printHelp("ini choosenpick 2" + choosenPick);
             });
           } else if (choosenPick != "") {
+            printHelp("ini choosenpick " + choosenPick);
             showAlertDialog(context, data);
             // selectedDropdownValue = data;
           } else {
             changedPick(data);
             // kalo pilih iya
+            printHelp("ini choosenpick 3" + choosenPick);
             setState(() {
               choosenPick = data;
               selectedDropdownValue = data;
-              printHelp("ini choosenpick 3" + choosenPick);
             });
           }
         },
@@ -865,8 +976,8 @@ class _PickPageVerticalState extends State<PickPageVertical> {
       );
     }
     return HorizontalDataTable(
-      leftHandSideColumnWidth: MediaQuery.of(context).size.width * 0.33,
-      rightHandSideColumnWidth: MediaQuery.of(context).size.width * 0.66,
+      leftHandSideColumnWidth: MediaQuery.of(context).size.width * 0.32,
+      rightHandSideColumnWidth: MediaQuery.of(context).size.width * 0.65,
       isFixedHeader: true,
       headerWidgets: _getTitleWidget(),
       leftSideItemBuilder: _generateFirstColumnRow,
@@ -889,61 +1000,60 @@ class _PickPageVerticalState extends State<PickPageVertical> {
   List<Widget> _getTitleWidget() {
     return [
       _getTitleItemWidget(
-          'NAMA BARANG', MediaQuery.of(context).size.width * 0.23),
+          'NAMA BARANG', MediaQuery.of(context).size.width * 0.23, 5),
       _getTitleItemWidget(
-          'KEMAS-\nAN', MediaQuery.of(context).size.width * 0.17),
-      _getTitleItemWidget('BIN', MediaQuery.of(context).size.width * 0.15),
-      _getTitleItemWidget('QTY', MediaQuery.of(context).size.width * 0.08),
-      _getTitleItemWidget('QTY REAL', MediaQuery.of(context).size.width * 0.08),
-      _getTitleItemWidget('UoM', MediaQuery.of(context).size.width * 0.08),
-      _getTitleItemWidget('ADA', MediaQuery.of(context).size.width * 0.08),
+          'KEMASAN', MediaQuery.of(context).size.width * 0.17, 5),
+      _getTitleItemWidget('BIN', MediaQuery.of(context).size.width * 0.15, 14),
+      _getTitleItemWidget('QTY', MediaQuery.of(context).size.width * 0.07, 0),
+      _getTitleItemWidget(
+          'QTY REAL', MediaQuery.of(context).size.width * 0.08, 5),
+      _getTitleItemWidget('UoM', MediaQuery.of(context).size.width * 0.08, 5),
+      _getTitleItemWidget('ADA', MediaQuery.of(context).size.width * 0.08, 14),
     ];
   }
 
-  Widget _getTitleItemWidget(String label, double width) {
+  Widget _getTitleItemWidget(String label, double width, double paddingLeft) {
     return Container(
       child: Text(label,
           style: TextStyle(fontWeight: FontWeight.bold),
           textAlign: TextAlign.left),
       width: width,
       height: 56,
-      padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+      padding: EdgeInsets.fromLTRB(paddingLeft, 0, 0, 0),
       alignment: Alignment.centerLeft,
     );
   }
 
   Widget _generateRightHandSideColumnRow(BuildContext context, int index) {
     return Row(
-      // mainAxisAlignment : MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Container(
-          // color: Colors.orange,
-          // child: TextView('12X0.075MMX10MX0.20G', 6),
-          child: Align(child: TextView(detailPicks[index].ukuran, 6)),
-          // child: TextView(detailPicks[index].ukuran, 6, align: TextAlign.center),
-          width: MediaQuery.of(context).size.width * 0.17,
+          child: Align(
+            alignment: Alignment.centerRight,
+            // child: TextView('12X0.075MMX10MX0.20G', 6)
+            child: TextView(detailPicks[index].ukuran, 6),
+          ),
+          width: MediaQuery.of(context).size.width * 0.18,
           height: 52,
-          // padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+          padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
           alignment: Alignment.centerLeft,
         ),
         Container(
-          // child: TextView('1.24.14.1.1', 6),
           child: TextView(detailPicks[index].bincode, 6),
           width: MediaQuery.of(context).size.width * 0.15,
           height: 52,
-          // padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+          padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
           alignment: Alignment.centerLeft,
         ),
         Container(
-          // color: Colors.orange,
-          // child: TextView('1200', 6),
           child: Align(
               alignment: Alignment.centerRight,
+              // child: TextView('696', 6)),
               child: TextView(detailPicks[index].quantity, 6)),
-          width: MediaQuery.of(context).size.width * 0.08,
+          width: MediaQuery.of(context).size.width * 0.07,
           height: 52,
-          // padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+          padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
           alignment: Alignment.centerLeft,
         ),
         Container(
@@ -962,7 +1072,7 @@ class _PickPageVerticalState extends State<PickPageVertical> {
               counterText: "",
             ),
             onChanged: (value) {
-              onchangedData();
+              // onchangedData();
               if (value.isNotEmpty) {
                 setState(() {
                   isCheckboxEnabled[index] = false;
@@ -974,16 +1084,16 @@ class _PickPageVerticalState extends State<PickPageVertical> {
               }
             },
           ),
-          width: MediaQuery.of(context).size.width * 0.08,
+          width: MediaQuery.of(context).size.width * 0.07,
           height: 52,
-          // padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+          padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
           alignment: Alignment.centerLeft,
         ),
         Container(
           child: TextView(detailPicks[index].uom, 6),
           width: MediaQuery.of(context).size.width * 0.08,
           height: 52,
-          // padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+          padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
           alignment: Alignment.centerLeft,
         ),
         Container(
@@ -992,7 +1102,7 @@ class _PickPageVerticalState extends State<PickPageVertical> {
             onChanged: !isCheckboxEnabled[index]
                 ? null
                 : (bool value) {
-                    onchangedData();
+                    // onchangedData();
                     setState(() {
                       isCheckboxSelected[index] = value;
                       if (value == true) {
@@ -1005,7 +1115,7 @@ class _PickPageVerticalState extends State<PickPageVertical> {
           ),
           width: MediaQuery.of(context).size.width * 0.08,
           height: 52,
-          // padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+          padding: EdgeInsets.fromLTRB(16, 0, 0, 0),
           alignment: Alignment.centerLeft,
         ),
       ],

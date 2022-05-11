@@ -37,8 +37,6 @@ class DashboardState extends State<Dashboard> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    printHelp("cek ya "+userModel.userId);
-    printHelp("cek ya "+userModel.moduleId[0]);
   }
   
   @override
@@ -144,22 +142,23 @@ class DashboardState extends State<Dashboard> {
                           splashColor: Colors.green.withOpacity(0.5),
                           onTap: () {
                             if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="adjustmentstockopname") {
-
-                            } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="monitoringstockopname") {
+                              Navigator.pushNamed(context, "adjustmentStockOpname");
+                            } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="dailymonitoringstockopname") {
 
                             } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="downloadopnamedata") {
 
                             } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="pick") {
-                              Navigator.pushNamed(context, "pick");
+                              Navigator.pushNamed(context, "pick", arguments: userModel);
                             } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="processopnamedata") {
                               Navigator.pushNamed(context, "processOpnameData");
                             } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="reportstockopname") {
-                              // Navigator.pushNamed(context, "reportstockopname");
+                              Navigator.pushNamed(context, "reportstockopname");
                             } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="stockopname") {
                               Navigator.pushNamed(context, "stockopname");
                             } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="stockopnamedifference") {
-                              // Navigator.pushNamed(context, "stockOpnameDifference");
-                              Navigator.pushNamed(context, "stockOpname");
+                              Navigator.pushNamed(context, "stockOpnameDifference");
+                              // Navigator.pushNamed(context, "adjustmentStockOpname");
+                              // Navigator.pushNamed(context, "stockOpname");
                               // Navigator.pushNamed(context, "coba");
                             }
                           },

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:utility_warehouse/screens/adjustmentStockOpname.dart';
 import 'package:utility_warehouse/screens/coba.dart';
 import 'package:utility_warehouse/screens/dashboard.dart';
 import 'package:utility_warehouse/screens/login.dart';
 import 'package:utility_warehouse/screens/otpVerification.dart';
 import 'package:utility_warehouse/screens/pick_page_vertical.dart';
 import 'package:utility_warehouse/screens/processOpnameData.dart';
+import 'package:utility_warehouse/screens/reportStockOpname.dart';
 import 'package:utility_warehouse/screens/setting.dart';
 import 'package:utility_warehouse/screens/signUp.dart';
 import 'package:utility_warehouse/screens/splashscreen.dart';
@@ -40,8 +42,14 @@ MaterialPageRoute routing(int mode, int id, List<String> pages, RouteSettings se
     case 'stockOpnameDifference':
       return MaterialPageRoute(builder: (context)=> StockOpnameDifference());
       break;
+    case 'adjustmentStockOpname':
+      return MaterialPageRoute(builder: (context)=> AdjustmentStockOpname());
+      break;
+    case 'reportStockOpname':
+      return MaterialPageRoute(builder: (context)=> ReportStockOpname());
+      break;
     case 'pick':
-      return MaterialPageRoute(builder: (context)=> PickPageVertical());
+      return MaterialPageRoute(builder: (context)=> PickPageVertical(model: settings.arguments));
       break;
     case 'coba':
       return MaterialPageRoute(builder: (context)=> Coba());

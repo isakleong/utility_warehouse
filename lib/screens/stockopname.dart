@@ -990,6 +990,7 @@ class StockOpnameState extends State<StockOpname> {
     return Scaffold(
       bottomNavigationBar: Container(
         width: mediaWidth,
+        margin: EdgeInsets.symmetric(horizontal: 15),
         child: Button(
           disable: false,
           child: TextView('Upload', 3, color: Colors.white, caps: true),

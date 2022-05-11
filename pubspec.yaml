@@ -37,7 +37,7 @@ dependencies:
   ota_update: ^4.0.1
   pin_code_fields: ^7.3.0
   mask_text_input_formatter: ^2.3.0
-  auto_size_text: ^3.0.0
+  # auto_size_text: ^3.0.0
   connectivity_plus: ^2.1.0
   data_connection_checker: ^0.3.4
   encrypt: ^5.0.0

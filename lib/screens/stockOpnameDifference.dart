@@ -990,6 +990,7 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
     return Scaffold(
       bottomNavigationBar: Container(
         width: mediaWidth,
+        margin: EdgeInsets.symmetric(horizontal: 15),
         child: Button(
           disable: false,
           child: TextView('Upload', 3, color: Colors.white, caps: true),
@@ -1033,7 +1034,8 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
                       if (details.rowIndex == 0)
                         return details.rowHeight;
                       else
-                        return details.getIntrinsicRowHeight(details.rowIndex);
+                        // return details.getIntrinsicRowHeight(details.rowIndex);
+                        return details.getIntrinsicRowHeight(details.rowIndex)*1.5;
                     },
                     // shrinkWrapColumns: true,
                     shrinkWrapRows: true,

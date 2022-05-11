@@ -88,8 +88,8 @@ class LoginState extends State<Login> {
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
-    usernameController.text = "23A-KG";
-    passwordController.text = "23A.0422";
+    // usernameController.text = "23A-KG";
+    // passwordController.text = "23A.0422";
 
     setState(() {
       userTypeList = [
