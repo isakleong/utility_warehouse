@@ -50,7 +50,7 @@ class LoginState extends State<Login> {
   final confirmPasswordController = TextEditingController();
 
   String dropdownValue = 'One';
-  String selectedDropdownValue = "Kepala Gudang";
+  String selectedDropdownValue = "Warehouse Manager";
   List<DropdownMenuItem<String>> userTypeList = [];
   final _dropdownFormKey = GlobalKey<FormState>();
 

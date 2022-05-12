@@ -34,7 +34,7 @@ MaterialPageRoute routing(int mode, int id, List<String> pages, RouteSettings se
       return MaterialPageRoute(builder: (context)=> Dashboard(userModel: settings.arguments));
       break;
     case 'processOpnameData':
-      return MaterialPageRoute(builder: (context)=> ProcessOpnameData());
+      return MaterialPageRoute(builder: (context)=> ProcessOpnameData(model: settings.arguments));
       break;
     case 'stockOpname':
       return MaterialPageRoute(builder: (context)=> StockOpname());

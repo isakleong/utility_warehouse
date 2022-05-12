@@ -1,7 +1,11 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:utility_warehouse/models/result.dart';
 import 'package:utility_warehouse/models/userModel.dart';
+import 'package:utility_warehouse/resources/stockOpnameAPI.dart';
+import 'package:utility_warehouse/screens/processOpnameData.dart';
 import 'package:utility_warehouse/settings/configuration.dart';
 import 'package:utility_warehouse/tools/function.dart';
 import 'package:utility_warehouse/widget/button.dart';
@@ -22,6 +26,13 @@ class DashboardState extends State<Dashboard> {
   
   DateTime currentBackPressTime;
 
+  String dropdownValue = 'One';
+  String selectedDataTypeDropdownValue = "Stock Opname";
+  String selectedUrutanHariDropdownValue = "1";
+  List<DropdownMenuItem<String>> userTypeList = [];
+  final _dropdownFormKey1 = GlobalKey<FormState>();
+  final _dropdownFormKey2 = GlobalKey<FormState>();
+
   @override
   void initState() {
     super.initState();
@@ -37,6 +48,20 @@ class DashboardState extends State<Dashboard> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    setState(() {
+      userTypeList = [
+        DropdownMenuItem(child: TextView('Stock Opname', 5, color: Colors.white), value: "WM"),
+        DropdownMenuItem(child: TextView('Stock Opname Difference', 5, color: Colors.white), value: "KG"),
+      ];
+    });
+  }
+
+  doDownloadData() async {
+    Alert(context: context, loading: true, disableBackButton: true);
+    
+    Result result = await stockOpnameAPI.login(context, usernameData, passwordData);
+                                                          // Navigator.of(context).pop();
+                                                          // doDownloadData();
   }
   
   @override
@@ -146,11 +171,115 @@ class DashboardState extends State<Dashboard> {
                             } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="dailymonitoringstockopname") {
 
                             } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="downloadopnamedata") {
-
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return Dialog(
+                                    // title: TextView("Pilih Helper", 3),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    // elevation: 0,
+                                    // backgroundColor: Colors.transparent,
+                                    child: Stack(
+                                        clipBehavior: Clip.none, 
+                                        alignment: Alignment.topCenter,
+                                        children: [
+                                          Container(
+                                            child: Padding(
+                                              padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+                                              child: SingleChildScrollView(
+                                                reverse: true,
+                                                child: Column(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    Form(
+                                                      key: _dropdownFormKey1,
+                                                      child: DropdownButtonFormField(
+                                                        decoration: InputDecoration(
+                                                          enabledBorder: OutlineInputBorder(
+                                                            borderSide: BorderSide(color: config.grayColor, width: 1.5),
+                                                            borderRadius: BorderRadius.circular(5),
+                                                          ),
+                                                          // filled: true,
+                                                          // fillColor: Colors.white,
+                                                          labelText: "Data Type",
+                                                          labelStyle: TextStyle(fontWeight: FontWeight.bold, fontFamily:'Roboto', fontSize: 16),
+                                                        ),
+                                                        hint: TextView('Data Type', 5),
+                                                        validator: (value) => value == null ? "Select a country" : null,
+                                                        dropdownColor: Colors.white,
+                                                        value: selectedDataTypeDropdownValue,
+                                                        onChanged: (String value) {
+                                                          setState(() {
+                                                            selectedDataTypeDropdownValue = value;
+                                                          });
+                                                        },
+                                                        items: <String>['Stock Opname', 'Stock Opname Difference']
+                                                            .map<DropdownMenuItem<String>>((String value) {
+                                                          return DropdownMenuItem<String>(
+                                                            value: value,
+                                                            child: TextView(value, 4),
+                                                          );
+                                                        }).toList(),
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 30),
+                                                    Form(
+                                                      key: _dropdownFormKey2,
+                                                      child: DropdownButtonFormField(
+                                                        decoration: InputDecoration(
+                                                          enabledBorder: OutlineInputBorder(
+                                                            borderSide: BorderSide(color: config.grayColor, width: 1.5),
+                                                            borderRadius: BorderRadius.circular(5),
+                                                          ),
+                                                          // filled: true,
+                                                          // fillColor: Colors.white,
+                                                          labelText: "Urutan Hari",
+                                                          labelStyle: TextStyle(fontWeight: FontWeight.bold, fontFamily:'Roboto', fontSize: 16),
+                                                        ),
+                                                        hint: TextView('Urutan Hari', 5),
+                                                        validator: (value) => value == null ? "Select a country" : null,
+                                                        dropdownColor: Colors.white,
+                                                        value: selectedUrutanHariDropdownValue,
+                                                        onChanged: (String value) {
+                                                          setState(() {
+                                                            selectedUrutanHariDropdownValue = value;
+                                                          });
+                                                        },
+                                                        items: <String>['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20',]
+                                                            .map<DropdownMenuItem<String>>((String value) {
+                                                          return DropdownMenuItem<String>(
+                                                            value: value,
+                                                            child: TextView(value, 4),
+                                                          );
+                                                        }).toList(),
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 30),
+                                                    Align(
+                                                      alignment: Alignment.bottomRight,
+                                                      child:   Button(
+                                                        child: TextView('Download', 3, color: Colors.white, caps: true),
+                                                        onTap: (){
+                                                          Navigator.of(context).pop();
+                                                          doDownloadData();
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    );
+                                });
                             } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="pick") {
                               Navigator.pushNamed(context, "pick", arguments: userModel);
                             } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="processopnamedata") {
-                              Navigator.pushNamed(context, "processOpnameData");
+                              Navigator.pushNamed(context, "processOpnameData", arguments: userModel);
                             } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="reportstockopname") {
                               Navigator.pushNamed(context, "reportstockopname");
                             } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="stockopname") {

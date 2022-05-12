@@ -41,9 +41,9 @@ String fetchAPI(String url, BuildContext context, {String parameter = "", bool p
 
   String urlAPI;
   if(secondary) {
-    urlAPI = configuration.urlPathAlt + "/" + url + (parameter == "" ? "" : "&" + parameter);
+    urlAPI = configuration.urlPathAlt + "/" + url + (parameter == "" ? "" : "?" + parameter);
   } else {
-    urlAPI = configuration.urlPath + "/" + url + (parameter == "" ? "" : "&" + parameter);
+    urlAPI = configuration.urlPath + "/" + url + (parameter == "" ? "" : "?" + parameter);
   }
   
   if(print)

@@ -1,13 +1,19 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:utility_warehouse/models/result.dart';
+import 'package:utility_warehouse/models/userModel.dart';
+import 'package:utility_warehouse/resources/stockOpnameAPI.dart';
 import 'package:utility_warehouse/settings/configuration.dart';
 import 'package:utility_warehouse/tools/function.dart';
 import 'package:utility_warehouse/widget/button.dart';
 import 'package:utility_warehouse/widget/textView.dart';
 
 class ProcessOpnameData extends StatefulWidget {
+  final User model;
 
-  const ProcessOpnameData({Key key}) : super(key: key);
+  const ProcessOpnameData({Key key, this.model}) : super(key: key);
 
   @override
   ProcessOpnameDataState createState() => ProcessOpnameDataState();
@@ -15,6 +21,8 @@ class ProcessOpnameData extends StatefulWidget {
 
 
 class ProcessOpnameDataState extends State<ProcessOpnameData> {
+  User userModel;
+
   String selectedDaySequence = "1";
   String selectedCountPIC = "1";
   String selectedDataType = "Stock Opname";
@@ -35,7 +43,8 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
   //   HelperItem(5, 'Berto', false),
   // ];
 
-  var helperList = <String>['Andi', 'Tommy', 'Jerry', 'Alex', 'Berto', 'Recca', 'Isak', 'Rudy'];
+  // var helperList = <String>['Andi', 'Tommy', 'Jerry', 'Alex', 'Berto', 'Recca', 'Isak', 'Rudy'];
+  var helperList = <String>[];
   List<String> selectedHelperList = [];
   bool isSubmitHelper = false;
 
@@ -50,6 +59,7 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
   void initState() {
     super.initState();
     selectedListPIC = new List.generate(2, (i) => ["Andi", "Tommy", "Jerry"]);
+    userModel = widget.model;
   }
 
   @override
@@ -58,13 +68,45 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
     // for(int i = 0; i < 20; i ++) {
     //   selectedDay.add
     // }
-    await initColorWidget();
+    initColorWidget();
+  }
+
+  getHelperList() async {
+    FocusScope.of(context).requestFocus(FocusNode());
+    Alert(context: context, loading: true, disableBackButton: true);
+
+    Result result = await stockOpnameAPI.getHelperList(context, userModel.userId.substring(0, 3));
+
+    Navigator.of(context).pop();
+
+    if(result.code == 200) {
+      setState(() {
+        helperList = result.data.split(',');
+        for(int i = 0; i < helperList.length; i++) {
+          helperList[i] = helperList[i].replaceAll("\"", '');
+          helperList[i] = helperList[i].replaceAll("\[",'');
+          helperList[i] = helperList[i].replaceAll("\]",'');
+        }
+        });
+    } else {
+      Alert(
+        context: context,
+        title: "Maaf",
+        content: Text(result.error_message),
+        cancel: false,
+        type: "error"
+      );  
+    }
   }
 
   void initColorWidget() {
-    selectedDay.add(Color(0xFFFFFFFF));
+    selectedDay.add(config.lightGrayColor);
     for(int i = 0; i < 19; i++){
-      selectedDay.add(Color(0xFF0066ff));
+      if(i>1) {
+        selectedDay.add(Color(0xFF0066ff));
+      } else {
+        selectedDay.add(config.lightGrayColor);
+      }
     }
   }
 
@@ -89,36 +131,39 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
                   Container(
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(10, 70, 10, 10),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 20),
-                            child: TextView("Pilih Helper", 2),
-                          ),
-                          ChipWidget(
-                            helperList,
-                            helperSelectedList: selectedHelperList,
-                            onSelectionChanged: (selectedList) {
-                              setState(() {
-                                selectedHelperList = selectedList;
-                              });
-                            },
-                          ),
-                          SizedBox(height: 20),
-                          Align(
-                            alignment: Alignment.bottomRight,
-                            child:   Button(
-                              child: TextView("Pilih", 4),
-                              onTap: (){
+                      child: SingleChildScrollView(
+                        reverse: true,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 20),
+                              child: TextView("Pilih Helper", 2),
+                            ),
+                            ChipWidget(
+                              helperList,
+                              helperSelectedList: selectedHelperList,
+                              onSelectionChanged: (selectedList) {
                                 setState(() {
-                                  isSubmitHelper = true;
+                                  selectedHelperList = selectedList;
                                 });
-                                Navigator.of(context).pop();
                               },
                             ),
-                          ),
-                        ],
+                            SizedBox(height: 20),
+                            Align(
+                              alignment: Alignment.bottomRight,
+                              child:   Button(
+                                child: TextView("Pilih", 4),
+                                onTap: (){
+                                  setState(() {
+                                    isSubmitHelper = true;
+                                  });
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -324,17 +369,21 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
                               ),
                               child: InkWell(
                                 onTap: (){
+                                  index > 2 ?
                                   setState(() {
-                                    for(int i = 0; i < 20; i++){
+                                    for(int i = 3; i < 20; i++){
                                       if(i!=index) {
                                         selectedDay[i] = Color(0xFF0066ff);
                                       }
                                     }
                                     selectedDay[index] = Colors.white;
                                     Scrollable.ensureVisible(_key[index].currentContext);
-                                  });
+                                  })
+                                  :
+                                  null;
                                 },
-                                child: Column(
+                                child: index > 2 ?
+                                Column(
                                   children: [
                                     (index+1) >= 10 ? SizedBox(height: 7) : Container(),
                                     Container(
@@ -350,7 +399,27 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
                                     //   child: TextView("Sudah".toString(), 1, color: Colors.white)
                                     // )
                                   ],
-                                ),
+                                )
+                                :
+                                Column(
+                                  children: [
+                                    (index+1) >= 10 ? SizedBox(height: 7) : Container(),
+                                    Container(
+                                      padding: (index+1) >= 10 ? EdgeInsets.all(18) : EdgeInsets.all(20),
+                                      decoration: new BoxDecoration(
+                                        color: Colors.white,
+                                        shape: BoxShape.circle,
+                                        border: Border.all(color: Colors.black, width: 0.0),
+                                      ),
+                                      child: Text((index+1).toString(), style: TextStyle(fontSize: (index+1) >= 10 ? 14 : 20)),
+                                    ),
+                                    Expanded(child: Container()),
+                                    Container(
+                                      margin: EdgeInsets.only(bottom: 10),
+                                      child: Icon(Icons.check_circle_rounded, size: 40, color: Colors.white),
+                                    )
+                                  ],
+                                )
                               )
                             );
                           }),
@@ -535,7 +604,8 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
                         child: Button(
                           disable: false,
                           child: TextView('Pilih Helper', 3, color: Colors.white, caps: false),
-                          onTap: () {
+                          onTap: () async {
+                            await getHelperList();
                             showHelperList();
                             setState(() {
                               isSubmitHelper = false;
@@ -581,22 +651,26 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
                                     ],
                                   ),
                                 ),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      RawMaterialButton(
-                                        onPressed: () {},
-                                        elevation: 2.0,
-                                        fillColor: config.darkOpacityBlueColor,
-                                        child: Icon(Icons.close, color: Colors.white),
-                                        padding: EdgeInsets.all(3),
-                                        shape: CircleBorder(),
-                                      )
-                                    ],
-                                  ),
-                                ),
+                                // Expanded(
+                                //   child: Column(
+                                //     crossAxisAlignment: CrossAxisAlignment.start,
+                                //     mainAxisSize: MainAxisSize.min,
+                                //     children: [
+                                //       RawMaterialButton(
+                                //         onPressed: () {
+                                //           setState(() {
+                                //             helperList.removeAt(index);
+                                //           });
+                                //         },
+                                //         elevation: 2.0,
+                                //         fillColor: config.darkOpacityBlueColor,
+                                //         child: Icon(Icons.close, color: Colors.white),
+                                //         padding: EdgeInsets.all(3),
+                                //         shape: CircleBorder(),
+                                //       )
+                                //     ],
+                                //   ),
+                                // ),
                                 // Expanded(child: Container())
                               ],
                             ),
