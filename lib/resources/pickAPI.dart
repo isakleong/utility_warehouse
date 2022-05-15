@@ -23,8 +23,11 @@ class PickAPI {
 
     Configuration configuration = await getUrlConfig(context);
 
-    String url_address_1 = fetchAPI("object/pick.php?branchId="+ branchId, context, print: true);
-    String url_address_2 = fetchAPI("object/pick.php?branchId="+ branchId, context, secondary: true, print: true);
+    String url_address_1 =
+        fetchAPI("object/pick.php?branchId=" + branchId, context, print: true);
+    String url_address_2 = fetchAPI(
+        "object/pick.php?branchId=" + branchId, context,
+        secondary: true, print: true);
 
     String getPickSuccess = "";
 
@@ -62,7 +65,7 @@ class PickAPI {
       // printHelp("before");
       final response = await client.get(url);
       // print("after");
-      // print("status code " + response.statusCode.toString());
+      print("status code " + response.statusCode.toString());
       print("cek body " + response.body);
       final res = response.body;
       final decryptResponse_ = decryptData(res.trim());
@@ -94,17 +97,19 @@ class PickAPI {
     DetailPick dpick;
     String url = "";
 
+    Configuration configuration = await getUrlConfig(context);
+
+    String url_address_1 = fetchAPI(
+        "/object/pickDetail.php?branchId=" + branchId + "&pickNo=" + noPick,
+        context,
+        print: true);
+    String url_address_2 = fetchAPI(
+        "/object/pickDetail.php?branchId=" + branchId + "&pickNo=" + noPick,
+        context,
+        secondary: true,
+        print: true);
+
     bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-    String url_address_1 = config.baseUrl +
-        "/object/pickDetail.php?branchId=" +
-        branchId +
-        "&pickNo=" +
-        noPick;
-    String url_address_2 = config.baseUrlAlt +
-        "/object/pickDetail.php?branchId=" +
-        branchId +
-        "&pickNo=" +
-        noPick;
 
     String getPickSuccess = "";
 
@@ -174,8 +179,13 @@ class PickAPI {
     String url = "";
 
     bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-    String url_address_1 = config.baseUrl + "/object/insertPick.php";
-    String url_address_2 = config.baseUrlAlt + "/object/insertPick.php";
+    String url_address_1 =
+        fetchAPI("/object/insertPick.php", context, print: true);
+    String url_address_2 = fetchAPI("/object/insertPick.php", context,
+        secondary: true, print: true);
+
+    // String url_address_1 = config.baseUrl + "/object/insertPick.php";
+    // String url_address_2 = config.baseUrlAlt + "/object/insertPick.php";
 
     try {
       final conn_1 = await connectionTest(url_address_1, context);
@@ -252,7 +262,6 @@ class PickAPI {
 
       // final response = await client.post(url);
 
-      // print("status code " + response.statusCode.toString());
       // print("cek body " + response.body);
 
       // var parsedJson = jsonDecode(response.body);
@@ -261,13 +270,18 @@ class PickAPI {
 
       final encryptedJsonn = encryptData(jsonn);
 
+      printHelp("json nya " + encryptedJsonn);
+
       final response = await client.post(url,
           headers: {"Content-Type": "application/json"}, body: encryptedJsonn);
+
+      print("status code " + response.statusCode.toString());
 
       final res = response.body;
       // printHelp("boomsmsmsmms " + res);
       // printHelp("current decrypt (using response bodyyy)");
       final decryptResponse_ = decryptData(res.trim());
+      printHelp("result nya " + decryptResponse_);
       // printHelp("print aaa  ");
       // print(decryptResponse_);
 
@@ -287,10 +301,11 @@ class PickAPI {
       } else if (decryptResponse_.contains("all data inserted successfully")) {
         result = new Result(
             code: 1, message: decryptResponse_, data: decryptResponse_);
-      } else if(decryptResponse_.contains("Helper lain sudah mengerjakan nomor pick ini")){
+      } else if (decryptResponse_.contains(
+          "Helper lain sudah mengerjakan nomor pick ini. Silahkan memilih nomor pick lain.")) {
         result = new Result(
             code: 2, message: decryptResponse_, data: decryptResponse_);
-      }else{
+      } else {
         result = new Result(
             code: -1, message: decryptResponse_, data: decryptResponse_);
       }
@@ -312,8 +327,13 @@ class PickAPI {
     String url = "";
 
     bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-    String url_address_1 = config.baseUrl + "/object/changedPick.php";
-    String url_address_2 = config.baseUrlAlt + "/object/changedPick.php";
+    String url_address_1 =
+        fetchAPI("/object/changedPick.php", context, print: true);
+    String url_address_2 = fetchAPI("/object/changedPick.php", context,
+        secondary: true, print: true);
+
+    // String url_address_1 = config.baseUrl + "/object/changedPick.php";
+    // String url_address_2 = config.baseUrlAlt + "/object/changedPick.php";
 
     try {
       final conn_1 = await connectionTest(url_address_1, context);
@@ -375,7 +395,6 @@ class PickAPI {
       try {
         // final response = await client.post(url);
 
-        // print("status code " + response.statusCode.toString());
         // print("cek body " + response.body);
 
         // var parsedJson = jsonDecode(response.body);
@@ -388,11 +407,12 @@ class PickAPI {
             headers: {"Content-Type": "application/json"},
             body: encryptedJsonn);
 
+        print("status code " + response.statusCode.toString());
         final res = response.body;
-        // printHelp("current decrypt (using response bodyyy)");
+        printHelp("current decrypt (using response bodyyy)" + res);
         final decryptResponse_ = decryptData(res.trim());
-        // printHelp("print aaa  ");
-        // print(decryptResponse_);
+        printHelp("print aaa  ");
+        print(decryptResponse_);
 
         // var parsedJson = jsonDecode(decryptResponse_);
 
@@ -433,10 +453,17 @@ class PickAPI {
     String url = "";
 
     bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-    String url_address_1 =
-        config.baseUrl + "/object/changedPick.php?pickNo=" + noPick;
-    String url_address_2 =
-        config.baseUrlAlt + "/object/changedPick.php?pickNo=" + noPick;
+
+    String url_address_1 = fetchAPI(
+        "/object/changedPick.php?pickNo=" + noPick, context,
+        print: true);
+    String url_address_2 = fetchAPI(
+        "/object/changedPick.php?pickNo=" + noPick, context,
+        secondary: true, print: true);
+    // String url_address_1 =
+    //     config.baseUrl + "/object/changedPick.php?pickNo=" + noPick;
+    // String url_address_2 =
+    //     config.baseUrlAlt + "/object/changedPick.php?pickNo=" + noPick;
 
     String getPickSuccess = "";
 
@@ -505,9 +532,14 @@ class PickAPI {
     String url = "";
 
     bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-    String url_address_1 = config.baseUrl + "/object/pick.php?pickNo=" + pickNo;
-    String url_address_2 =
-        config.baseUrlAlt + "/object/pick.php?pickNo=" + pickNo;
+    String url_address_1 =
+        fetchAPI("/object/pick.php?pickNo=" + pickNo, context, print: true);
+    String url_address_2 = fetchAPI(
+        "/object/pick.php?pickNo=" + pickNo, context,
+        secondary: true, print: true);
+    // String url_address_1 = config.baseUrl + "/object/pick.php?pickNo=" + pickNo;
+    // String url_address_2 =
+    //     config.baseUrlAlt + "/object/pick.php?pickNo=" + pickNo;
 
     try {
       final conn_1 = await connectionTest(url_address_1, context);
@@ -545,8 +577,9 @@ class PickAPI {
       print("after");
 
       print("status code " + response.statusCode.toString());
-      final res = response.body;
-      final decryptResponse_ = decryptData(res);
+      final String res = response.body;
+      printHelp("print..." + res);
+      final decryptResponse_ = decryptData(res.trim());
       print("cek body getpickInserted" + decryptResponse_);
 
       if (decryptResponse_.contains("Error")) {

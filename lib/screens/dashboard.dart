@@ -56,13 +56,13 @@ class DashboardState extends State<Dashboard> {
     });
   }
 
-  doDownloadData() async {
-    Alert(context: context, loading: true, disableBackButton: true);
+  // doDownloadData() async {
+  //   Alert(context: context, loading: true, disableBackButton: true);
     
-    Result result = await stockOpnameAPI.login(context, usernameData, passwordData);
-                                                          // Navigator.of(context).pop();
-                                                          // doDownloadData();
-  }
+  //   Result result = await stockOpnameAPI.login(context, usernameData, passwordData);
+  //                                                         // Navigator.of(context).pop();
+  //                                                         // doDownloadData();
+  // }
   
   @override
   Widget build(BuildContext context) {
@@ -168,26 +168,23 @@ class DashboardState extends State<Dashboard> {
                           onTap: () {
                             if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="adjustmentstockopname") {
                               Navigator.pushNamed(context, "adjustmentStockOpname");
-                            } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="dailymonitoringstockopname") {
-
+                            } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="monitoringstockopname") {
+                              Navigator.pushNamed(context, "performanceStockOpname");
                             } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="downloadopnamedata") {
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
                                   return Dialog(
-                                    // title: TextView("Pilih Helper", 3),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(16),
                                     ),
-                                    // elevation: 0,
-                                    // backgroundColor: Colors.transparent,
                                     child: Stack(
                                         clipBehavior: Clip.none, 
                                         alignment: Alignment.topCenter,
                                         children: [
                                           Container(
                                             child: Padding(
-                                              padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+                                              padding: EdgeInsets.all(30),
                                               child: SingleChildScrollView(
                                                 reverse: true,
                                                 child: Column(
@@ -201,13 +198,10 @@ class DashboardState extends State<Dashboard> {
                                                             borderSide: BorderSide(color: config.grayColor, width: 1.5),
                                                             borderRadius: BorderRadius.circular(5),
                                                           ),
-                                                          // filled: true,
-                                                          // fillColor: Colors.white,
-                                                          labelText: "Data Type",
+                                                          labelText: "Tipe Data",
                                                           labelStyle: TextStyle(fontWeight: FontWeight.bold, fontFamily:'Roboto', fontSize: 16),
                                                         ),
-                                                        hint: TextView('Data Type', 5),
-                                                        validator: (value) => value == null ? "Select a country" : null,
+                                                        hint: TextView('Tipe Data', 5),
                                                         dropdownColor: Colors.white,
                                                         value: selectedDataTypeDropdownValue,
                                                         onChanged: (String value) {
@@ -225,45 +219,13 @@ class DashboardState extends State<Dashboard> {
                                                       ),
                                                     ),
                                                     SizedBox(height: 30),
-                                                    Form(
-                                                      key: _dropdownFormKey2,
-                                                      child: DropdownButtonFormField(
-                                                        decoration: InputDecoration(
-                                                          enabledBorder: OutlineInputBorder(
-                                                            borderSide: BorderSide(color: config.grayColor, width: 1.5),
-                                                            borderRadius: BorderRadius.circular(5),
-                                                          ),
-                                                          // filled: true,
-                                                          // fillColor: Colors.white,
-                                                          labelText: "Urutan Hari",
-                                                          labelStyle: TextStyle(fontWeight: FontWeight.bold, fontFamily:'Roboto', fontSize: 16),
-                                                        ),
-                                                        hint: TextView('Urutan Hari', 5),
-                                                        validator: (value) => value == null ? "Select a country" : null,
-                                                        dropdownColor: Colors.white,
-                                                        value: selectedUrutanHariDropdownValue,
-                                                        onChanged: (String value) {
-                                                          setState(() {
-                                                            selectedUrutanHariDropdownValue = value;
-                                                          });
-                                                        },
-                                                        items: <String>['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20',]
-                                                            .map<DropdownMenuItem<String>>((String value) {
-                                                          return DropdownMenuItem<String>(
-                                                            value: value,
-                                                            child: TextView(value, 4),
-                                                          );
-                                                        }).toList(),
-                                                      ),
-                                                    ),
-                                                    SizedBox(height: 30),
                                                     Align(
                                                       alignment: Alignment.bottomRight,
                                                       child:   Button(
                                                         child: TextView('Download', 3, color: Colors.white, caps: true),
                                                         onTap: (){
                                                           Navigator.of(context).pop();
-                                                          doDownloadData();
+                                                          // doDownloadData();
                                                         },
                                                       ),
                                                     ),
@@ -281,14 +243,11 @@ class DashboardState extends State<Dashboard> {
                             } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="processopnamedata") {
                               Navigator.pushNamed(context, "processOpnameData", arguments: userModel);
                             } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="reportstockopname") {
-                              Navigator.pushNamed(context, "reportstockopname");
+                              Navigator.pushNamed(context, "reportStockOpname");
                             } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="stockopname") {
-                              Navigator.pushNamed(context, "stockopname");
+                              Navigator.pushNamed(context, "stockOpname");
                             } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="stockopnamedifference") {
                               Navigator.pushNamed(context, "stockOpnameDifference");
-                              // Navigator.pushNamed(context, "adjustmentStockOpname");
-                              // Navigator.pushNamed(context, "stockOpname");
-                              // Navigator.pushNamed(context, "coba");
                             }
                           },
                           child: Padding(

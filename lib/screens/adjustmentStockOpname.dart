@@ -70,11 +70,11 @@ class AdjustmentStockOpnameState extends State<AdjustmentStockOpname> {
     return [
       Employee('AVEM025KP751','AVITEX Emulsion 751','1.1.12.3',1,'PL','Stock','Positive Adjustment'),
       Employee('WOWO001K109','WOOD-ECO Woodstain 109','1.1.14.6',24,'DS','Stock','Positive Adjustment'),
-      Employee('WOWO001K110','WOOD-ECO Woodstain 110','1.1.15.1',24,'DS','Stock','Positive Adjustment'),
-      Employee('WOWO001K112','WOOD-ECO Woodstain 112','1.1.15.3',24,'DS','Stock','Positive Adjustment'),
-      Employee('WOWO001K115','WOOD-ECO Woodstain 115','1.1.15.6',24,'DS','Stock','Positive Adjustment'),
+      Employee('WOWO001K110','WOOD-ECO Woodstain 110','1.1.15.1',24,'DS','Stock','Negative Adjustment'),
+      Employee('WOWO001K112','WOOD-ECO Woodstain 112','1.1.15.3',24,'DS','Stock','Negative Adjustment'),
+      Employee('WOWO001K115','WOOD-ECO Woodstain 115','1.1.15.6',24,'DS','Stock','Negative Adjustment'),
       Employee('WOWO001KCG','WOOD-ECO Woodstain CG','1.1.16.1',24,'DS','Stock','Positive Adjustment'),
-      Employee('WOWO001KCM','WOOD-ECO Woodstain CM','1.1.16.2',24,'DS','Stock','Positive Adjustment'),
+      Employee('WOWO001KCM','WOOD-ECO Woodstain CM','1.1.16.2',24,'DS','Stock','Negative Adjustment'),
       Employee('AVSY002KBY','AVIAN Synthetic Base Y','1.1.17.3',8,'DS','Stock','Positive Adjustment'),
       Employee('AVSY002KBA','AVIAN Synthetic Base A','1.1.17.4',8,'DS','Stock','Positive Adjustment'),
       Employee('AVSY002KBB','AVIAN Synthetic Base B','1.1.17.5',8,'DS','Stock','Positive Adjustment'),
@@ -83,7 +83,7 @@ class AdjustmentStockOpnameState extends State<AdjustmentStockOpname> {
       Employee('POFIJIAWRS01','Pow Fit Reduce Sock AW 4x3','1.1.26.5',18,'DS','Stock','Positive Adjustment'),
       Employee('POFIHHD0E001','Pow Fit Elbow D 2 1/2','1.1.38.1',45,'DS','Stock','Positive Adjustment'),
       Employee('AVEM005K725','AVITEX Emulsion 725','1.1.7.3',4,'DS','Stock','Positive Adjustment'),
-      Employee('GLSY001KSB','GLOVIN Synthetic SB','1.1.R',24,'DS','Stock','Positive Adjustment'),
+      Employee('GLSY001KSB','GLOVIN Synthetic SB','1.1.R',24,'DS','Stock','Negative Adjustment'),
       Employee('AGEM020KPSW','ARIES GOLD Emulsion SW','1.10.1.1',1,'PL','Stock','Positive Adjustment'),
       Employee('BOVE001KSW600','BOYO Politur Vernis Water 600','1.10.11.5',24,'DS','Stock','Positive Adjustment'),
       Employee('AVTH001KASP','AVIA Thinner A Special','1.10.15.1',24,'DS','Stock','Positive Adjustment'),
@@ -91,7 +91,7 @@ class AdjustmentStockOpnameState extends State<AdjustmentStockOpname> {
       Employee('AQEM005KBC','AQUAMATT Emulsion BC','1.10.5.3',4,'DS','Stock','Positive Adjustment'),
       Employee('NODR001K019','NO DROP 019','1.10.8.2',24,'DS','Stock','Positive Adjustment'),
       Employee('AREM005K686','ARIES Emulsion 686','1.11.13.3',4,'DS','Stock','Positive Adjustment'),
-      Employee('AGEM020KPSB','ARIES GOLD Emulsion SB','1.11.16.4',1,'PL','Stock','Positive Adjustment'),
+      Employee('AGEM020KPSB','ARIES GOLD Emulsion SB','1.11.16.4',1,'PL','Stock','Negative Adjustment'),
       Employee('AVSY004K657','AVIAN Synthetic 657','1.11.20.5',4,'DS','Stock','Positive Adjustment'),
       Employee('AVSY004K190','AVIAN Synthetic 190','1.11.22.1',4,'DS','Stock','Positive Adjustment'),
       Employee('AVSY004K192','AVIAN Synthetic 192','1.11.22.2',4,'DS','Stock','Positive Adjustment'),
@@ -237,7 +237,7 @@ class AdjustmentStockOpnameState extends State<AdjustmentStockOpname> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: TextView('Entry Type', 6, align: TextAlign.center)
+                          child: TextView('Entry Type', 6, align: TextAlign.center, fontWeight: FontWeight.bold)
                         )
                       ),
                       GridColumn(
@@ -246,7 +246,12 @@ class AdjustmentStockOpnameState extends State<AdjustmentStockOpname> {
                         // columnWidthMode: ColumnWidthMode.fitByCellValue,
                         label: Container(
                           alignment: Alignment.center,
-                          child: TextView('Item\nNo', 6, align: TextAlign.center),
+                          decoration: BoxDecoration(
+                            border: Border(
+                              left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
+                            )
+                          ),
+                          child: TextView('Item\nNo', 6, align: TextAlign.center, fontWeight: FontWeight.bold),
                         )
                       ),
                       GridColumn(
@@ -255,7 +260,12 @@ class AdjustmentStockOpnameState extends State<AdjustmentStockOpname> {
                         // columnWidthMode: ColumnWidthMode.fitByCellValue,
                         label: Container(
                           alignment: Alignment.center,
-                          child: TextView('Item\nNo', 6, align: TextAlign.center),
+                          decoration: BoxDecoration(
+                            border: Border(
+                              left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
+                            )
+                          ),
+                          child: TextView('Item\nDescription', 6, align: TextAlign.center, fontWeight: FontWeight.bold),
                         )
                       ),
                       GridColumn(
@@ -268,7 +278,7 @@ class AdjustmentStockOpnameState extends State<AdjustmentStockOpname> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: TextView('Quantity',  6, align: TextAlign.center)
+                          child: TextView('Quantity',  6, align: TextAlign.center, fontWeight: FontWeight.bold)
                         )
                       ),
                       GridColumn(
@@ -281,7 +291,7 @@ class AdjustmentStockOpnameState extends State<AdjustmentStockOpname> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: TextView('Uom',  6, align: TextAlign.center)
+                          child: TextView('Uom',  6, align: TextAlign.center, fontWeight: FontWeight.bold)
                         )
                       ),
                       GridColumn(
@@ -294,7 +304,7 @@ class AdjustmentStockOpnameState extends State<AdjustmentStockOpname> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: TextView('Zone Code',  6, align: TextAlign.center)
+                          child: TextView('Zone Code',  6, align: TextAlign.center, fontWeight: FontWeight.bold)
                         )
                       ),
                       GridColumn(
@@ -307,7 +317,7 @@ class AdjustmentStockOpnameState extends State<AdjustmentStockOpname> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: TextView('Bin Code', 6, align: TextAlign.center)
+                          child: TextView('Bin Code', 6, align: TextAlign.center, fontWeight: FontWeight.bold)
                         )
                       ),
                     ],
@@ -359,21 +369,33 @@ class EmployeeDataSource extends DataGridSource {
   @override
   List<DataGridRow> get rows => _employeeData;
 
+  bool isNegative = false;
+
   @override
   DataGridRowAdapter buildRow(DataGridRow row) {
     return DataGridRowAdapter(
         cells: row.getCells().map<Widget>((e) {
+      if(e.columnName == "entryType"){
+        if(e.value.toString().toLowerCase().contains("negative")){
+          isNegative = true;
+        } else {
+          isNegative = false;
+        }
+      }
       return Container(
         decoration: BoxDecoration(
               border: Border(
-            left: e.columnName == 'itemNo'
+            left: e.columnName == 'entryType'
                 ? BorderSide.none
                 : BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45)),
           )),
         alignment: Alignment.center,
         padding: EdgeInsets.all(16),
         // child: Text(e.value.toString(), softWrap: true, overflow: TextOverflow.visible),
-        child: TextView(e.value.toString(), 6),
+        child: e.columnName == 'quantity' && isNegative ?
+        TextView(e.value.toString(), 6, color: Colors.red)
+        :
+        TextView(e.value.toString(), 6)
       );
     }).toList());
   }

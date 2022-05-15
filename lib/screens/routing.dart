@@ -4,6 +4,7 @@ import 'package:utility_warehouse/screens/coba.dart';
 import 'package:utility_warehouse/screens/dashboard.dart';
 import 'package:utility_warehouse/screens/login.dart';
 import 'package:utility_warehouse/screens/otpVerification.dart';
+import 'package:utility_warehouse/screens/performanceStockOpname.dart';
 import 'package:utility_warehouse/screens/pick_page_vertical.dart';
 import 'package:utility_warehouse/screens/processOpnameData.dart';
 import 'package:utility_warehouse/screens/reportStockOpname.dart';
@@ -47,6 +48,9 @@ MaterialPageRoute routing(int mode, int id, List<String> pages, RouteSettings se
       break;
     case 'reportStockOpname':
       return MaterialPageRoute(builder: (context)=> ReportStockOpname());
+      break;
+    case 'performanceStockOpname':
+      return MaterialPageRoute(builder: (context)=> PerformanceStockOpname());
       break;
     case 'pick':
       return MaterialPageRoute(builder: (context)=> PickPageVertical(model: settings.arguments));

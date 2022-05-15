@@ -87,7 +87,7 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
           helperList[i] = helperList[i].replaceAll("\[",'');
           helperList[i] = helperList[i].replaceAll("\]",'');
         }
-        });
+      });
     } else {
       Alert(
         context: context,
@@ -100,13 +100,15 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
   }
 
   void initColorWidget() {
-    selectedDay.add(config.lightGrayColor);
+    // selectedDay.add(config.lightGrayColor);
+    selectedDay.add(Colors.white);
     for(int i = 0; i < 19; i++){
-      if(i>1) {
-        selectedDay.add(Color(0xFF0066ff));
-      } else {
-        selectedDay.add(config.lightGrayColor);
-      }
+      // if(i>1) {
+      //   selectedDay.add(Color(0xFF0066ff));
+      // } else {
+      //   selectedDay.add(config.lightGrayColor);
+      // }
+      selectedDay.add(Color(0xFF0066ff));
     }
   }
 
@@ -140,7 +142,7 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
                               padding: EdgeInsets.symmetric(vertical: 20),
                               child: TextView("Pilih Helper", 2),
                             ),
-                            ChipWidget(
+                            HelperListWidget(
                               helperList,
                               helperSelectedList: selectedHelperList,
                               onSelectionChanged: (selectedList) {
@@ -149,6 +151,15 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
                                 });
                               },
                             ),
+                            // ChipWidget(
+                            //   helperList,
+                            //   helperSelectedList: selectedHelperList,
+                            //   onSelectionChanged: (selectedList) {
+                            //     setState(() {
+                            //       selectedHelperList = selectedList;
+                            //     });
+                            //   },
+                            // ),
                             SizedBox(height: 20),
                             Align(
                               alignment: Alignment.bottomRight,
@@ -178,88 +189,6 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
                 ],
               )
             );
-            
-          //   Stack(
-          //     overflow: Overflow.visible,
-              
-          //     children: [
-          //       Container(
-          //         padding: EdgeInsets.only(left: 5,top: 15, right: 5 ,bottom:5),
-          //         margin: EdgeInsets.only(top: 10),
-          //         decoration: BoxDecoration(
-          //           shape: BoxShape.rectangle,
-          //           color: Colors.white,
-          //           borderRadius: BorderRadius.circular(5),
-          //           boxShadow: [
-          //             BoxShadow(color: Colors.black,offset: Offset(0,10),
-          //             blurRadius: 10
-          //             ),
-          //           ]
-          //         ),
-          //         child: Column(
-          //           mainAxisSize: MainAxisSize.min,
-          //           children: [
-          //             TextView("Pilih Helper", 3),
-          //             SizedBox(height: 15,),
-          //             TextView("Desc Pilih Helper", 3),
-          //             SizedBox(height: 22),
-          //             ChipWidget(
-          //               helperList,
-          //               helperSelectedList: selectedHelperList,
-          //               onSelectionChanged: (selectedList) {
-          //                 setState(() {
-          //                   selectedHelperList = selectedList;
-          //                 });
-          //               },
-          //             ),
-          //             Align(
-          //               alignment: Alignment.bottomRight,
-          //               child:   Button(
-          //                 child: TextView("Pilih", 4),
-          //                 onTap: (){
-          //                   setState(() {
-          //                     isSubmitHelper = true;
-          //                   });
-          //                   Navigator.of(context).pop();
-          //                 },
-          //               ),
-          //             ),
-          //           ],
-          //         ),
-          //       ),
-          //       Positioned(
-          //         left: 5,
-          //         right: 5,
-          //         top: -60,
-          //         child: CircleAvatar(
-          //           backgroundColor: Colors.transparent,
-          //           radius: 80,
-          //           child: Lottie.asset('assets/illustration/helper.json', fit: BoxFit.contain),
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          //   // content: ChipWidget(
-          //   //   helperList,
-          //   //   helperSelectedList: selectedHelperList,
-          //   //   onSelectionChanged: (selectedList) {
-          //   //     setState(() {
-          //   //       selectedHelperList = selectedList;
-          //   //     });
-          //   //   },
-          //   // ),
-          //   // actions: <Widget>[
-          //   //   Button(
-          //   //     child: TextView("Pilih", 4),
-          //   //     onTap: (){
-          //   //       setState(() {
-          //   //         isSubmitHelper = true;
-          //   //       });
-          //   //       Navigator.of(context).pop();
-          //   //     },
-          //   //   )
-          //   // ],
-          // );
         });
   }
   
@@ -318,7 +247,7 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
                       Row(
                         children: [
                           Container(
-                            child: TextView("Data Type", 2, color: Colors.white),
+                            child: TextView("Tipe Data", 2, color: Colors.white),
                           ),
                           SizedBox(width: 15),
                           Expanded(
@@ -382,8 +311,7 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
                                   :
                                   null;
                                 },
-                                child: index > 2 ?
-                                Column(
+                                child: Column(
                                   children: [
                                     (index+1) >= 10 ? SizedBox(height: 7) : Container(),
                                     Container(
@@ -399,27 +327,26 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
                                     //   child: TextView("Sudah".toString(), 1, color: Colors.white)
                                     // )
                                   ],
-                                )
-                                :
-                                Column(
-                                  children: [
-                                    (index+1) >= 10 ? SizedBox(height: 7) : Container(),
-                                    Container(
-                                      padding: (index+1) >= 10 ? EdgeInsets.all(18) : EdgeInsets.all(20),
-                                      decoration: new BoxDecoration(
-                                        color: Colors.white,
-                                        shape: BoxShape.circle,
-                                        border: Border.all(color: Colors.black, width: 0.0),
-                                      ),
-                                      child: Text((index+1).toString(), style: TextStyle(fontSize: (index+1) >= 10 ? 14 : 20)),
-                                    ),
-                                    Expanded(child: Container()),
-                                    Container(
-                                      margin: EdgeInsets.only(bottom: 10),
-                                      child: Icon(Icons.check_circle_rounded, size: 40, color: Colors.white),
-                                    )
-                                  ],
-                                )
+                                ),
+                                // Column(
+                                //   children: [
+                                //     (index+1) >= 10 ? SizedBox(height: 7) : Container(),
+                                //     Container(
+                                //       padding: (index+1) >= 10 ? EdgeInsets.all(18) : EdgeInsets.all(20),
+                                //       decoration: new BoxDecoration(
+                                //         color: Colors.white,
+                                //         shape: BoxShape.circle,
+                                //         border: Border.all(color: Colors.black, width: 0.0),
+                                //       ),
+                                //       child: Text((index+1).toString(), style: TextStyle(fontSize: (index+1) >= 10 ? 14 : 20)),
+                                //     ),
+                                //     Expanded(child: Container()),
+                                //     Container(
+                                //       margin: EdgeInsets.only(bottom: 10),
+                                //       child: Icon(Icons.check_circle_rounded, size: 40, color: Colors.white),
+                                //     )
+                                //   ],
+                                // )
                               )
                             );
                           }),
@@ -816,6 +743,90 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
     );
   }
 
+}
+
+class Helper {
+  String helperName;
+  bool isCheck;
+
+  Helper({this.helperName, this.isCheck});
+}
+
+class HelperListWidget extends StatefulWidget {
+  final List<String> helperList;
+  final List<String> helperSelectedList;
+  final Function(List<String>) onSelectionChanged;
+
+  HelperListWidget(this.helperList, {this.helperSelectedList, this.onSelectionChanged});
+
+  @override
+  HelperListWidgetState createState() => HelperListWidgetState();
+}
+
+class HelperListWidgetState extends State<HelperListWidget> {
+  List<String> selectedChoices = [];
+
+  _buildChoiceList() {
+    List<Widget> choices = [];
+    widget.helperList.forEach((item) {
+      choices.add(
+        Container(
+          padding: EdgeInsets.all(7),
+          child: CheckboxListTile(
+            activeColor: Colors.pink[300],
+            dense: true,
+            //font change
+            title: new TextView(item, 4),
+            value: selectedChoices.contains(item),
+            // secondary: Container(
+            //   height: 50,
+            //   width: 50,
+            //   child: Image.asset(
+            //     checkBoxListTileModel[index].img,
+            //     fit: BoxFit.cover,
+            //   ),
+            // ),
+            onChanged: (bool val) {
+              setState(() {
+                // checkBoxListTileModel[index].isCheck = val;
+                selectedChoices.contains(item)
+                    ? selectedChoices.remove(item)
+                    : selectedChoices.add(item);
+                widget.onSelectionChanged(selectedChoices);
+              });
+            })
+          
+          // ChoiceChip(
+          //   label: TextView(item, 4),
+          //   selected: selectedChoices.contains(item),
+          //   onSelected: (selected) {
+          //     setState(() {
+          //       selectedChoices.contains(item)
+          //           ? selectedChoices.remove(item)
+          //           : selectedChoices.add(item);
+          //       widget.onSelectionChanged(selectedChoices);
+
+          //       // selectedChoices.contains(item)
+          //       //     ? selectedChoices.remove(item)
+          //       //     : selectedChoices.add(item);
+          //       // widget.onSelectionChanged(selectedChoices);
+          //     });
+          //   },
+          // ),
+
+        )
+      );
+    });
+
+    return choices;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      children: _buildChoiceList(),
+    );
+  }
 }
 
 class HelperItem {

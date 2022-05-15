@@ -1071,7 +1071,7 @@ class StockOpnameState extends State<StockOpname> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: TextView('Bin Code', 6, align: TextAlign.center)
+                          child: TextView('Bin Code', 6, align: TextAlign.center, fontWeight: FontWeight.bold)
                         )
                       ),
                       GridColumn(
@@ -1080,7 +1080,7 @@ class StockOpnameState extends State<StockOpname> {
                         // columnWidthMode: ColumnWidthMode.fitByCellValue,
                         label: Container(
                           alignment: Alignment.center,
-                          child: TextView('Item\nNo', 6, align: TextAlign.center),
+                          child: TextView('Item\nNo', 6, align: TextAlign.center, fontWeight: FontWeight.bold),
                         )
                       ),
                       GridColumn(
@@ -1093,7 +1093,7 @@ class StockOpnameState extends State<StockOpname> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: TextView('Item\nDescription',  6, align: TextAlign.center)
+                          child: TextView('Item\nDescription',  6, align: TextAlign.center, fontWeight: FontWeight.bold)
                         )
                       ),
                       GridColumn(
@@ -1106,7 +1106,7 @@ class StockOpnameState extends State<StockOpname> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: TextView('Coli', 6, align: TextAlign.center)
+                          child: TextView('Coli', 6, align: TextAlign.center, fontWeight: FontWeight.bold)
                         )
                       ),
                       GridColumn(
@@ -1119,7 +1119,7 @@ class StockOpnameState extends State<StockOpname> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: TextView('Qty Uom DS', 6, align: TextAlign.center)
+                          child: TextView('Qty Uom DS', 6, align: TextAlign.center, fontWeight: FontWeight.bold)
                         )
                       ),
                       GridColumn(
@@ -1132,7 +1132,7 @@ class StockOpnameState extends State<StockOpname> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: TextView('Qty Uom', 6, align: TextAlign.center)
+                          child: TextView('Qty Uom', 6, align: TextAlign.center, fontWeight: FontWeight.bold)
                         )
                       ),
                     ],

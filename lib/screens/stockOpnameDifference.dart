@@ -1067,7 +1067,7 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
                         // columnWidthMode: ColumnWidthMode.fitByCellValue,
                         label: Container(
                           alignment: Alignment.center,
-                          child: TextView('Item\nNo', 6, align: TextAlign.center),
+                          child: TextView('Item\nNo', 6, align: TextAlign.center, fontWeight: FontWeight.bold),
                         )
                       ),
                       GridColumn(
@@ -1080,7 +1080,7 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: TextView('Bin Code', 6, align: TextAlign.center)
+                          child: TextView('Bin Code', 6, align: TextAlign.center, fontWeight: FontWeight.bold)
                         )
                       ),
                       GridColumn(
@@ -1093,7 +1093,7 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: TextView('Item\nDescription',  6, align: TextAlign.center)
+                          child: TextView('Item\nDescription',  6, align: TextAlign.center, fontWeight: FontWeight.bold)
                         )
                       ),
                       GridColumn(
@@ -1106,7 +1106,7 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: TextView('Coli', 6, align: TextAlign.center)
+                          child: TextView('Coli', 6, align: TextAlign.center, fontWeight: FontWeight.bold)
                         )
                       ),
                       GridColumn(
@@ -1119,7 +1119,7 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: TextView('Uom', 6, align: TextAlign.center)
+                          child: TextView('Uom', 6, align: TextAlign.center, fontWeight: FontWeight.bold)
                         )
                       ),
                       GridColumn(
@@ -1132,7 +1132,7 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: TextView('Nama', 6, align: TextAlign.center)
+                          child: TextView('Nama', 6, align: TextAlign.center, fontWeight: FontWeight.bold)
                         )
                       ),
                       GridColumn(
@@ -1145,7 +1145,7 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: TextView('Qty\nSTO\nDS', 6, align: TextAlign.center)
+                          child: TextView('Qty\nSTO\nDS', 6, align: TextAlign.center, fontWeight: FontWeight.bold)
                         )
                       ),
                       GridColumn(
@@ -1158,7 +1158,7 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: TextView('Qty\nSTO\nUom', 6, align: TextAlign.center)
+                          child: TextView('Qty\nSTO\nUom', 6, align: TextAlign.center, fontWeight: FontWeight.bold)
                         )
                       ),
                       GridColumn(
@@ -1171,7 +1171,7 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: TextView('Qty\nSTO\nDS 2', 6, align: TextAlign.center)
+                          child: TextView('Qty\nSTO\nDS 2', 6, align: TextAlign.center, fontWeight: FontWeight.bold)
                         )
                       ),
                       GridColumn(
@@ -1184,7 +1184,7 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: TextView('Qty\nSTO\nUom 2', 6, align: TextAlign.center)
+                          child: TextView('Qty\nSTO\nUom 2', 6, align: TextAlign.center, fontWeight: FontWeight.bold)
                         )
                       ),
                       GridColumn(
@@ -1197,7 +1197,7 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: TextView('Qty\nSTO\nDS Final', 6, align: TextAlign.center)
+                          child: TextView('Qty\nSTO\nDS Final', 6, align: TextAlign.center, fontWeight: FontWeight.bold)
                         )
                       ),
                       GridColumn(
@@ -1210,7 +1210,7 @@ class StockOpnameDifferenceState extends State<StockOpnameDifference> {
                               left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                             )
                           ),
-                          child: TextView('Qty\nSTO\nUom Final', 6, align: TextAlign.center)
+                          child: TextView('Qty\nSTO\nUom Final', 6, align: TextAlign.center, fontWeight: FontWeight.bold)
                         )
                       ),
                     ],

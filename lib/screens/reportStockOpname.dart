@@ -171,16 +171,18 @@ class ReportStockOpnameState extends State<ReportStockOpname> {
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
               new SliverAppBar(
-                title: Text('Report Stock Opname'),
+                title: Text(''),
                 automaticallyImplyLeading: false,
                 backgroundColor: config.darkOpacityBlueColor,
                 pinned: true,
                 floating: true,
                 bottom: TabBar(
                   isScrollable: true,
+                  indicatorColor: Colors.white,
+                  indicatorWeight: 5,
                   tabs: [
-                    Tab(child: Text('All Item')),
-                    Tab(child: Text('Detail Bin Code')),
+                    Tab(child: TextView('All Item', 3, color: Colors.white)),
+                    Tab(child: TextView('Detail Bin Code', 3, color: Colors.white)),
                   ],
                 ),
               ),
@@ -260,7 +262,7 @@ class ReportStockOpnameState extends State<ReportStockOpname> {
                                       left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                                     )
                                   ),
-                                  child: TextView('Entry Type', 6, align: TextAlign.center)
+                                  child: TextView('Entry Type', 6, align: TextAlign.center, fontWeight: FontWeight.bold)
                                 )
                               ),
                               GridColumn(
@@ -269,7 +271,12 @@ class ReportStockOpnameState extends State<ReportStockOpname> {
                                 // columnWidthMode: ColumnWidthMode.fitByCellValue,
                                 label: Container(
                                   alignment: Alignment.center,
-                                  child: TextView('Item\nNo', 6, align: TextAlign.center),
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
+                                    )
+                                  ),
+                                  child: TextView('Item\nNo', 6, align: TextAlign.center, fontWeight: FontWeight.bold),
                                 )
                               ),
                               GridColumn(
@@ -278,7 +285,12 @@ class ReportStockOpnameState extends State<ReportStockOpname> {
                                 // columnWidthMode: ColumnWidthMode.fitByCellValue,
                                 label: Container(
                                   alignment: Alignment.center,
-                                  child: TextView('Item\nNo', 6, align: TextAlign.center),
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
+                                    )
+                                  ),
+                                  child: TextView('Item\nDescription', 6, align: TextAlign.center, fontWeight: FontWeight.bold),
                                 )
                               ),
                               GridColumn(
@@ -291,7 +303,7 @@ class ReportStockOpnameState extends State<ReportStockOpname> {
                                       left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                                     )
                                   ),
-                                  child: TextView('Quantity',  6, align: TextAlign.center)
+                                  child: TextView('Quantity',  6, align: TextAlign.center, fontWeight: FontWeight.bold)
                                 )
                               ),
                               GridColumn(
@@ -304,7 +316,7 @@ class ReportStockOpnameState extends State<ReportStockOpname> {
                                       left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                                     )
                                   ),
-                                  child: TextView('Uom',  6, align: TextAlign.center)
+                                  child: TextView('Uom',  6, align: TextAlign.center, fontWeight: FontWeight.bold)
                                 )
                               ),
                               GridColumn(
@@ -317,7 +329,7 @@ class ReportStockOpnameState extends State<ReportStockOpname> {
                                       left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                                     )
                                   ),
-                                  child: TextView('Zone Code',  6, align: TextAlign.center)
+                                  child: TextView('Zone Code',  6, align: TextAlign.center, fontWeight: FontWeight.bold)
                                 )
                               ),
                               GridColumn(
@@ -330,7 +342,7 @@ class ReportStockOpnameState extends State<ReportStockOpname> {
                                       left: BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45))
                                     )
                                   ),
-                                  child: TextView('Bin Code', 6, align: TextAlign.center)
+                                  child: TextView('Bin Code', 6, align: TextAlign.center, fontWeight: FontWeight.bold)
                                 )
                               ),
                             ],
@@ -547,7 +559,7 @@ class EmployeeDataSource extends DataGridSource {
       return Container(
         decoration: BoxDecoration(
               border: Border(
-            left: e.columnName == 'itemNo'
+            left: e.columnName == 'entryType'
                 ? BorderSide.none
                 : BorderSide(width: 1.0, color: Colors.grey.withOpacity(0.45)),
           )),

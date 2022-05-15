@@ -71,8 +71,9 @@ class _PickPageVerticalState extends State<PickPageVertical> {
   String wsNo = "";
   String sales = "";
   String selectedDropdownValue = "Pilih nomor pick";
-  String selectedNoPick = ""; 
-  int pickDone;
+  String selectedNoPick = "";
+  int pickDone = 0;
+  int pickInserted = 0;
 
   String choosenPick = ""; //pick yang dipilih
   String tempChoosenPick = "";
@@ -158,39 +159,6 @@ class _PickPageVerticalState extends State<PickPageVertical> {
     pickNos = [];
     Result res;
 
-    if (choosenPick.contains("Pilih nomor pick") || choosenPick == "") {
-      tempChoosenPick = "";
-    } else {
-      print("choosenpick di getnomorpick"+choosenPick);
-      // Alert(context: context, loading: true, disableBackButton: true);
-      res = await PickAPIs.getPickInserted(context, choosenPick);
-      // tempChoosenPick = res.data;
-      // print("tempchoosenpick " + tempChoosenPick.toString());
-      // print("ini tempchoosenpickk " + res.data.toString());
-
-      if (res.data == "1") {
-        // Navigator.of(context, rootNavigator: true).pop();
-        // choosenPick = "Pilih nomor pick";
-        // changedPick("Pilih nomor pick");
-        await Alert(
-            context: context,
-            title: "Maaf,",
-            content:
-                Text("Helper lain sedang mengerjakan nomor pick ini. Silahkan memilih nomor pick lain."),
-            cancel: false,
-            type: "error");
-      }else if(res.code == 500 || res.code == 0){
-        // Navigator.of(context, rootNavigator: true).pop();
-        await Alert(
-            context: context,
-            title: "Maaf,",
-            content:
-                Text(res.message),
-            cancel: false,
-            type: "error");
-      }
-    }
-
     Configuration config = Configuration.of(context);
     Alert(context: context, loading: true, disableBackButton: true);
     Result result = await PickAPIs.getPickNo(context, branchId);
@@ -205,8 +173,8 @@ class _PickPageVerticalState extends State<PickPageVertical> {
       pickNos.add(Pick(pickNo: "Pilih nomor pick"));
       pickNos.addAll(temp_pickNos);
       setPick(pickNos);
-      final pickNosLength = pickNos.length;
       Navigator.of(context, rootNavigator: true).pop();
+      final pickNosLength = pickNos.length;
     } else {
       Navigator.of(context, rootNavigator: true).pop();
       await Alert(
@@ -257,7 +225,6 @@ class _PickPageVerticalState extends State<PickPageVertical> {
           cancel: false,
           type: "error");
     }
-    
 
     if (detailPicks.length > 0) {}
     setState(() {
@@ -295,6 +262,10 @@ class _PickPageVerticalState extends State<PickPageVertical> {
     });
     if (result.code == 1) {
       print("sudah insertttt pick " + result.message.toString());
+      Navigator.of(context, rootNavigator: true).pop();
+      setState(() {
+        pickDone = 1;
+      });
       Alert(
         context: context,
         title: "Berhasil!",
@@ -308,16 +279,21 @@ class _PickPageVerticalState extends State<PickPageVertical> {
         },
       );
       changedPick("Pilih nomor pick");
-    } else if(result.code == 2){
+    } else if (result.code == 2) {
+      Navigator.of(context, rootNavigator: true).pop();
+      setState(() {
+        pickDone = 1;
+        pickInserted = 1;
+      });
       Alert(
           context: context,
           title: "Maaf ,",
           content: Text(result.message),
           cancel: false,
           type: "error");
-      pickDone = 1;
-    }
-    else {
+      
+    } else {
+      Navigator.of(context, rootNavigator: true).pop();
       print("error insertttt pick " + result.message.toString());
       Alert(
           context: context,
@@ -326,15 +302,14 @@ class _PickPageVerticalState extends State<PickPageVertical> {
           cancel: false,
           type: "error");
     }
-    
-    Navigator.of(context, rootNavigator: true).pop();
+
     // await refresh();
   }
 
   insertOnchangePick(pickChanged) async {
-    pickDone = 0;
     Configuration config = Configuration.of(context);
     // Alert(context: context, loading: true, disableBackButton: true);
+    printHelp("prints" + pickChanged.length.toString());
     Result result = await PickAPIs.insertPickSelected(context, pickChanged);
     setState(() {
       result = result;
@@ -342,7 +317,7 @@ class _PickPageVerticalState extends State<PickPageVertical> {
     if (result.code == 1) {
       print("sudah insertttt " + result.message.toString());
       // Navigator.of(context, rootNavigator: true).pop();
-    } else if (pickChanged != "Pilih nomor pick"){
+    } else if (pickChanged != "Pilih nomor pick") {
       // Navigator.of(context, rootNavigator: true).pop();
       print("error insertttt " + result.message.toString());
       Alert(
@@ -356,39 +331,45 @@ class _PickPageVerticalState extends State<PickPageVertical> {
   }
 
   deleteOnchangePick(pickChanged) async {
-
     Configuration config = Configuration.of(context);
 
-    printHelp("pickChanged DATA " + pickChanged);
-    if (pickChanged != "") {
-      final pickChangedEncrypted = encryptData(pickChanged);
-      printHelp("pickChangedEncrypted DATA " + pickChanged);
-      // Alert(context: context, loading: true, disableBackButton: true);
-      Result result =
-          await PickAPIs.deletePickChanged(context, pickChangedEncrypted);
-      setState(() {
-        result = result;
-      });
-      if (result.code == 1) {
-        // Navigator.of(context, rootNavigator: true).pop();
-        print("sudah deletee " + result.message.toString());
-      } else {
-        // Navigator.of(context, rootNavigator: true).pop();
-        print("error deletee " + result.message.toString());
-        Alert(
-            context: context,
-            title: "Error ,",
-            content: Text(result.message),
-            cancel: false,
-            type: "error");
+    if(pickInserted == 1){
+      pickInserted = 0;
+    }else{
+      printHelp("pickChanged DATA " + pickChanged);
+      if (pickChanged != "") {
+        final pickChangedEncrypted = encryptData(pickChanged);
+        printHelp("pickChangedEncrypted DATA " + pickChanged);
+        // Alert(context: context, loading: true, disableBackButton: true);
+        Result result =
+            await PickAPIs.deletePickChanged(context, pickChangedEncrypted);
+        setState(() {
+          result = result;
+        });
+        if (result.code == 1) {
+          // Navigator.of(context, rootNavigator: true).pop();
+          print("sudah deletee " + result.message.toString());
+        } else {
+          // Navigator.of(context, rootNavigator: true).pop();
+          print("error deletee " + result.message.toString());
+          Alert(
+              context: context,
+              title: "Error ,",
+              content: Text(result.message),
+              cancel: false,
+              type: "error");
+        }
       }
     }
+
+    
 
     // await refresh();
   }
 
 // textfield or checkbox onchange
   void onchangedData() {
+
     try {
       // printHelp("this is choosenpick " + choosenPick);
 
@@ -417,8 +398,9 @@ class _PickPageVerticalState extends State<PickPageVertical> {
             selectedNoPick = pickNos[i].pickNo;
             // print('set val pickchangedd ' + selectedNoPick);
           });
+          printHelp("Aaaaaaa " + pickDone.toString());
 
-          if(pickDone != 1){
+          if (pickDone != 1) {
             insertOnchangePick(pickChanged);
           }
           // print("pick choosen piro : " + picksChoosen.length.toString());
@@ -794,15 +776,78 @@ class _PickPageVerticalState extends State<PickPageVertical> {
   }
 
   void changedPick(data) async {
+    
+    Result res;
     // await getNomorPick();
     setState(() {
       choosenPick = data;
       selectedDropdownValue = data;
+      
       // printHelp("ini choosenpick " +
       //     choosenPick +
       //     "dan selected dropdown val " +
       //     selectedDropdownValue);
     });
+    if (data.contains("Pilih nomor pick") || data == "") {
+      tempChoosenPick = "";
+      
+    } else {
+      pickDone = 0;
+      print("choosenpick di getnomorpick" + choosenPick);
+      // Alert(context: context, loading: true, disableBackButton: true);
+      final choosenPickEncrypted = encryptData(choosenPick);
+      res = await PickAPIs.getPickInserted(context, choosenPickEncrypted);
+      // tempChoosenPick = res.data;
+      print("tempchoosenpick " + choosenPick.toString());
+      print("ini tempchoosenpickk " + res.data.toString());
+
+      if (res.data == "1") {
+        // Navigator.of(context, rootNavigator: true).pop();
+        // choosenPick = "Pilih nomor pick";
+        // changedPick("Pilih nomor pick");
+        await Alert(
+            context: context,
+            title: "Maaf,",
+            content: Text(
+                "Helper lain sedang mengerjakan nomor pick ini. Silahkan memilih nomor pick lain."),
+            cancel: false,
+            type: "error",
+            defaultAction: () {
+              // changedPick("Pilih nomor pick");
+              setState(() {
+                detailPicks = [];
+                custName = "";
+                contactName = "";
+                city = "";
+                county = "";
+                postcode = "";
+                province = "";
+                cityPostcode = "";
+
+                gudang = "";
+                source = "";
+                tanggal = "";
+                berat = "";
+                beratKg = "";
+                userId = "";
+                wsNo = "";
+                sales = "";
+              });
+            },
+        );
+        setState(() {
+          pickInserted = 1;
+        });
+      } else if (res.code == 500 || res.code == 0) {
+        // Navigator.of(context, rootNavigator: true).pop();
+        await Alert(
+            context: context,
+            title: "Maaf,",
+            content: Text(res.message),
+            cancel: false,
+            type: "error");
+      }
+    }
 
     // default value
     if (data.contains("Pilih nomor pick")) {
@@ -824,11 +869,11 @@ class _PickPageVerticalState extends State<PickPageVertical> {
       userId = "";
       wsNo = "";
       sales = "";
-      dropdownSearch("Pilih nomor pick");
+      // dropdownSearch("Pilih nomor pick");
     } else {
       print("length picknoss " + pickNos.length.toString());
       // if(pickDone != 1){
-        deleteOnchangePick(selectedNoPick);
+      deleteOnchangePick(selectedNoPick);
       // }
       getDetailPick(data);
       setState(() {
@@ -841,6 +886,7 @@ class _PickPageVerticalState extends State<PickPageVertical> {
       // print("ini data" + data);
       // print("ini length picknosss " + pickNos.length.toString());
     }
+
     getNomorPick();
   }
 
@@ -855,7 +901,8 @@ class _PickPageVerticalState extends State<PickPageVertical> {
             " dan ini temp " +
             temp);
         setState(() {
-          selectedDropdownValue = temp.trim();
+          selectedDropdownValue = temp;
+          // dropdownSearch(selectedDropdownValue);
         });
         print("ini selecteddropdown val = " + selectedDropdownValue);
         // changedPick(selectedDropdownValue);
@@ -867,6 +914,7 @@ class _PickPageVerticalState extends State<PickPageVertical> {
         Navigator.of(context, rootNavigator: true).pop();
         changedPick(data);
         choosenPick = data;
+        pickDone = 0;
       },
     );
 
@@ -888,6 +936,7 @@ class _PickPageVerticalState extends State<PickPageVertical> {
   }
 
   Widget dropdownSearch(choosen) {
+    selectedDropdownValue = choosen;
     return Container(
       width: 250,
       height: 50,
@@ -896,6 +945,8 @@ class _PickPageVerticalState extends State<PickPageVertical> {
         showSelectedItems: true,
         items: pickNos.map((list) => list.pickNo).toList(),
         onChanged: (data) {
+          printHelp("ini choosenpick " + choosenPick);
+          printHelp("ini daata " + data);
           if (choosenPick.contains("Pilih nomor pick")) {
             changedPick(data);
             // kalo pilih iya
@@ -904,11 +955,15 @@ class _PickPageVerticalState extends State<PickPageVertical> {
               selectedDropdownValue = data;
               printHelp("ini choosenpick 2" + choosenPick);
             });
-          } else if (choosenPick != "") {
-            printHelp("ini choosenpick " + choosenPick);
+          } else if (choosenPick != "" && choosenPick != data) {
             showAlertDialog(context, data);
             // selectedDropdownValue = data;
-          } else {
+          } else if(choosenPick == data){
+            printHelp("masuk sni");
+            selectedDropdownValue = data;
+            // getNomorPick();
+          }
+          else {
             changedPick(data);
             // kalo pilih iya
             printHelp("ini choosenpick 3" + choosenPick);
@@ -1007,7 +1062,7 @@ class _PickPageVerticalState extends State<PickPageVertical> {
       _getTitleItemWidget('QTY', MediaQuery.of(context).size.width * 0.07, 0),
       _getTitleItemWidget(
           'QTY REAL', MediaQuery.of(context).size.width * 0.08, 5),
-      _getTitleItemWidget('UoM', MediaQuery.of(context).size.width * 0.08, 5),
+      _getTitleItemWidget('UoM', MediaQuery.of(context).size.width * 0.08, 8),
       _getTitleItemWidget('ADA', MediaQuery.of(context).size.width * 0.08, 14),
     ];
   }
@@ -1037,7 +1092,6 @@ class _PickPageVerticalState extends State<PickPageVertical> {
           width: MediaQuery.of(context).size.width * 0.18,
           height: 52,
           padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
-          alignment: Alignment.centerLeft,
         ),
         Container(
           child: TextView(detailPicks[index].bincode, 6),
@@ -1093,7 +1147,7 @@ class _PickPageVerticalState extends State<PickPageVertical> {
           child: TextView(detailPicks[index].uom, 6),
           width: MediaQuery.of(context).size.width * 0.08,
           height: 52,
-          padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+          padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
           alignment: Alignment.centerLeft,
         ),
         Container(
