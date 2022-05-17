@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:utility_warehouse/models/result.dart';
 import 'package:utility_warehouse/models/userModel.dart';
@@ -133,47 +134,50 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
                   Container(
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(10, 70, 10, 10),
-                      child: SingleChildScrollView(
-                        reverse: true,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.symmetric(vertical: 20),
-                              child: TextView("Pilih Helper", 2),
-                            ),
-                            HelperListWidget(
-                              helperList,
-                              helperSelectedList: selectedHelperList,
-                              onSelectionChanged: (selectedList) {
-                                setState(() {
-                                  selectedHelperList = selectedList;
-                                });
-                              },
-                            ),
-                            // ChipWidget(
-                            //   helperList,
-                            //   helperSelectedList: selectedHelperList,
-                            //   onSelectionChanged: (selectedList) {
-                            //     setState(() {
-                            //       selectedHelperList = selectedList;
-                            //     });
-                            //   },
-                            // ),
-                            SizedBox(height: 20),
-                            Align(
-                              alignment: Alignment.bottomRight,
-                              child:   Button(
-                                child: TextView("Pilih", 4),
-                                onTap: (){
+                      child: Scrollbar(
+                        isAlwaysShown: true,
+                        child: SingleChildScrollView(
+                          // reverse: true,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 20),
+                                child: TextView("Pilih Helper", 2),
+                              ),
+                              HelperListWidget(
+                                helperList,
+                                helperSelectedList: selectedHelperList,
+                                onSelectionChanged: (selectedList) {
                                   setState(() {
-                                    isSubmitHelper = true;
+                                    selectedHelperList = selectedList;
                                   });
-                                  Navigator.of(context).pop();
                                 },
                               ),
-                            ),
-                          ],
+                              // ChipWidget(
+                              //   helperList,
+                              //   helperSelectedList: selectedHelperList,
+                              //   onSelectionChanged: (selectedList) {
+                              //     setState(() {
+                              //       selectedHelperList = selectedList;
+                              //     });
+                              //   },
+                              // ),
+                              SizedBox(height: 20),
+                              Align(
+                                alignment: Alignment.bottomRight,
+                                child:   Button(
+                                  child: TextView("Pilih", 4),
+                                  onTap: (){
+                                    setState(() {
+                                      isSubmitHelper = true;
+                                    });
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -191,6 +195,78 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
             );
         });
   }
+
+  doProcessOpnameData() async {
+    Alert(context: context, loading: true, disableBackButton: true);
+
+    http://192.168.10.213/NewUtilityWarehouseDev/StockOpnameGadget/process_data_opname.php?Cabang=02A&TanggalTarikData=2022-05-16&Jenis=ALL&ProductGroupCode&Username=02A-KG&HariKe=1&Helper=coba helper
+
+    // $pullDate = $_GET["pull-date"];
+    // $dayOf = $_GET["day-of"];
+    // $branchId = $_GET["branch-id"];
+    // $userId = $_GET["user-id"];
+    // $helper = $_GET["helper"];
+
+    //pengecekan
+    //1. harus ada di tabel HK_ProcessOpnameLog
+    //2. 
+
+
+    var now = DateTime.now();
+    var formatter = new DateFormat('yyyy-MM-dd');
+    String pullDate = formatter.format(now);
+
+    String helper = "";
+    for(int i = 0; i < selectedHelperList.length; i++) {
+      if(i!=selectedHelperList.length - 1) {
+        helper+=selectedHelperList[i]+",";
+      } else {
+        helper+=selectedHelperList[i];
+      }
+    }
+
+    Result result = await stockOpnameAPI.getProcessOpnameDataLog(context, parameter: "branch-id=${userModel.userId.substring(0, 3)}&pull-date=$pullDate&day-of=$selectedDaySequence");
+
+    Navigator.of(context).pop();
+
+    if(result.code == 200) {
+      if(result.data == 0) {
+        Alert(
+          context: context,
+          title: "Info",
+          content: Text("Apakah Anda yakin ingin memproses lagi?\n(Proses ke-${result.data+1}"),
+          cancel: false,
+          type: "warning",
+          defaultAction: () {
+            Navigator.of(context).pop();
+          }
+        );
+      }
+    } else {
+      Alert(
+        context: context,
+        title: "Maaf",
+        content: Text(result.error_message),
+        cancel: false,
+        type: "error"
+      );  
+    }
+    
+    // Result result = await stockOpnameAPI.processOpnameData(context, parameter: "branch-id=${userModel.userId.substring(0, 3)}&pull-date=$pullDate&day-of=$selectedDaySequence&user-id=${userModel.userId}&helper=$helper");
+
+    // if(result.code == 200) {
+    //   print("SUCCESS");
+    // } else {
+    //   Alert(
+    //     context: context,
+    //     title: "Maaf",
+    //     content: Text(result.error_message),
+    //     cancel: false,
+    //     type: "error"
+    //   );  
+    // }
+    
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -201,9 +277,15 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
     
     return Scaffold(
       bottomNavigationBar: Button(
-        disable: false,
+        disable: selectedHelperList.length > 0 ? false : true,
         child: TextView('Process', 3, color: Colors.white, caps: true),
         onTap: () {
+          printHelp("tipe data "+selectedDataType);
+          printHelp("urut hari "+selectedDaySequence);
+          printHelp("helper "+selectedHelperList.toString());
+
+          doProcessOpnameData();
+
         },
       ),
       body: Stack(
