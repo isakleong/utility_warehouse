@@ -339,7 +339,7 @@ class LoginState extends State<Login> {
     } else {
       Alert(
         context: context,
-        title: "Maaf",
+        title: "Maaf,",
         content: Text(result.error_message),
         cancel: false,
         type: "error"

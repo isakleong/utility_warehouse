@@ -16,8 +16,10 @@ class StockOpnameAPI {
     Configuration configuration = await getUrlConfig(context);
 
     bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-    String url_address_1 = fetchAPI("stock-opname/helper-list.php", context, print: true, parameter: "branch-id="+branchId);
-    String url_address_2 = fetchAPI("stock-opname/helper-list.php", context, secondary: true, parameter: "branch-id="+branchId, print: true);
+    String url_address_1 = "", url_address_2 = "";
+
+    url_address_1 = fetchAPI("config/test-ip.php", context);
+    url_address_2 = fetchAPI("config/test-ip.php", context, secondary: true);
 
     try {
 		  final conn_1 = await connectionTest(url_address_1, context);
@@ -31,7 +33,7 @@ class StockOpnameAPI {
     }
 
     if(isUrlAddress_1) {
-      url = url_address_1;
+      url = fetchAPI("stock-opname/helper-list.php", context, print: true, parameter: "branch-id="+branchId);
     } else {
       try {
         final conn_2 = await connectionTest(url_address_2, context);
@@ -45,7 +47,7 @@ class StockOpnameAPI {
       }
     }
     if(isUrlAddress_2){
-      url = url_address_2;
+      url = fetchAPI("stock-opname/helper-list.php", context, secondary: true, parameter: "branch-id="+branchId, print: true);
     }
 
     try {
@@ -72,8 +74,10 @@ class StockOpnameAPI {
     Configuration configuration = await getUrlConfig(context);
 
     bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-    String url_address_1 = fetchAPI("stock-opname/process-log.php", context, print: true, parameter: parameter);
-    String url_address_2 = fetchAPI("stock-opname/process-log.php", context, secondary: true, parameter: parameter, print: true);
+    String url_address_1 = "", url_address_2 = "";
+
+    url_address_1 = fetchAPI("config/test-ip.php", context);
+    url_address_2 = fetchAPI("config/test-ip.php", context, secondary: true);
 
     try {
 		  final conn_1 = await connectionTest(url_address_1, context);
@@ -87,7 +91,7 @@ class StockOpnameAPI {
     }
 
     if(isUrlAddress_1) {
-      url = url_address_1;
+      url = fetchAPI("stock-opname/process-log.php", context, print: true, parameter: parameter);
     } else {
       try {
         final conn_2 = await connectionTest(url_address_2, context);
@@ -101,7 +105,7 @@ class StockOpnameAPI {
       }
     }
     if(isUrlAddress_2){
-      url = url_address_2;
+      url = fetchAPI("stock-opname/process-log.php", context, secondary: true, parameter: parameter, print: true);
     }
 
     try {
@@ -128,12 +132,14 @@ class StockOpnameAPI {
     Configuration configuration = await getUrlConfig(context);
 
     bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-    String url_address_1 = fetchAPI("stock-opname/process.php", context, print: true, parameter: parameter);
-    String url_address_2 = fetchAPI("stock-opname/process.php", context, secondary: true, parameter: parameter, print: true);
+    String url_address_1 = "", url_address_2 = "";
+
+    url_address_1 = fetchAPI("config/test-ip.php", context);
+    url_address_2 = fetchAPI("config/test-ip.php", context, secondary: true);
 
     try {
 		  final conn_1 = await connectionTest(url_address_1, context);
-      printHelp("GET STATUS 1 "+conn_1);
+      printHelp("GET STATUS 1 pr "+conn_1);
       if(conn_1 == "OK"){
         isUrlAddress_1 = true;
       }
@@ -143,11 +149,11 @@ class StockOpnameAPI {
     }
 
     if(isUrlAddress_1) {
-      url = url_address_1;
+      url = fetchAPI("stock-opname/process.php", context, print: true, parameter: parameter);
     } else {
       try {
         final conn_2 = await connectionTest(url_address_2, context);
-        printHelp("GET STATUS 2 "+conn_2);
+        printHelp("GET STATUS 2 pr "+conn_2);
         if(conn_2 == "OK"){
           isUrlAddress_2 = true;
         }
@@ -157,7 +163,7 @@ class StockOpnameAPI {
       }
     }
     if(isUrlAddress_2){
-      url = url_address_2;
+      url = url = fetchAPI("stock-opname/process.php", context, print: true, secondary: true, parameter: parameter);
     }
 
     try {

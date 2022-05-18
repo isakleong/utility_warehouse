@@ -450,8 +450,8 @@ class SplashScreenState extends State<SplashScreen> {
 
   //   bool isUrlAddress_1 = false, isUrlAddress_2 = false;
     
-  //   String url_address_1 = configuration.getUrlPath + "/config/tes_ip.php";
-  //   String url_address_2 = configuration.getUrlPathAlt + "/config/tes_ip.php";
+  //   String url_address_1 = configuration.getUrlPath + "/config/test-ip.php";
+  //   String url_address_2 = configuration.getUrlPathAlt + "/config/test-ip.php";
 
   //   try {
 	// 	  final conn_1 = await connectionTest(url_address_1, context);
@@ -727,8 +727,8 @@ class SplashScreenState extends State<SplashScreen> {
     
     print("HSHSHSH "+configuration.getUrlPath.toString());
     
-    String url_address_1 = configuration.getUrlPath + "/config/tes_ip.php";
-    String url_address_2 = configuration.getUrlPathAlt + "/config/tes_ip.php";
+    String url_address_1 = configuration.getUrlPath + "/config/test-ip.php";
+    String url_address_2 = configuration.getUrlPathAlt + "/config/test-ip.php";
 
     try {
 		  final conn_1 = await connectionTest(url_address_1, context);

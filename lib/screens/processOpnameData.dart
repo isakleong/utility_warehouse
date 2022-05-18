@@ -199,7 +199,7 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
   doProcessOpnameData() async {
     Alert(context: context, loading: true, disableBackButton: true);
 
-    http://192.168.10.213/NewUtilityWarehouseDev/StockOpnameGadget/process_data_opname.php?Cabang=02A&TanggalTarikData=2022-05-16&Jenis=ALL&ProductGroupCode&Username=02A-KG&HariKe=1&Helper=coba helper
+    //http://192.168.10.213/NewUtilityWarehouseDev/StockOpnameGadget/process_data_opname.php?Cabang=02A&TanggalTarikData=2022-05-16&Jenis=ALL&ProductGroupCode&Username=02A-KG&HariKe=1&Helper=coba helper
 
     // $pullDate = $_GET["pull-date"];
     // $dayOf = $_GET["day-of"];
@@ -210,7 +210,6 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
     //pengecekan
     //1. harus ada di tabel HK_ProcessOpnameLog
     //2. 
-
 
     var now = DateTime.now();
     var formatter = new DateFormat('yyyy-MM-dd');
@@ -225,28 +224,73 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
       }
     }
 
-    Result result = await stockOpnameAPI.getProcessOpnameDataLog(context, parameter: "branch-id=${userModel.userId.substring(0, 3)}&pull-date=$pullDate&day-of=$selectedDaySequence");
+    Result logProcessResult = await stockOpnameAPI.getProcessOpnameDataLog(context, parameter: "branch-id=${userModel.userId.substring(0, 3)}&pull-date=$pullDate&day-of=$selectedDaySequence");
 
-    Navigator.of(context).pop();
-
-    if(result.code == 200) {
-      if(result.data == 0) {
+    if(logProcessResult.code == 200) {
+      if(logProcessResult.data > 0) {
+        Navigator.of(context).pop();
         Alert(
           context: context,
-          title: "Info",
-          content: Text("Apakah Anda yakin ingin memproses lagi?\n(Proses ke-${result.data+1}"),
-          cancel: false,
+          title: "Info,",
+          content: Text("Apakah Anda yakin ingin memproses lagi?\n(Proses ke-${logProcessResult.data+1})"),
+          cancel: true,
           type: "warning",
-          defaultAction: () {
+          defaultAction: () async {
+            Alert(context: context, loading: true, disableBackButton: true);
+
+            Result processResult = await stockOpnameAPI.processOpnameData(context, parameter: "branch-id=${userModel.userId.substring(0, 3)}&pull-date=$pullDate&day-of=$selectedDaySequence&user-id=${userModel.userId}&helper=$helper");
+
             Navigator.of(context).pop();
+
+            if(processResult.code == 200) {
+              Alert(
+                context: context,
+                title: "Info,",
+                content: Text(processResult.message),
+                cancel: false,
+                type: "success"
+              );
+            } else {
+              Alert(
+                context: context,
+                title: "Maaf,",
+                content: Text(processResult.error_message),
+                cancel: false,
+                type: "error"
+              );
+            }
           }
         );
+
+      } else {
+        Result processResult = await stockOpnameAPI.processOpnameData(context, parameter: "branch-id=${userModel.userId.substring(0, 3)}&pull-date=$pullDate&day-of=$selectedDaySequence&user-id=${userModel.userId}&helper=$helper");
+
+        Navigator.of(context).pop();
+
+        if(processResult.code == 200) {
+          Alert(
+            context: context,
+            title: "Info,",
+            content: Text(processResult.message),
+            cancel: false,
+            type: "success"
+          );
+        } else {
+          Alert(
+            context: context,
+            title: "Maaf,",
+            content: Text(processResult.error_message),
+            cancel: false,
+            type: "error"
+          );      
+        }
       }
+
     } else {
       Alert(
         context: context,
-        title: "Maaf",
-        content: Text(result.error_message),
+        title: "Maaf,",
+        content: Text(logProcessResult.error_message),
         cancel: false,
         type: "error"
       );  
