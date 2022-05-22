@@ -224,21 +224,21 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
       }
     }
 
-    Result logProcessResult = await stockOpnameAPI.getProcessOpnameDataLog(context, parameter: "branch-id=${userModel.userId.substring(0, 3)}&pull-date=$pullDate&day-of=$selectedDaySequence");
+    Result processLogResult = await stockOpnameAPI.getProcessOpnameLog(context, parameter: "data-type=$selectedDataType&branch-id=${userModel.userId.substring(0, 3)}&pull-date=$pullDate&day-of=$selectedDaySequence");
 
-    if(logProcessResult.code == 200) {
-      if(logProcessResult.data > 0) {
+    if(processLogResult.code == 200) {
+      if(processLogResult.data > 0) {
         Navigator.of(context).pop();
         Alert(
           context: context,
           title: "Info,",
-          content: Text("Apakah Anda yakin ingin memproses lagi?\n(Proses ke-${logProcessResult.data+1})"),
+          content: Text("Apakah Anda yakin ingin memproses lagi?\n(Proses ke-${processLogResult.data+1})"),
           cancel: true,
           type: "warning",
           defaultAction: () async {
             Alert(context: context, loading: true, disableBackButton: true);
 
-            Result processResult = await stockOpnameAPI.processOpnameData(context, parameter: "branch-id=${userModel.userId.substring(0, 3)}&pull-date=$pullDate&day-of=$selectedDaySequence&user-id=${userModel.userId}&helper=$helper");
+            Result processResult = await stockOpnameAPI.processOpnameData(context, parameter: "data-type=$selectedDataType&branch-id=${userModel.userId.substring(0, 3)}&pull-date=$pullDate&day-of=$selectedDaySequence&user-id=${userModel.userId}&helper=$helper");
 
             Navigator.of(context).pop();
 
@@ -290,7 +290,7 @@ class ProcessOpnameDataState extends State<ProcessOpnameData> {
       Alert(
         context: context,
         title: "Maaf,",
-        content: Text(logProcessResult.error_message),
+        content: Text(processLogResult.error_message),
         cancel: false,
         type: "error"
       );  

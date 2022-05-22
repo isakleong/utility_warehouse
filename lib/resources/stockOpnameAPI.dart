@@ -67,7 +67,7 @@ class StockOpnameAPI {
     return result;
   }
 
-  Future<Result> getProcessOpnameDataLog(final context, {String parameter}) async {
+  Future<Result> getProcessOpnameLog(final context, {String parameter}) async {
     Result result;
     String url = "";
 
@@ -164,6 +164,64 @@ class StockOpnameAPI {
     }
     if(isUrlAddress_2){
       url = url = fetchAPI("stock-opname/process.php", context, print: true, secondary: true, parameter: parameter);
+    }
+
+    try {
+      final response = await client.get(url);
+      // var responseData = decryptData(response.body.toString());
+      var parsedJson = jsonDecode(response.body.toString());
+      result = Result.fromJson(parsedJson);
+      
+      if(result.code == 200) {
+        result = new Result(code: result.code, message: result.message, data: result.data);
+      }
+    } catch (e) {
+      result = new Result(code: 500, message: "Gagal terhubung dengan server");
+      print(e);
+    }
+
+    return result;
+  }
+
+  Future<Result> getDownloadOpnameLog(final context, {String parameter}) async {
+    Result result;
+    String url = "";
+
+    Configuration configuration = await getUrlConfig(context);
+
+    bool isUrlAddress_1 = false, isUrlAddress_2 = false;
+    String url_address_1 = "", url_address_2 = "";
+
+    url_address_1 = fetchAPI("config/test-ip.php", context);
+    url_address_2 = fetchAPI("config/test-ip.php", context, secondary: true);
+
+    try {
+		  final conn_1 = await connectionTest(url_address_1, context);
+      printHelp("GET STATUS 1 "+conn_1);
+      if(conn_1 == "OK"){
+        isUrlAddress_1 = true;
+      }
+	  } on SocketException {
+      isUrlAddress_1 = false;
+      result = new Result(code: 500, message: "Gagal terhubung dengan server");
+    }
+
+    if(isUrlAddress_1) {
+      url = fetchAPI("stock-opname/download-log.php", context, print: true, parameter: parameter);
+    } else {
+      try {
+        final conn_2 = await connectionTest(url_address_2, context);
+        printHelp("GET STATUS 2 "+conn_2);
+        if(conn_2 == "OK"){
+          isUrlAddress_2 = true;
+        }
+      } on SocketException {
+        isUrlAddress_2 = false;
+        result = new Result(code: 500, message: "Gagal terhubung dengan server");
+      }
+    }
+    if(isUrlAddress_2){
+      url = fetchAPI("stock-opname/download-log.php", context, secondary: true, parameter: parameter, print: true);
     }
 
     try {

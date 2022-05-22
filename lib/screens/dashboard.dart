@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:utility_warehouse/models/result.dart';
 import 'package:utility_warehouse/models/userModel.dart';
 import 'package:utility_warehouse/resources/stockOpnameAPI.dart';
@@ -27,7 +29,7 @@ class DashboardState extends State<Dashboard> {
   DateTime currentBackPressTime;
 
   String dropdownValue = 'One';
-  String selectedDataTypeDropdownValue = "Stock Opname";
+  String selectedDataType = "Stock Opname";
   String selectedUrutanHariDropdownValue = "1";
   List<DropdownMenuItem<String>> userTypeList = [];
   final _dropdownFormKey1 = GlobalKey<FormState>();
@@ -56,13 +58,20 @@ class DashboardState extends State<Dashboard> {
     });
   }
 
-  // doDownloadData() async {
-  //   Alert(context: context, loading: true, disableBackButton: true);
+  doDownloadData() async {
+    Alert(context: context, loading: true, disableBackButton: true);
+
+    var now = DateTime.now();
+    var formatter = new DateFormat('yyyy-MM-dd');
+    String pullDate = formatter.format(now);
     
-  //   Result result = await stockOpnameAPI.login(context, usernameData, passwordData);
-  //                                                         // Navigator.of(context).pop();
-  //                                                         // doDownloadData();
-  // }
+    Result downloadLogResult = await stockOpnameAPI.getDownloadOpnameLog(context, parameter: "data-type=$selectedDataType&branch-id=${userModel.userId.substring(0, 3)}&pull-date=$pullDate");
+
+    Navigator.of(context).pop();
+    
+
+    print(downloadLogResult.data.toString());
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -171,6 +180,7 @@ class DashboardState extends State<Dashboard> {
                             } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="monitoringstockopname") {
                               Navigator.pushNamed(context, "performanceStockOpname");
                             } else if(userModel.moduleId[index].toLowerCase().replaceAll(RegExp(r"\s+"), "")=="downloadopnamedata") {
+
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
@@ -178,18 +188,24 @@ class DashboardState extends State<Dashboard> {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(16),
                                     ),
+                                    // elevation: 0,
+                                    // backgroundColor: Colors.transparent,
                                     child: Stack(
                                         clipBehavior: Clip.none, 
                                         alignment: Alignment.topCenter,
                                         children: [
                                           Container(
                                             child: Padding(
-                                              padding: EdgeInsets.all(30),
+                                              padding: const EdgeInsets.fromLTRB(10, 70, 10, 10),
                                               child: SingleChildScrollView(
-                                                reverse: true,
+                                                // reverse: true,
                                                 child: Column(
                                                   mainAxisSize: MainAxisSize.min,
                                                   children: [
+                                                    Padding(
+                                                      padding: EdgeInsets.symmetric(vertical: 20),
+                                                      child: TextView("Download Opname Data", 2),
+                                                    ),
                                                     Form(
                                                       key: _dropdownFormKey1,
                                                       child: DropdownButtonFormField(
@@ -203,10 +219,10 @@ class DashboardState extends State<Dashboard> {
                                                         ),
                                                         hint: TextView('Tipe Data', 5),
                                                         dropdownColor: Colors.white,
-                                                        value: selectedDataTypeDropdownValue,
+                                                        value: selectedDataType,
                                                         onChanged: (String value) {
                                                           setState(() {
-                                                            selectedDataTypeDropdownValue = value;
+                                                            selectedDataType = value;
                                                           });
                                                         },
                                                         items: <String>['Stock Opname', 'Stock Opname Difference']
@@ -225,7 +241,7 @@ class DashboardState extends State<Dashboard> {
                                                         child: TextView('Download', 3, color: Colors.white, caps: true),
                                                         onTap: (){
                                                           Navigator.of(context).pop();
-                                                          // doDownloadData();
+                                                          doDownloadData();
                                                         },
                                                       ),
                                                     ),
@@ -233,6 +249,14 @@ class DashboardState extends State<Dashboard> {
                                                 ),
                                               ),
                                             ),
+                                          ),
+                                          Positioned(
+                                            top: -70,
+                                            child: CircleAvatar(
+                                              backgroundColor: config.lightOpactityBlueColor,
+                                              radius: 70,
+                                              child: Lottie.asset('assets/illustration/helper.json', fit: BoxFit.contain),
+                                            )
                                           ),
                                         ],
                                       )
