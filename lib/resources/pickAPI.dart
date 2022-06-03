@@ -11,28 +11,23 @@ import 'package:xml/xml.dart';
 
 class PickAPI {
   Client client = Client();
-  // get pick number only
-  Future<Result> getPickNo(final context, branchId) async {
+  Future<Result> getCity(final context, branchId) async {
     Result result;
     List<Pick> picks = [];
     Pick pick;
 
     String url = "";
 
-    bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-
-    Configuration configuration = await getUrlConfig(context);
-
-    String url_address_1 =
-        fetchAPI("object/pick.php?branchId=" + branchId, context, print: true);
-    String url_address_2 = fetchAPI(
-        "object/pick.php?branchId=" + branchId, context,
-        secondary: true, print: true);
+    bool isUrlAddress_1 = false, isUrlAddress_2 = false, isUrlAddress_3 = false;
+    String urlAddress_1 = "", urlAddress_2 = "", urlAddress_3 = "";
+    urlAddress_1 = fetchAPI("config/test-ip.php", context);
+    urlAddress_2 = fetchAPI("config/test-ip.php", context, public: true);
+    urlAddress_3 = fetchAPI("config/test-ip.php", context, publicAlt: true);
 
     String getPickSuccess = "";
 
     try {
-      final conn_1 = await connectionTest(url_address_1, context);
+      final conn_1 = await connectionTest(urlAddress_1, context);
       printHelp("GET STATUS 1 getpickno" + conn_1);
       if (conn_1 == "OK") {
         isUrlAddress_1 = true;
@@ -43,10 +38,10 @@ class PickAPI {
     }
 
     if (isUrlAddress_1) {
-      url = url_address_1;
+      url = fetchAPI("object/pick.php?branchId=" + branchId, context, print: true);
     } else {
       try {
-        final conn_2 = await connectionTest(url_address_2, context);
+        final conn_2 = await connectionTest(urlAddress_2, context);
         printHelp("GET STATUS 2 getpickno" + conn_2);
         if (conn_2 == "OK") {
           isUrlAddress_2 = true;
@@ -58,7 +53,26 @@ class PickAPI {
       }
     }
     if (isUrlAddress_2) {
-      url = url_address_2;
+      url = fetchAPI(
+        "object/pick.php?branchId=" + branchId, context,
+        public: true, print: true);
+    } else {
+      try {
+        final conn_3 = await connectionTest(urlAddress_3, context);
+        printHelp("GET STATUS 3 getpickno" + conn_3);
+        if (conn_3 == "OK") {
+          isUrlAddress_3 = true;
+        }
+      } on SocketException {
+        isUrlAddress_3 = false;
+        result =
+            new Result(code: 500, message: "Gagal terhubung dengan server");
+      }
+    }
+    if (isUrlAddress_3) {
+      url = fetchAPI(
+        "object/pick.php?branchId=" + branchId, context,
+        publicAlt: true, print: true);
     }
 
     try {
@@ -66,7 +80,195 @@ class PickAPI {
       final response = await client.get(url);
       // print("after");
       print("status code " + response.statusCode.toString());
-      print("cek body " + response.body);
+      print("cek body city " + response.body);
+      final res = response.body;
+      final decryptResponse_ = decryptData(res.trim());
+      // print("cek body getpickno " + decryptResponse_);
+
+      // String parsedJson = jsonDecode(res);
+
+      if (decryptResponse_.contains("Error (sqlsrv_query)")) {
+        result = new Result(
+            code: 0, message: decryptResponse_, data: decryptResponse_);
+      } else {
+        result = new Result(
+            code: 1, message: decryptResponse_, data: decryptResponse_);
+        // result.data["MF_PickNo"].map((item) {
+        //   picks.add(Pick.fromJson(item));
+        // }).toList();
+        // result.data = picks;
+      }
+    } catch (e) {
+      result = new Result(code: 500, message: "Gagal terhubung dengan server");
+      print(e);
+    }
+    return result;
+  }
+
+  Future<Result> getCustomer(final context, branchId, city) async {
+    Result result;
+    List<Pick> picks = [];
+    Pick pick;
+
+    String url = "";
+
+    bool isUrlAddress_1 = false, isUrlAddress_2 = false, isUrlAddress_3 = false;
+    String urlAddress_1 = "", urlAddress_2 = "", urlAddress_3 = "";
+    urlAddress_1 = fetchAPI("config/test-ip.php", context);
+    urlAddress_2 = fetchAPI("config/test-ip.php", context, public: true);
+    urlAddress_3 = fetchAPI("config/test-ip.php", context, publicAlt: true);
+
+    String getPickSuccess = "";
+
+    try {
+      final conn_1 = await connectionTest(urlAddress_1, context);
+      printHelp("GET STATUS 1 getpickno" + conn_1);
+      if (conn_1 == "OK") {
+        isUrlAddress_1 = true;
+      }
+    } on SocketException {
+      isUrlAddress_1 = false;
+      result = new Result(code: 500, message: "Gagal terhubung dengan server");
+    }
+
+    if (isUrlAddress_1) {
+      url = fetchAPI("object/pick.php?branchId=" + branchId+"&city="+city, context, print: true);
+    } else {
+      try {
+        final conn_2 = await connectionTest(urlAddress_2, context);
+        printHelp("GET STATUS 2 getpickno" + conn_2);
+        if (conn_2 == "OK") {
+          isUrlAddress_2 = true;
+        }
+      } on SocketException {
+        isUrlAddress_2 = false;
+        result =
+            new Result(code: 500, message: "Gagal terhubung dengan server");
+      }
+    }
+    if (isUrlAddress_2) {
+      url = fetchAPI(
+        "object/pick.php?branchId=" + branchId+"&city="+city, context,
+        public: true, print: true);
+    } else {
+      try {
+        final conn_3 = await connectionTest(urlAddress_3, context);
+        printHelp("GET STATUS 2 getpickno" + conn_3);
+        if (conn_3 == "OK") {
+          isUrlAddress_3 = true;
+        }
+      } on SocketException {
+        isUrlAddress_3 = false;
+        result =
+            new Result(code: 500, message: "Gagal terhubung dengan server");
+      }
+    }
+    if (isUrlAddress_3) {
+      url = fetchAPI(
+        "object/pick.php?branchId=" + branchId+"&city="+city, context,
+        publicAlt: true, print: true);
+    }
+
+    try {
+      // printHelp("before");
+      final response = await client.get(url);
+      // print("after");
+      print("status code " + response.statusCode.toString());
+      print("cek body cust " + response.body);
+      final res = response.body;
+      final decryptResponse_ = decryptData(res.trim());
+      // print("cek body getpickno " + decryptResponse_);
+
+      // String parsedJson = jsonDecode(res);
+
+      if (decryptResponse_.contains("Error (sqlsrv_query)")) {
+        result = new Result(
+            code: 0, message: decryptResponse_, data: decryptResponse_);
+      } else {
+        result = new Result(
+            code: 1, message: decryptResponse_, data: decryptResponse_);
+        // result.data["MF_PickNo"].map((item) {
+        //   picks.add(Pick.fromJson(item));
+        // }).toList();
+        // result.data = picks;
+      }
+    } catch (e) {
+      result = new Result(code: 500, message: "Gagal terhubung dengan server");
+      print(e);
+    }
+    return result;
+  }
+  
+  Future<Result> getPickNo(final context, branchId, customerId) async {
+    Result result;
+    List<Pick> picks = [];
+    Pick pick;
+
+    String url = "";
+
+    bool isUrlAddress_1 = false, isUrlAddress_2 = false, isUrlAddress_3 = false;
+    String urlAddress_1 = "", urlAddress_2 = "", urlAddress_3 = "";
+    urlAddress_1 = fetchAPI("config/test-ip.php", context);
+    urlAddress_2 = fetchAPI("config/test-ip.php", context, public: true);
+    urlAddress_3 = fetchAPI("config/test-ip.php", context, publicAlt: true);
+
+    String getPickSuccess = "";
+
+    try {
+      final conn_1 = await connectionTest(urlAddress_1, context);
+      printHelp("GET STATUS 1 getpickno" + conn_1);
+      if (conn_1 == "OK") {
+        isUrlAddress_1 = true;
+      }
+    } on SocketException {
+      isUrlAddress_1 = false;
+      result = new Result(code: 500, message: "Gagal terhubung dengan server");
+    }
+
+    if (isUrlAddress_1) {
+      url = fetchAPI("object/pick.php?branchId=" + branchId + "&customerId=" + customerId, context, print: true);
+    } else {
+      try {
+        final conn_2 = await connectionTest(urlAddress_2, context);
+        printHelp("GET STATUS 2 getpickno" + conn_2);
+        if (conn_2 == "OK") {
+          isUrlAddress_2 = true;
+        }
+      } on SocketException {
+        isUrlAddress_2 = false;
+        result =
+            new Result(code: 500, message: "Gagal terhubung dengan server");
+      }
+    }
+    if (isUrlAddress_2) {
+      url = fetchAPI(
+        "object/pick.php?branchId=" + branchId + "&customerId=" + customerId, context,
+        public: true, print: true);
+    } else {
+      try {
+        final conn_3 = await connectionTest(urlAddress_2, context);
+        printHelp("GET STATUS 3 getpickno" + conn_3);
+        if (conn_3 == "OK") {
+          isUrlAddress_3 = true;
+        }
+      } on SocketException {
+        isUrlAddress_3 = false;
+        result =
+            new Result(code: 500, message: "Gagal terhubung dengan server");
+      }
+    }
+    if (isUrlAddress_3) {
+      url = fetchAPI(
+        "object/pick.php?branchId=" + branchId + "&customerId=" + customerId, context,
+        publicAlt: true, print: true);
+    }
+
+    try {
+      // printHelp("before");
+      final response = await client.get(url);
+      // print("after");
+      print("status code " + response.statusCode.toString());
+      print("cek body pickno " + response.body);
       final res = response.body;
       final decryptResponse_ = decryptData(res.trim());
       // print("cek body getpickno " + decryptResponse_);
@@ -97,24 +299,16 @@ class PickAPI {
     DetailPick dpick;
     String url = "";
 
-    Configuration configuration = await getUrlConfig(context);
-
-    String url_address_1 = fetchAPI(
-        "/object/pickDetail.php?branchId=" + branchId + "&pickNo=" + noPick,
-        context,
-        print: true);
-    String url_address_2 = fetchAPI(
-        "/object/pickDetail.php?branchId=" + branchId + "&pickNo=" + noPick,
-        context,
-        secondary: true,
-        print: true);
-
-    bool isUrlAddress_1 = false, isUrlAddress_2 = false;
+    bool isUrlAddress_1 = false, isUrlAddress_2 = false, isUrlAddress_3 = false;
+    String urlAddress_1 = "", urlAddress_2 = "", urlAddress_3 = "";
+    urlAddress_1 = fetchAPI("config/test-ip.php", context);
+    urlAddress_2 = fetchAPI("config/test-ip.php", context, public: true);
+    urlAddress_3 = fetchAPI("config/test-ip.php", context, publicAlt: true);
 
     String getPickSuccess = "";
 
     try {
-      final conn_1 = await connectionTest(url_address_1, context);
+      final conn_1 = await connectionTest(urlAddress_1, context);
       printHelp("GET STATUS 1 detailpick " + conn_1);
       if (conn_1 == "OK") {
         isUrlAddress_1 = true;
@@ -125,10 +319,11 @@ class PickAPI {
     }
 
     if (isUrlAddress_1) {
-      url = url_address_1;
+      url = fetchAPI(
+        "/object/pickDetail.php?branchId=" + branchId + "&pickNo=" + noPick, context, print: true);
     } else {
       try {
-        final conn_2 = await connectionTest(url_address_2, context);
+        final conn_2 = await connectionTest(urlAddress_2, context);
         printHelp("GET STATUS 2 detailpick " + conn_2);
         if (conn_2 == "OK") {
           isUrlAddress_2 = true;
@@ -140,7 +335,24 @@ class PickAPI {
       }
     }
     if (isUrlAddress_2) {
-      url = url_address_2;
+      url = fetchAPI(
+        "/object/pickDetail.php?branchId=" + branchId + "&pickNo=" + noPick, context, public: true, print: true);
+    } else {
+      try {
+        final conn_3 = await connectionTest(urlAddress_3, context);
+        printHelp("GET STATUS 3 detailpick " + conn_3);
+        if (conn_3 == "OK") {
+          isUrlAddress_3 = true;
+        }
+      } on SocketException {
+        isUrlAddress_3 = false;
+        result =
+            new Result(code: 500, message: "Gagal terhubung dengan server");
+      }
+    }
+    if (isUrlAddress_3) {
+      url = fetchAPI(
+        "/object/pickDetail.php?branchId=" + branchId + "&pickNo=" + noPick, context, publicAlt: true, print: true);
     }
 
     try {
@@ -178,17 +390,14 @@ class PickAPI {
     // List<Map<String, dynamic>> body;
     String url = "";
 
-    bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-    String url_address_1 =
-        fetchAPI("/object/insertPick.php", context, print: true);
-    String url_address_2 = fetchAPI("/object/insertPick.php", context,
-        secondary: true, print: true);
-
-    // String url_address_1 = config.baseUrl + "/object/insertPick.php";
-    // String url_address_2 = config.baseUrlAlt + "/object/insertPick.php";
+    bool isUrlAddress_1 = false, isUrlAddress_2 = false, isUrlAddress_3 = false;
+    String urlAddress_1 = "", urlAddress_2 = "", urlAddress_3 = "";
+    urlAddress_1 = fetchAPI("config/test-ip.php", context);
+    urlAddress_2 = fetchAPI("config/test-ip.php", context, public: true);
+    urlAddress_3 = fetchAPI("config/test-ip.php", context, publicAlt: true);
 
     try {
-      final conn_1 = await connectionTest(url_address_1, context);
+      final conn_1 = await connectionTest(urlAddress_1, context);
       printHelp("GET STATUS 1 insertpick " + conn_1);
       if (conn_1 == "OK") {
         isUrlAddress_1 = true;
@@ -199,10 +408,10 @@ class PickAPI {
     }
 
     if (isUrlAddress_1) {
-      url = url_address_1;
+      url = fetchAPI("/object/insertPick.php", context, print: true);
     } else {
       try {
-        final conn_2 = await connectionTest(url_address_2, context);
+        final conn_2 = await connectionTest(urlAddress_2, context);
         printHelp("GET STATUS 2 insertpick " + conn_2);
         if (conn_2 == "OK") {
           isUrlAddress_2 = true;
@@ -214,7 +423,22 @@ class PickAPI {
       }
     }
     if (isUrlAddress_2) {
-      url = url_address_2;
+      url = fetchAPI("/object/insertPick.php", context, public: true, print: true);
+    } else {
+      try {
+        final conn_3 = await connectionTest(urlAddress_3, context);
+        printHelp("GET STATUS 3 insertpick " + conn_3);
+        if (conn_3 == "OK") {
+          isUrlAddress_3 = true;
+        }
+      } on SocketException {
+        isUrlAddress_3 = false;
+        result =
+            new Result(code: 500, message: "Gagal terhubung dengan server");
+      }
+    }
+    if (isUrlAddress_3) {
+      url = fetchAPI("/object/insertPick.php", context, publicAlt: true, print: true);
     }
 
     try {
@@ -326,17 +550,14 @@ class PickAPI {
     // List<Map<String, dynamic>> body;
     String url = "";
 
-    bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-    String url_address_1 =
-        fetchAPI("/object/changedPick.php", context, print: true);
-    String url_address_2 = fetchAPI("/object/changedPick.php", context,
-        secondary: true, print: true);
-
-    // String url_address_1 = config.baseUrl + "/object/changedPick.php";
-    // String url_address_2 = config.baseUrlAlt + "/object/changedPick.php";
+    bool isUrlAddress_1 = false, isUrlAddress_2 = false, isUrlAddress_3 = false;
+    String urlAddress_1 = "", urlAddress_2 = "", urlAddress_3 = "";
+    urlAddress_1 = fetchAPI("config/test-ip.php", context);
+    urlAddress_2 = fetchAPI("config/test-ip.php", context, public: true);
+    urlAddress_3 = fetchAPI("config/test-ip.php", context, publicAlt: true);
 
     try {
-      final conn_1 = await connectionTest(url_address_1, context);
+      final conn_1 = await connectionTest(urlAddress_1, context);
       printHelp("GET STATUS 1 insert selected" + conn_1);
       if (conn_1 == "OK") {
         isUrlAddress_1 = true;
@@ -347,10 +568,10 @@ class PickAPI {
     }
 
     if (isUrlAddress_1) {
-      url = url_address_1;
+      url = fetchAPI("/object/changedPick.php", context, print: true);
     } else {
       try {
-        final conn_2 = await connectionTest(url_address_2, context);
+        final conn_2 = await connectionTest(urlAddress_2, context);
         printHelp("GET STATUS 2 insert selected " + conn_2);
         if (conn_2 == "OK") {
           isUrlAddress_2 = true;
@@ -362,7 +583,22 @@ class PickAPI {
       }
     }
     if (isUrlAddress_2) {
-      url = url_address_2;
+      url = fetchAPI("/object/changedPick.php", context, public: true, print: true);
+    } else {
+      try {
+        final conn_3 = await connectionTest(urlAddress_3, context);
+        printHelp("GET STATUS 3 insert selected " + conn_3);
+        if (conn_3 == "OK") {
+          isUrlAddress_3 = true;
+        }
+      } on SocketException {
+        isUrlAddress_3 = false;
+        result =
+            new Result(code: 500, message: "Gagal terhubung dengan server");
+      }
+    }
+    if (isUrlAddress_3) {
+      url = fetchAPI("/object/changedPick.php", context, publicAlt: true, print: true);
     }
 
     try {
@@ -452,23 +688,16 @@ class PickAPI {
     DetailPick dpick;
     String url = "";
 
-    bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-
-    String url_address_1 = fetchAPI(
-        "/object/changedPick.php?pickNo=" + noPick, context,
-        print: true);
-    String url_address_2 = fetchAPI(
-        "/object/changedPick.php?pickNo=" + noPick, context,
-        secondary: true, print: true);
-    // String url_address_1 =
-    //     config.baseUrl + "/object/changedPick.php?pickNo=" + noPick;
-    // String url_address_2 =
-    //     config.baseUrlAlt + "/object/changedPick.php?pickNo=" + noPick;
+    bool isUrlAddress_1 = false, isUrlAddress_2 = false, isUrlAddress_3 = false;
+    String urlAddress_1 = "", urlAddress_2 = "", urlAddress_3 = "";
+    urlAddress_1 = fetchAPI("config/test-ip.php", context);
+    urlAddress_2 = fetchAPI("config/test-ip.php", context, public: true);
+    urlAddress_3 = fetchAPI("config/test-ip.php", context, publicAlt: true);
 
     String getPickSuccess = "";
 
     try {
-      final conn_1 = await connectionTest(url_address_1, context);
+      final conn_1 = await connectionTest(urlAddress_1, context);
       printHelp("GET STATUS 1 delete selected " + conn_1);
       if (conn_1 == "OK") {
         isUrlAddress_1 = true;
@@ -479,10 +708,10 @@ class PickAPI {
     }
 
     if (isUrlAddress_1) {
-      url = url_address_1;
+      url = fetchAPI("/object/changedPick.php?pickNo=" + noPick, context, print: true);
     } else {
       try {
-        final conn_2 = await connectionTest(url_address_2, context);
+        final conn_2 = await connectionTest(urlAddress_2, context);
         printHelp("GET STATUS 2 delete selected " + conn_2);
         if (conn_2 == "OK") {
           isUrlAddress_2 = true;
@@ -494,7 +723,22 @@ class PickAPI {
       }
     }
     if (isUrlAddress_2) {
-      url = url_address_2;
+      url = fetchAPI("/object/changedPick.php?pickNo=" + noPick, context, public: true, print: true);
+    } else {
+      try {
+        final conn_3 = await connectionTest(urlAddress_3, context);
+        printHelp("GET STATUS 3 delete selected " + conn_3);
+        if (conn_3 == "OK") {
+          isUrlAddress_3 = true;
+        }
+      } on SocketException {
+        isUrlAddress_3 = false;
+        result =
+            new Result(code: 500, message: "Gagal terhubung dengan server");
+      }
+    }
+    if (isUrlAddress_3) {
+      url = fetchAPI("/object/changedPick.php?pickNo=" + noPick, context, publicAlt: true, print: true);
     }
 
     try {
@@ -530,19 +774,15 @@ class PickAPI {
     Pick pick;
     String res;
     String url = "";
-
-    bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-    String url_address_1 =
-        fetchAPI("/object/pick.php?pickNo=" + pickNo, context, print: true);
-    String url_address_2 = fetchAPI(
-        "/object/pick.php?pickNo=" + pickNo, context,
-        secondary: true, print: true);
-    // String url_address_1 = config.baseUrl + "/object/pick.php?pickNo=" + pickNo;
-    // String url_address_2 =
-    //     config.baseUrlAlt + "/object/pick.php?pickNo=" + pickNo;
+    
+    bool isUrlAddress_1 = false, isUrlAddress_2 = false, isUrlAddress_3 = false;
+    String urlAddress_1 = "", urlAddress_2 = "", urlAddress_3 = "";
+    urlAddress_1 = fetchAPI("config/test-ip.php", context);
+    urlAddress_2 = fetchAPI("config/test-ip.php", context, public: true);
+    urlAddress_3 = fetchAPI("config/test-ip.php", context, publicAlt: true);
 
     try {
-      final conn_1 = await connectionTest(url_address_1, context);
+      final conn_1 = await connectionTest(urlAddress_1, context);
       printHelp("GET STATUS 1 getpick1" + conn_1);
       if (conn_1 == "OK") {
         isUrlAddress_1 = true;
@@ -553,10 +793,10 @@ class PickAPI {
     }
 
     if (isUrlAddress_1) {
-      url = url_address_1;
+      url = fetchAPI("/object/pick.php?pickNo=" + pickNo, context, print: true);;
     } else {
       try {
-        final conn_2 = await connectionTest(url_address_2, context);
+        final conn_2 = await connectionTest(urlAddress_2, context);
         printHelp("GET STATUS 2 getpick2" + conn_2);
         if (conn_2 == "OK") {
           isUrlAddress_2 = true;
@@ -568,7 +808,22 @@ class PickAPI {
       }
     }
     if (isUrlAddress_2) {
-      url = url_address_2;
+      url = fetchAPI("/object/pick.php?pickNo=" + pickNo, context, public: true, print: true);
+    } else {
+      try {
+        final conn_3 = await connectionTest(urlAddress_3, context);
+        printHelp("GET STATUS 3 getpick2" + conn_3);
+        if (conn_3 == "OK") {
+          isUrlAddress_3 = true;
+        }
+      } on SocketException {
+        isUrlAddress_3 = false;
+        result =
+            new Result(code: 500, message: "Gagal terhubung dengan server");
+      }
+    }
+    if (isUrlAddress_3) {
+      url = fetchAPI("/object/pick.php?pickNo=" + pickNo, context, publicAlt: true, print: true);
     }
 
     try {

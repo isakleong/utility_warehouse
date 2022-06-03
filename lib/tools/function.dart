@@ -27,23 +27,28 @@ getUrlConfig(context) async {
 
   if(FileSystemEntity.typeSync(path) != FileSystemEntityType.notFound){
     final document = XmlDocument.parse(file.readAsStringSync());
-    final url_address_1 = document.findAllElements('url_address_1').map((node) => node.text);
-    final url_address_2 = document.findAllElements('url_address_2').map((node) => node.text);
-    configuration.setUrlPath = url_address_1.first;
-    configuration.setUrlPathAlt = url_address_2.first;
+    final urlAddressLocal = document.findAllElements('url_address_local').map((node) => node.text);
+    final urlAddressPublic = document.findAllElements('url_address_public').map((node) => node.text);
+    final urlAddressPublicAlt = document.findAllElements('url_address_public_alt').map((node) => node.text);
+    configuration.setUrlPathLocal = urlAddressLocal.first;
+    configuration.setUrlPathPublic = urlAddressPublic.first;
+    configuration.setUrlPathPublicAlt = urlAddressPublicAlt.first;
   }
 
   return configuration;
 }
 
-String fetchAPI(String url, BuildContext context, {String parameter = "", bool print = false, bool secondary = false}) {
+String fetchAPI(String url, BuildContext context, {String parameter = "", bool print = false, bool public = false, bool publicAlt = false}) {
   Configuration configuration = Configuration.of(context);
 
   String urlAPI;
-  if(secondary) {
-    urlAPI = configuration.urlPathAlt + "/" + url + (parameter == "" ? "" : "?" + parameter);
-  } else {
-    urlAPI = configuration.urlPath + "/" + url + (parameter == "" ? "" : "?" + parameter);
+  if(public) {
+    urlAPI = configuration.urlPathPublic + "/" + url + (parameter == "" ? "" : "?" + parameter);
+  } else if(publicAlt) {
+    urlAPI = configuration.urlPathPublicAlt + "/" + url + (parameter == "" ? "" : "?" + parameter);
+  }
+  else {
+    urlAPI = configuration.urlPathLocal + "/" + url + (parameter == "" ? "" : "?" + parameter);
   }
   
   if(print)
@@ -142,7 +147,7 @@ fieldFocusChange(BuildContext context, FocusNode currentFocus,FocusNode nextFocu
 }
 
 void Alert({ context, String title, Widget content, List<Widget> actions, VoidCallback defaultAction, bool cancel = true, String type = "warning", bool showIcon = true,
-  bool disableBackButton = false, Future<bool> willPopAction, loading = false, double value, String errorBtnTitle = "OK" }) {
+  bool disableBackButton = false, Future<bool> willPopAction, loading = false, String loadingMessage="", double value, String errorBtnTitle = "OK" }) {
 
   bool isShowing = false;
 
@@ -249,23 +254,64 @@ void Alert({ context, String title, Widget content, List<Widget> actions, VoidCa
       context: context,
       barrierDismissible: false,
       builder: (context){
-        return WillPopScope(
-          onWillPop: disableBackButton ? () {
-          }:null,
-          child: Center(
-            child: Container(
-                child: Lottie.asset('assets/illustration/loading.json', width: 220, height: 220, fit: BoxFit.contain)
+        if(loadingMessage == "") {
+          return WillPopScope(
+            onWillPop: disableBackButton ? () {
+            }:null,
+            child: Center(
+              child: Container(
+                  child: Lottie.asset('assets/illustration/loading.json', width: 220, height: 220, fit: BoxFit.contain)
+                ),
+            )
+          );
+        } else {
+          return WillPopScope(
+            onWillPop: disableBackButton ? () {
+            }:null,
+            child: AlertDialog(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              scrollable: true,
+              content: Column(
+                children: [
+                  Container(
+                    child: Lottie.asset('assets/illustration/loading.json', width: 220, height: 220, fit: BoxFit.contain)
+                  ),
+                  SizedBox(height: 30),
+                  Container(
+                    child: TextView(loadingMessage, 3, color: Colors.white),
+                  ),
+                ],
               ),
-          )
-          // ListView(
-          //   children: [
-          //     SizedBox(height: 30),
-          //     Container(
-          //       child: Lottie.asset('assets/illustration/loading.json', width: 220, height: 220, fit: BoxFit.contain)
-          //     ),
-          //   ],
-          // )
-        );
+            )
+          );
+        }
+        
+        
+        // return WillPopScope(
+        //   onWillPop: disableBackButton ? () {
+        //   }:null,
+        //   child: loadingMessage == "" ?
+        //   Center(
+        //     child: Container(
+        //         child: Lottie.asset('assets/illustration/loading.json', width: 220, height: 220, fit: BoxFit.contain)
+        //       ),
+        //   )
+        //   :
+        //   Column(
+        //     mainAxisAlignment: MainAxisAlignment.center,
+        //     mainAxisSize: MainAxisSize.max,
+        //     children: [
+        //       Container(
+        //         child: Lottie.asset('assets/illustration/loading.json', width: 220, height: 220, fit: BoxFit.contain)
+        //       ),
+        //       SizedBox(height: 30),
+        //       Container(
+        //         child: TextView(loadingMessage, 3, color: Colors.white),
+        //       ),
+        //     ],
+        //   )
+        // );
       }
     );
   }

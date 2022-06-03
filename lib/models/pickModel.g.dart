@@ -8,20 +8,21 @@ part of 'pickModel.dart';
 
 Pick _$PickFromJson(Map<String, dynamic> json) {
   return Pick(
-    pickNo: json['Pick No'] as String,
-    wsNo: json['WS NO'] as String,
-    source: json['Source'] as String,
-    weight: json['Weight'] as String,
-    userId: json['User ID'] as String,
-    date: json['Tanggal'] as String,
-    sales: json['Sales'] as String,
-    gudang: json['Gudang'] as String,
-    custName: json['Sell-to Customer Name'] as String,
-    contactName: json['Sell-to Contact'] as String,
-    city: json['City'] as String,
-    postcode: json['Post Code'] as String,
-    county: json['Sell-to County'] as String,
-    province: json['Name'] as String
+    pickNo: json['pickNo'] as String,
+    wsNo: json['wsNo'] as String,
+    source: json['source'] as String,
+    weight: json['weight'] as String,
+    userId: json['userId'] as String,
+    date: json['date'] as String,
+    sales: json['sales'] as String,
+    gudang: json['gudang'] as String,
+    custName: json['custName'] as String,
+    custId: json['custId'] as String,
+    contactName: json['contactName'] as String,
+    city: json['city'] as String,
+    postcode: json['postcode'] as String,
+    county: json['county'] as String,
+    province: json['province'] as String,
   );
 }
 
@@ -35,9 +36,10 @@ Map<String, dynamic> _$PickToJson(Pick instance) => <String, dynamic>{
       'sales': instance.sales,
       'gudang': instance.gudang,
       'custName': instance.custName,
+      'custId': instance.custId,
       'contactName': instance.contactName,
       'city': instance.city,
       'postcode': instance.postcode,
       'county': instance.county,
-      'province': instance.province
+      'province': instance.province,
     };

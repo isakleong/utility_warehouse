@@ -8,12 +8,12 @@ part of 'detailPickModel.dart';
 
 DetailPick _$DetailPickFromJson(Map<String, dynamic> json) {
   return DetailPick(
-    description: json['Description'] as String,
-    ukuran: json['Ukuran'] as String,
-    bincode: json['Bin Code'] as String,
-    quantity: json['Quantity'] as String,
+    description: json['description'] as String,
+    ukuran: json['ukuran'] as String,
+    bincode: json['bincode'] as String,
+    quantity: json['quantity'] as String,
     qty_real: json['qty_real'] as String,
-    uom: json['Unit of Measure Code'] as String,
+    uom: json['uom'] as String,
     ada: json['ada'] as int,
   );
 }

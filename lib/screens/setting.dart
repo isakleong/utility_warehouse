@@ -26,11 +26,14 @@ class SettingState extends State<Setting> {
 
   bool urlAddressValid_1 = false;
   bool urlAddressValid_2 = false;
+  bool urlAddressValid_3 = false;
 
-  final FocusNode urlAdrressFocus_1 = FocusNode();  
-  final FocusNode urlAdrressFocus_2 = FocusNode();  
+  final FocusNode urlAdrressFocus_1 = FocusNode();
+  final FocusNode urlAdrressFocus_2 = FocusNode();
+  final FocusNode urlAdrressFocus_3 = FocusNode();
   final urlAdreessController_1 = TextEditingController();
   final urlAdreessController_2 = TextEditingController();
+  final urlAdreessController_3 = TextEditingController();
 
   String token = "";
 
@@ -175,7 +178,36 @@ class SettingState extends State<Setting> {
                             errorText: urlAddressValid_2 ? "IP tidak boleh kosong" : null,
                           ),
                           onSubmitted: (value) {
-                            urlAdrressFocus_2.unfocus();
+                            fieldFocusChange(context, urlAdrressFocus_2, urlAdrressFocus_3);
+                          },
+                        ),
+                      ),
+                      SizedBox(height: 30),
+                      Container(
+                        child: TextField(
+                          key: Key("UrlAddress3"),
+                          controller: urlAdreessController_3,
+                          keyboardType: TextInputType.text,
+                          textInputAction: TextInputAction.next,
+                          focusNode: urlAdrressFocus_3,
+                          decoration: InputDecoration(
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            hintStyle: TextStyle(fontWeight: FontWeight.bold, fontSize:16, fontFamily: 'Roboto'),
+                            labelStyle: TextStyle(fontWeight: FontWeight.bold, fontFamily:'Roboto', fontSize: 16),
+                            border: OutlineInputBorder(),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(4)),
+                              borderSide: BorderSide(width: 1.5, color: config.grayColor),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(4)),
+                              borderSide: BorderSide(width: 1.5, color: config.darkOpacityBlueColor),
+                            ),
+                            labelText: "IP Address 3",
+                            errorText: urlAddressValid_3 ? "IP tidak boleh kosong" : null,
+                          ),
+                          onSubmitted: (value) {
+                            urlAdrressFocus_3.unfocus();
                           },
                         ),
                       ),
@@ -219,16 +251,20 @@ class SettingState extends State<Setting> {
 
     if(FileSystemEntity.typeSync(path) != FileSystemEntityType.notFound){
       final document = XmlDocument.parse(file.readAsStringSync());
-      final url_address_1 = document.findAllElements('url_address_1').map((node) => node.text);
-      final url_address_2 = document.findAllElements('url_address_2').map((node) => node.text);
+      final urlAddress_1 = document.findAllElements('url_address_local').map((node) => node.text);
+      final urlAddress_2 = document.findAllElements('url_address_public').map((node) => node.text);
+      final urlAddress_3 = document.findAllElements('url_address_public_alt').map((node) => node.text);
       final tempToken = document.findAllElements('token').map((node) => node.text);
 
       try {
-        urlAdreessController_1.text = url_address_1.first;
+        urlAdreessController_1.text = urlAddress_1.first;
         urlAdreessController_1.selection = TextSelection.fromPosition(TextPosition(offset: urlAdreessController_1.text.length));
 
-        urlAdreessController_2.text = url_address_2.first;
+        urlAdreessController_2.text = urlAddress_2.first;
         urlAdreessController_2.selection = TextSelection.fromPosition(TextPosition(offset: urlAdreessController_2.text.length));
+
+        urlAdreessController_3.text = urlAddress_3.first;
+        urlAdreessController_3.selection = TextSelection.fromPosition(TextPosition(offset: urlAdreessController_3.text.length));
 
         token = tempToken.first;
       } catch (e) {
@@ -248,8 +284,9 @@ class SettingState extends State<Setting> {
     final builder = XmlBuilder();
     builder.processing('xml', 'version="1.0" encoding="UTF-8" standalone="yes"');
     builder.element('deviceconfig', nest: () {
-      builder.element('url_address_1', nest: urlAdreessController_1.text);
-      builder.element('url_address_2', nest: urlAdreessController_2.text);
+      builder.element('url_address_local', nest: urlAdreessController_1.text);
+      builder.element('url_address_public', nest: urlAdreessController_2.text);
+      builder.element('url_address_public_alt', nest: urlAdreessController_3.text);
       builder.element('token_id', nest: token);
     });
     final document = builder.buildDocument();

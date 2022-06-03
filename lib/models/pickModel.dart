@@ -15,6 +15,7 @@ class Pick {
   String sales;
   String gudang;
   String custName;
+  String custId;
   String contactName;
   String city;
   String postcode;
@@ -31,6 +32,7 @@ class Pick {
     this.sales,
     this.gudang,
     this.custName,
+    this.custId,
     this.contactName,
     this.city,
     this.postcode,

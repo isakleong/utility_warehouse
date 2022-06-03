@@ -78,21 +78,25 @@ class SplashScreenState extends State<SplashScreen> {
 
     if(FileSystemEntity.typeSync(path) != FileSystemEntityType.notFound){
       final document = XmlDocument.parse(file.readAsStringSync());
-      final url_address_1 = document.findAllElements('url_address_1').map((node) => node.text);
-      final url_address_2 = document.findAllElements('url_address_2').map((node) => node.text);
-      configuration.setUrlPath = url_address_1.first;
-      configuration.setUrlPathAlt = url_address_2.first;
+      final urlAddress_1 = document.findAllElements('url_address_local').map((node) => node.text);
+      final urlAddress_2 = document.findAllElements('url_address_public').map((node) => node.text);
+      final urlAddress_3 = document.findAllElements('url_address_public_alt').map((node) => node.text);
+      configuration.setUrlPathLocal = urlAddress_1.first;
+      configuration.setUrlPathPublic = urlAddress_2.first;
+      configuration.setUrlPathPublicAlt = urlAddress_3.first;
       // print(document.toString());
       // print(document.toXmlString(pretty: true, indent: '\t'));
     } else {
-      configuration.setUrlPath = "http://203.142.77.243/NewUtilityWarehouseDev";
-      configuration.setUrlPathAlt = "http://103.76.27.124/NewUtilityWarehouseDev";
+      configuration.setUrlPathLocal = "http://192.168.10.213/NewUtilityWarehouseDev";
+      configuration.setUrlPathPublic = "http://203.142.77.243/NewUtilityWarehouseDev";
+      configuration.setUrlPathPublicAlt = "http://103.76.27.124/NewUtilityWarehouseDev";
 
       final builder = XmlBuilder();
       builder.processing('xml', 'version="1.0" encoding="UTF-8" standalone="yes"');
       builder.element('deviceconfig', nest: () {
-        builder.element('url_address_1', nest: "http://203.142.77.243/NewUtilityWarehouseDev");
-        builder.element('url_address_2', nest: "http://103.76.27.124/NewUtilityWarehouseDev");
+        builder.element('url_address_local', nest: "http://192.168.10.213/NewUtilityWarehouseDev");
+        builder.element('url_address_public', nest: "http://203.142.77.243/NewUtilityWarehouseDev");
+        builder.element('url_address_public_alt', nest: "http://103.76.27.124/NewUtilityWarehouseDev");
         builder.element('token_id', nest: '');
       });
       final document = builder.buildDocument();
@@ -275,14 +279,15 @@ class SplashScreenState extends State<SplashScreen> {
 
     String url = "";
 
-    bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-    String url_address_1 = configuration.getUrlPath + "/config/apk/" + config.apkName+".apk";
-    String url_address_2 = configuration.getUrlPathAlt + "/config/apk/" + config.apkName+".apk";
+    bool isUrlAddress_1 = false, isUrlAddress_2 = false, isUrlAddress_3 = false;
+    String urlAddress_1 = configuration.getUrlPathLocal + "/config/apk/" + config.apkName+".apk";
+    String urlAddress_2 = configuration.getUrlPathPublic + "/config/apk/" + config.apkName+".apk";
+    String urlAddress_3 = configuration.getUrlPathPublicAlt + "/config/apk/" + config.apkName+".apk";
 
-    printHelp("print "+url_address_1);
+    printHelp("print "+urlAddress_1);
 
     try {
-		  final conn_1 = await connectionTest(url_address_1, context);
+		  final conn_1 = await connectionTest(urlAddress_1, context);
       printHelp("GET STATUS 1 "+conn_1);
       if(conn_1 == "OK"){
         isUrlAddress_1 = true;
@@ -293,10 +298,10 @@ class SplashScreenState extends State<SplashScreen> {
     }
 
     if(isUrlAddress_1) {
-      url = url_address_1;
+      url = urlAddress_1;
     } else {
       try {
-        final conn_2 = await connectionTest(url_address_2, context);
+        final conn_2 = await connectionTest(urlAddress_2, context);
         printHelp("GET STATUS 2 "+conn_2);
         if(conn_2 == "OK"){
           isUrlAddress_2 = true;
@@ -307,7 +312,21 @@ class SplashScreenState extends State<SplashScreen> {
       }
     }
     if(isUrlAddress_2){
-      url = url_address_2;
+      url = urlAddress_2;
+    } else {
+      try {
+        final conn_3 = await connectionTest(urlAddress_3, context);
+        printHelp("GET STATUS 3 "+conn_3);
+        if(conn_3 == "OK"){
+          isUrlAddress_3 = true;
+        }
+      } on SocketException {
+        isUrlAddress_3 = false;
+        // isGetVersionSuccess = "Gagal terhubung dengan server";
+      }
+    }
+    if(isUrlAddress_3){
+      url = urlAddress_3;
     }
 
     if(url != "") {
@@ -614,13 +633,14 @@ class SplashScreenState extends State<SplashScreen> {
     int apkSize = 0;
 
     String url = "";
-    bool isUrlAddress_1 = false, isUrlAddress_2 = false;
+    bool isUrlAddress_1 = false, isUrlAddress_2 = false, isUrlAddress_3 = false;
 
-    String url_address_1 = configuration.getUrlPath + "/config/apk/" + configuration.apkName + ".apk";
-    String url_address_2 = configuration.getUrlPathAlt + "/config/apk/" + configuration.apkName + ".apk";
+    String urlAddress_1 = configuration.getUrlPathLocal + "/config/apk/" + configuration.apkName + ".apk";
+    String urlAddress_2 = configuration.getUrlPathPublic + "/config/apk/" + configuration.apkName + ".apk";
+    String urlAddress_3 = configuration.getUrlPathPublicAlt + "/config/apk/" + configuration.apkName + ".apk";
 
     try {
-		  final conn_1 = await connectionTest(url_address_1, context);
+		  final conn_1 = await connectionTest(urlAddress_1, context);
       printHelp("GET STATUS 1 "+conn_1);
       if(conn_1 == "OK"){
         isUrlAddress_1 = true;
@@ -631,10 +651,10 @@ class SplashScreenState extends State<SplashScreen> {
     }
 
     if(isUrlAddress_1) {
-      url = url_address_1;
+      url = urlAddress_1;
     } else {
       try {
-        final conn_2 = await connectionTest(url_address_2, context);
+        final conn_2 = await connectionTest(urlAddress_2, context);
         printHelp("GET STATUS 2 "+conn_2);
         if(conn_2 == "OK"){
           isUrlAddress_2 = true;
@@ -645,7 +665,21 @@ class SplashScreenState extends State<SplashScreen> {
       }
     }
     if(isUrlAddress_2){
-      url = url_address_2;
+      url = urlAddress_2;
+    } else {
+      try {
+        final conn_3 = await connectionTest(urlAddress_3, context);
+        printHelp("GET STATUS 3 "+conn_3);
+        if(conn_3 == "OK"){
+          isUrlAddress_3 = true;
+        }
+      } on SocketException {
+        isUrlAddress_3 = false;
+        // isGetVersionSuccess = "Gagal terhubung dengan server";
+      }
+    }
+    if(isUrlAddress_3){
+      url = urlAddress_3;
     }
 
     if(url != "") {
@@ -722,16 +756,17 @@ class SplashScreenState extends State<SplashScreen> {
     Client client = Client();
     String url = "";
 
-    bool isUrlAddress_1 = false, isUrlAddress_2 = false;
+    bool isUrlAddress_1 = false, isUrlAddress_2 = false, isUrlAddress_3 = false;
     String isGetVersionSuccess = "";
     
-    print("HSHSHSH "+configuration.getUrlPath.toString());
+    print("HSHSHSH "+configuration.getUrlPathLocal.toString());
     
-    String url_address_1 = configuration.getUrlPath + "/config/test-ip.php";
-    String url_address_2 = configuration.getUrlPathAlt + "/config/test-ip.php";
+    String urlAddress_1 = configuration.getUrlPathLocal + "/config/test-ip.php";
+    String urlAddress_2 = configuration.getUrlPathPublic + "/config/test-ip.php";
+    String urlAddress_3 = configuration.getUrlPathPublicAlt + "/config/test-ip.php";
 
     try {
-		  final conn_1 = await connectionTest(url_address_1, context);
+		  final conn_1 = await connectionTest(urlAddress_1, context);
       printHelp("GET STATUS 11 "+conn_1);
       if(conn_1 == "OK"){
         isUrlAddress_1 = true;
@@ -742,10 +777,10 @@ class SplashScreenState extends State<SplashScreen> {
     }
 
     if(isUrlAddress_1) {
-      url = configuration.getUrlPath + "/config/getVersion.php";
+      url = configuration.getUrlPathLocal + "/config/getVersion.php";
     } else {
       try {
-        final conn_2 = await connectionTest(url_address_2, context);
+        final conn_2 = await connectionTest(urlAddress_2, context);
         printHelp("GET STATUS 2 "+conn_2);
         if(conn_2 == "OK"){
           isUrlAddress_2 = true;
@@ -756,8 +791,21 @@ class SplashScreenState extends State<SplashScreen> {
       }
     }
     if(isUrlAddress_2){
-
-      url = configuration.getUrlPathAlt + "/config/getVersion.php";
+      url = configuration.getUrlPathPublic + "/config/getVersion.php";
+    } else {
+      try {
+        final conn_3 = await connectionTest(urlAddress_3, context);
+        printHelp("GET STATUS 2 "+conn_3);
+        if(conn_3 == "OK"){
+          isUrlAddress_3 = true;
+        }
+      } on SocketException {
+        isUrlAddress_3 = false;
+        isGetVersionSuccess = "Gagal terhubung dengan server";
+      }
+    }
+    if(isUrlAddress_3){
+      url = configuration.getUrlPathPublicAlt + "/config/getVersion.php";
     }
 
     var response;

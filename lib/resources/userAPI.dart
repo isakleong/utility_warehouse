@@ -16,9 +16,11 @@ class UserAPI {
 
     Configuration configuration = await getUrlConfig(context);
 
-    bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-    String url_address_1 = fetchAPI("users/login.php", context, print: true);
-    String url_address_2 = fetchAPI("users/login.php", context, secondary: true, print: true);
+    bool isUrlAddress_1 = false, isUrlAddress_2 = false, isUrlAddress_3 = false;
+    String urlAddress_1 = "", urlAddress_2 = "", urlAddress_3 = "";
+    urlAddress_1 = fetchAPI("config/test-ip.php", context);
+    urlAddress_2 = fetchAPI("config/test-ip.php", context, public: true);
+    urlAddress_3 = fetchAPI("config/test-ip.php", context, publicAlt: true);
 
     // final body = jsonEncode({
     //   "userID":username,
@@ -31,7 +33,7 @@ class UserAPI {
     };
 
     try {
-		  final conn_1 = await connectionTest(url_address_1, context);
+		  final conn_1 = await connectionTest(urlAddress_1, context);
       printHelp("GET STATUS 1 "+conn_1);
       if(conn_1 == "OK"){
         isUrlAddress_1 = true;
@@ -42,10 +44,10 @@ class UserAPI {
     }
 
     if(isUrlAddress_1) {
-      url = url_address_1;
+      url = fetchAPI("users/login.php", context, print: true);
     } else {
       try {
-        final conn_2 = await connectionTest(url_address_2, context);
+        final conn_2 = await connectionTest(urlAddress_2, context);
         printHelp("GET STATUS 2 "+conn_2);
         if(conn_2 == "OK"){
           isUrlAddress_2 = true;
@@ -56,7 +58,21 @@ class UserAPI {
       }
     }
     if(isUrlAddress_2){
-      url = url_address_2;
+      url = fetchAPI("users/login.php", context, public: true, print: true);
+    } else {
+      try {
+        final conn_3 = await connectionTest(urlAddress_3, context);
+        printHelp("GET STATUS 3 "+conn_3);
+        if(conn_3 == "OK"){
+          isUrlAddress_3 = true;
+        }
+      } on SocketException {
+        isUrlAddress_3 = false;
+        result = new Result(code: 500, message: "Gagal terhubung dengan server");
+      }
+    }
+    if(isUrlAddress_3){
+      url = fetchAPI("users/login.php", context, publicAlt: true, print: true);
     }
 
     try {
@@ -83,9 +99,11 @@ class UserAPI {
     User user;
     String url = "";
 
-    bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-    String url_address_1 = fetchAPI("users/auth_validation.php", context);
-    String url_address_2 = fetchAPI("users/auth_validation.php", context, secondary: true);
+    bool isUrlAddress_1 = false, isUrlAddress_2 = false, isUrlAddress_3 = false;
+    String urlAddress_1 = "", urlAddress_2 = "", urlAddress_3 = "";
+    urlAddress_1 = fetchAPI("config/test-ip.php", context);
+    urlAddress_2 = fetchAPI("config/test-ip.php", context, public: true);
+    urlAddress_3 = fetchAPI("config/test-ip.php", context, publicAlt: true);
 
     final body =  <String, String>{
       'userID' : username,
@@ -93,7 +111,7 @@ class UserAPI {
     };
 
     try {
-		  final conn_1 = await connectionTest(url_address_1, context);
+		  final conn_1 = await connectionTest(urlAddress_1, context);
       printHelp("GET STATUS 1 "+conn_1);
       if(conn_1 == "OK"){
         isUrlAddress_1 = true;
@@ -104,10 +122,10 @@ class UserAPI {
     }
 
     if(isUrlAddress_1) {
-      url = url_address_1;
+      url = fetchAPI("users/auth_validation.php", context);;
     } else {
       try {
-        final conn_2 = await connectionTest(url_address_2, context);
+        final conn_2 = await connectionTest(urlAddress_2, context);
         printHelp("GET STATUS 2 "+conn_2);
         if(conn_2 == "OK"){
           isUrlAddress_2 = true;
@@ -118,7 +136,21 @@ class UserAPI {
       }
     }
     if(isUrlAddress_2){
-      url = url_address_2;
+      url = fetchAPI("users/auth_validation.php", context, public: true);
+    } else {
+      try {
+        final conn_3 = await connectionTest(urlAddress_3, context);
+        printHelp("GET STATUS 3 "+conn_3);
+        if(conn_3 == "OK"){
+          isUrlAddress_3 = true;
+        }
+      } on SocketException {
+        isUrlAddress_3 = false;
+        result = new Result(code: 500, message: "Gagal terhubung dengan server");
+      }
+    }
+    if(isUrlAddress_3){
+      url = fetchAPI("users/auth_validation.php", context, publicAlt: true);
     }
 
     try {
@@ -143,16 +175,18 @@ class UserAPI {
     User user;
     String url = "";
 
-    bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-    String url_address_1 = fetchAPI("users/check_nik_validation.php", context);
-    String url_address_2 = fetchAPI("users/check_nik_validation.php", context, secondary: true);
+    bool isUrlAddress_1 = false, isUrlAddress_2 = false, isUrlAddress_3 = false;
+    String urlAddress_1 = "", urlAddress_2 = "", urlAddress_3 = "";
+    urlAddress_1 = fetchAPI("config/test-ip.php", context);
+    urlAddress_2 = fetchAPI("config/test-ip.php", context, public: true);
+    urlAddress_3 = fetchAPI("config/test-ip.php", context, publicAlt: true);
 
     final body =  <String, String>{
       'nik' : nik
     };
 
     try {
-		  final conn_1 = await connectionTest(url_address_1, context);
+		  final conn_1 = await connectionTest(urlAddress_1, context);
       printHelp("GET STATUS 1 "+conn_1);
       if(conn_1 == "OK"){
         isUrlAddress_1 = true;
@@ -163,10 +197,10 @@ class UserAPI {
     }
 
     if(isUrlAddress_1) {
-      url = url_address_1;
+      url = fetchAPI("users/check_nik_validation.php", context);
     } else {
       try {
-        final conn_2 = await connectionTest(url_address_2, context);
+        final conn_2 = await connectionTest(urlAddress_2, context);
         printHelp("GET STATUS 2 "+conn_2);
         if(conn_2 == "OK"){
           isUrlAddress_2 = true;
@@ -177,7 +211,21 @@ class UserAPI {
       }
     }
     if(isUrlAddress_2){
-      url = url_address_2;
+      url = fetchAPI("users/check_nik_validation.php", context, public: true);
+    } else {
+      try {
+        final conn_3 = await connectionTest(urlAddress_3, context);
+        printHelp("GET STATUS 3 "+conn_3);
+        if(conn_3 == "OK"){
+          isUrlAddress_3 = true;
+        }
+      } on SocketException {
+        isUrlAddress_3 = false;
+        result = new Result(code: 500, message: "Gagal terhubung dengan server");
+      }
+    }
+    if(isUrlAddress_3){
+      url = fetchAPI("users/check_nik_validation.php", context, publicAlt: true);
     }
 
     try {
@@ -197,16 +245,18 @@ class UserAPI {
     User user;
     String url = "";
 
-    bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-    String url_address_1 = fetchAPI("users/generate_otp.php", context);
-    String url_address_2 = fetchAPI("users/generate_otp.php", context, secondary: true);
+    bool isUrlAddress_1 = false, isUrlAddress_2 = false, isUrlAddress_3 = false;
+    String urlAddress_1 = "", urlAddress_2 = "", urlAddress_3 = "";
+    urlAddress_1 = fetchAPI("config/test-ip.php", context);
+    urlAddress_2 = fetchAPI("config/test-ip.php", context, public: true);
+    urlAddress_3 = fetchAPI("config/test-ip.php", context, publicAlt: true);
 
     final body =  <String, String>{
       'phoneNumber' : phoneNumber
     };
 
     try {
-		  final conn_1 = await connectionTest(url_address_1, context);
+		  final conn_1 = await connectionTest(urlAddress_1, context);
       printHelp("GET STATUS 1 "+conn_1);
       if(conn_1 == "OK"){
         isUrlAddress_1 = true;
@@ -217,10 +267,10 @@ class UserAPI {
     }
 
     if(isUrlAddress_1) {
-      url = url_address_1;
+      url = fetchAPI("users/generate_otp.php", context);
     } else {
       try {
-        final conn_2 = await connectionTest(url_address_2, context);
+        final conn_2 = await connectionTest(urlAddress_2, context);
         printHelp("GET STATUS 2 "+conn_2);
         if(conn_2 == "OK"){
           isUrlAddress_2 = true;
@@ -231,7 +281,21 @@ class UserAPI {
       }
     }
     if(isUrlAddress_2){
-      url = url_address_2;
+      url = fetchAPI("users/generate_otp.php", context, public: true);
+    } else {
+      try {
+        final conn_3 = await connectionTest(urlAddress_3, context);
+        printHelp("GET STATUS 3 "+conn_3);
+        if(conn_3 == "OK"){
+          isUrlAddress_3 = true;
+        }
+      } on SocketException {
+        isUrlAddress_3 = false;
+        result = new Result(code: 500, message: "Gagal terhubung dengan server");
+      }
+    }
+    if(isUrlAddress_3){
+      url = fetchAPI("users/generate_otp.php", context, publicAlt: true);
     }
 
     try {
@@ -251,9 +315,11 @@ class UserAPI {
     User user;
     String url = "";
 
-    bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-    String url_address_1 = fetchAPI("users/registration.php", context);
-    String url_address_2 = fetchAPI("users/registration.php", context, secondary: true);
+    bool isUrlAddress_1 = false, isUrlAddress_2 = false, isUrlAddress_3 = false;
+    String urlAddress_1 = "", urlAddress_2 = "", urlAddress_3 = "";
+    urlAddress_1 = fetchAPI("config/test-ip.php", context);
+    urlAddress_2 = fetchAPI("config/test-ip.php", context, public: true);
+    urlAddress_3 = fetchAPI("config/test-ip.php", context, publicAlt: true);
 
     print("DATA FETCH 1 "+username);
     print("DATA FETCH 2 "+token);
@@ -266,7 +332,7 @@ class UserAPI {
     };
 
     try {
-		  final conn_1 = await connectionTest(url_address_1, context);
+		  final conn_1 = await connectionTest(urlAddress_1, context);
       printHelp("GET STATUS 1 "+conn_1);
       if(conn_1 == "OK"){
         isUrlAddress_1 = true;
@@ -277,10 +343,10 @@ class UserAPI {
     }
 
     if(isUrlAddress_1) {
-      url = url_address_1;
+      url = fetchAPI("users/registration.php", context);
     } else {
       try {
-        final conn_2 = await connectionTest(url_address_2, context);
+        final conn_2 = await connectionTest(urlAddress_2, context);
         printHelp("GET STATUS 2 "+conn_2);
         if(conn_2 == "OK"){
           isUrlAddress_2 = true;
@@ -291,7 +357,21 @@ class UserAPI {
       }
     }
     if(isUrlAddress_2){
-      url = url_address_2;
+      url = fetchAPI("users/registration.php", context, public: true);
+    } else {
+      try {
+        final conn_3 = await connectionTest(urlAddress_3, context);
+        printHelp("GET STATUS 3 "+conn_3);
+        if(conn_3 == "OK"){
+          isUrlAddress_3 = true;
+        }
+      } on SocketException {
+        isUrlAddress_3 = false;
+        result = new Result(code: 500, message: "Gagal terhubung dengan server");
+      }
+    }
+    if(isUrlAddress_3){
+      url = fetchAPI("users/registration.php", context, publicAlt: true);
     }
 
     try {
@@ -311,9 +391,11 @@ class UserAPI {
     User user;
     String url = "";
 
-    bool isUrlAddress_1 = false, isUrlAddress_2 = false;
-    String url_address_1 = fetchAPI("users/update_password.php", context);
-    String url_address_2 = fetchAPI("users/update_password.php", context, secondary: true);
+    bool isUrlAddress_1 = false, isUrlAddress_2 = false, isUrlAddress_3 = false;
+    String urlAddress_1 = "", urlAddress_2 = "", urlAddress_3 = "";
+    urlAddress_1 = fetchAPI("config/test-ip.php", context);
+    urlAddress_2 = fetchAPI("config/test-ip.php", context, public: true);
+    urlAddress_3 = fetchAPI("config/test-ip.php", context, publicAlt: true);
 
     final body =  <String, String>{
       'userID' : username,
@@ -321,7 +403,7 @@ class UserAPI {
     };
 
     try {
-		  final conn_1 = await connectionTest(url_address_1, context);
+		  final conn_1 = await connectionTest(urlAddress_1, context);
       printHelp("GET STATUS 1 "+conn_1);
       if(conn_1 == "OK"){
         isUrlAddress_1 = true;
@@ -332,10 +414,10 @@ class UserAPI {
     }
 
     if(isUrlAddress_1) {
-      url = url_address_1;
+      url = fetchAPI("users/update_password.php", context);
     } else {
       try {
-        final conn_2 = await connectionTest(url_address_2, context);
+        final conn_2 = await connectionTest(urlAddress_2, context);
         printHelp("GET STATUS 2 "+conn_2);
         if(conn_2 == "OK"){
           isUrlAddress_2 = true;
@@ -346,7 +428,21 @@ class UserAPI {
       }
     }
     if(isUrlAddress_2){
-      url = url_address_2;
+      url = fetchAPI("users/update_password.php", context, public: true);
+    } else {
+      try {
+        final conn_3 = await connectionTest(urlAddress_3, context);
+        printHelp("GET STATUS 3 "+conn_3);
+        if(conn_3 == "OK"){
+          isUrlAddress_3 = true;
+        }
+      } on SocketException {
+        isUrlAddress_3 = false;
+        result = new Result(code: 500, message: "Gagal terhubung dengan server");
+      }
+    }
+    if(isUrlAddress_3){
+      url = fetchAPI("users/update_password.php", context, publicAlt: true);
     }
 
     try {

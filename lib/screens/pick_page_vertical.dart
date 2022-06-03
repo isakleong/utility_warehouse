@@ -24,6 +24,7 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:xml/xml.dart';
+import 'package:multiselect_formfield/multiselect_formfield.dart';
 
 class PickPageVertical extends StatefulWidget {
   final User model;
@@ -35,10 +36,13 @@ class PickPageVertical extends StatefulWidget {
 }
 
 class _PickPageVerticalState extends State<PickPageVertical> {
+  
   User userModel;
 
   List<Pick> pickNos = [];
   List<DetailPick> detailPicks = [];
+  List<Pick> cities = [];
+  List<Pick> customers = [];
 
   bool valuefirst = false;
   List<bool> isCheckboxSelected = [];
@@ -53,7 +57,14 @@ class _PickPageVerticalState extends State<PickPageVertical> {
   List<Pick> picksChoosen = [];
   List<Pick> pickChanged = [];
 
-  //header data
+  List<String> selectedPick = [];
+  final formKey = new GlobalKey<FormState>();
+  List _myActivities;
+  String _myActivitiesResult;
+  
+  List<Map<String, dynamic>> _items;
+
+  //header dataityChose
   String custName = "";
   String contactName = "";
   String city = "";
@@ -79,11 +90,14 @@ class _PickPageVerticalState extends State<PickPageVertical> {
   String tempChoosenPick = "";
   // Result res;
   String branchId = "";
+  String selectedCity = "";
+  String selectedCustomerId = "";
 
   static const int sortName = 0;
   static const int sortStatus = 1;
   bool isAscending = true;
   int sortType = sortName;
+
 
   final DataTableSource _data = MyData();
   Future<String> getDatabasesPath() => databaseFactory.getDatabasesPath();
@@ -96,6 +110,8 @@ class _PickPageVerticalState extends State<PickPageVertical> {
     detailPicks = [];
     detailPicksChoosen = [];
     super.initState();
+    _myActivities = [];
+    _myActivitiesResult = '';
     // const tenSec = Duration(seconds: 10);
     // Timer.periodic(tenSec, (Timer t) => getNomorPick());
     // SystemChrome.setPreferredOrientations([
@@ -104,44 +120,69 @@ class _PickPageVerticalState extends State<PickPageVertical> {
     // ]);
   }
 
+  _saveForm() {
+    var form = formKey.currentState;
+    if (form.validate()) {
+      form.save();
+      setState(() {
+        _myActivitiesResult = _myActivities.toString();
+      });
+    }
+  }
+
   @override
   void didChangeDependencies() async {
     configuration = Configuration.of(context);
     await getDeviceConfig();
-    await getNomorPick();
+    // await getNomorPick();
+    await getCity();
+  }
+
+  void itemChange(String itemValue, bool isSelected){
+    setState(() {
+      if(isSelected){
+        selectedPick.add(itemValue);
+      }else{
+        selectedPick.remove(itemValue);
+      }
+    });
+  }
+   void cancel() {
+    Navigator.pop(context);
+  }
+
+  void submit() {
+    Navigator.pop(context, selectedPick);
   }
 
   getDeviceConfig() async {
     // Directory dir = await getExternalStorageDirectory();
     // String path = '${dir.path}/deviceconfig.xml';
-    String path =
-        '/storage/emulated/0/Android/data/com.example.utility_warehouse/files/deviceconfig.xml';
+    String path = '/storage/emulated/0/Android/data/com.example.utility_warehouse/files/deviceconfig.xml';
 
     File file = File(path);
 
-    if (FileSystemEntity.typeSync(path) != FileSystemEntityType.notFound) {
+    if(FileSystemEntity.typeSync(path) != FileSystemEntityType.notFound){
       final document = XmlDocument.parse(file.readAsStringSync());
-      final url_address_1 =
-          document.findAllElements('url_address_1').map((node) => node.text);
-      final url_address_2 =
-          document.findAllElements('url_address_2').map((node) => node.text);
-      configuration.setUrlPath = url_address_1.first;
-      configuration.setUrlPathAlt = url_address_2.first;
+      final urlAddress_1 = document.findAllElements('url_address_local').map((node) => node.text);
+      final urlAddress_2 = document.findAllElements('url_address_public').map((node) => node.text);
+      final urlAddress_3 = document.findAllElements('url_address_public_alt').map((node) => node.text);
+      configuration.setUrlPathLocal = urlAddress_1.first;
+      configuration.setUrlPathPublic = urlAddress_2.first;
+      configuration.setUrlPathPublicAlt = urlAddress_3.first;
       // print(document.toString());
       // print(document.toXmlString(pretty: true, indent: '\t'));
     } else {
-      configuration.setUrlPath = "http://203.142.77.243/NewUtilityWarehouseDev";
-      configuration.setUrlPathAlt =
-          "http://103.76.27.124/NewUtilityWarehouseDev";
+      configuration.setUrlPathLocal = "http://192.168.10.213/NewUtilityWarehouseDev";
+      configuration.setUrlPathPublic = "http://203.142.77.243/NewUtilityWarehouseDev";
+      configuration.setUrlPathPublicAlt = "http://103.76.27.124/NewUtilityWarehouseDev";
 
       final builder = XmlBuilder();
-      builder.processing(
-          'xml', 'version="1.0" encoding="UTF-8" standalone="yes"');
+      builder.processing('xml', 'version="1.0" encoding="UTF-8" standalone="yes"');
       builder.element('deviceconfig', nest: () {
-        builder.element('url_address_1',
-            nest: "http://203.142.77.243/NewUtilityWarehouseDev");
-        builder.element('url_address_2',
-            nest: "http://103.76.27.124/NewUtilityWarehouseDev");
+        builder.element('url_address_local', nest: "http://192.168.10.213/NewUtilityWarehouseDev");
+        builder.element('url_address_public', nest: "http://203.142.77.243/NewUtilityWarehouseDev");
+        builder.element('url_address_public_alt', nest: "http://103.76.27.124/NewUtilityWarehouseDev");
         builder.element('token_id', nest: '');
       });
       final document = builder.buildDocument();
@@ -154,27 +195,155 @@ class _PickPageVerticalState extends State<PickPageVertical> {
     });
   }
 
-  getNomorPick() async {
-    List<Pick> temp_pickNos = [];
-    pickNos = [];
+  // getDeviceConfig() async {
+  //   // Directory dir = await getExternalStorageDirectory();
+  //   // String path = '${dir.path}/deviceconfig.xml';
+  //   String path =
+  //       '/storage/emulated/0/Android/data/com.example.utility_warehouse/files/deviceconfig.xml';
+
+  //   File file = File(path);
+
+  //   if (FileSystemEntity.typeSync(path) != FileSystemEntityType.notFound) {
+  //     final document = XmlDocument.parse(file.readAsStringSync());
+  //     final url_address_1 =
+  //         document.findAllElements('url_address_1').map((node) => node.text);
+  //     final url_address_2 =
+  //         document.findAllElements('url_address_2').map((node) => node.text);
+  //     configuration.setUrlPath = url_address_1.first;
+  //     configuration.setUrlPathAlt = url_address_2.first;
+  //     // print(document.toString());
+  //     // print(document.toXmlString(pretty: true, indent: '\t'));
+  //   } else {
+  //     configuration.setUrlPath = "http://203.142.77.243/NewUtilityWarehouseDev";
+  //     configuration.setUrlPathAlt =
+  //         "http://103.76.27.124/NewUtilityWarehouseDev";
+
+  //     final builder = XmlBuilder();
+  //     builder.processing(
+  //         'xml', 'version="1.0" encoding="UTF-8" standalone="yes"');
+  //     builder.element('deviceconfig', nest: () {
+  //       builder.element('url_address_1',
+  //           nest: "http://203.142.77.243/NewUtilityWarehouseDev");
+  //       builder.element('url_address_2',
+  //           nest: "http://103.76.27.124/NewUtilityWarehouseDev");
+  //       builder.element('token_id', nest: '');
+  //     });
+  //     final document = builder.buildDocument();
+  //     await file.writeAsString(document.toString());
+  //     // print(document.toString());
+  //     // print(document.toXmlString(pretty: true, indent: '\t'));
+  //   }
+  //   setState(() {
+  //     configuration = configuration;
+  //   });
+  // }
+
+  getCity() async {
+    List<Pick> temp_getCity = [];
+    cities = [];
     Result res;
 
     Configuration config = Configuration.of(context);
     Alert(context: context, loading: true, disableBackButton: true);
-    Result result = await PickAPIs.getPickNo(context, branchId);
+    Result result = await PickAPIs.getCity(context, branchId);
+    // print("aaa " + result.code.toString());
+
+    if (result.code == 1) {
+      var parsedJson = jsonDecode(result.data);
+      parsedJson["MF_GetCity"].map((item) {
+        temp_getCity.add(Pick.fromJson(item));
+      }).toList();
+      cities = [];
+      cities.add(Pick(city: "Pilih kecamatan"));
+      cities.addAll(temp_getCity);
+      // setPick(cities);
+      Navigator.of(context, rootNavigator: true).pop();
+      // final citiesLength = pickNos.length;
+    } else {
+      Navigator.of(context, rootNavigator: true).pop();
+      await Alert(
+          context: context,
+          title: "Error",
+          content: Text(result.message),
+          cancel: false,
+          type: "error");
+    }
+    setState(() {
+      cities = cities;
+      
+    });
+  }
+
+  getCustomer() async {
+    List<Pick> temp_getCustomer = [];
+    String selectedCityEncrypted = encryptData(selectedCity);
+    Result res;
+
+    Configuration config = Configuration.of(context);
+    Alert(context: context, loading: true, disableBackButton: true);
+    Result result = await PickAPIs.getCustomer(context, branchId, selectedCityEncrypted);
+    // print("aaa " + result.code.toString());
+
+    if (result.code == 1) {
+      var parsedJson = jsonDecode(result.data);
+      parsedJson["MF_GetCustomer"].map((item) {
+        temp_getCustomer.add(Pick.fromJson(item));
+      }).toList();
+      customers = [];
+      customers.add(Pick(custName: "Pilih toko"));
+      customers.addAll(temp_getCustomer);
+      // setPick(customers);
+      Navigator.of(context, rootNavigator: true).pop();
+    } else {
+      Navigator.of(context, rootNavigator: true).pop();
+      await Alert(
+          context: context,
+          title: "Error",
+          content: Text(result.message),
+          cancel: false,
+          type: "error");
+    }
+    setState(() {
+      customers = customers;
+    });
+  }
+
+  getNomorPick() async {
+
+    List<Pick> temp_pickNos = [];
+    pickNos = [];
+    Result res;
+    String selectedCustomerIdEncrypted = encryptData(selectedCustomerId);
+
+    Configuration config = Configuration.of(context);
+    Alert(context: context, loading: true, disableBackButton: true);
+    printHelp("branchid : "+branchId +" ini custId : "+selectedCustomerIdEncrypted);
+    Result result = await PickAPIs.getPickNo(context, branchId, selectedCustomerIdEncrypted);
     // print("aaa " + result.code.toString());
 
     if (result.code == 1) {
       var parsedJson = jsonDecode(result.data);
       parsedJson["MF_PickNo"].map((item) {
         temp_pickNos.add(Pick.fromJson(item));
+        
       }).toList();
       pickNos = [];
-      pickNos.add(Pick(pickNo: "Pilih nomor pick"));
       pickNos.addAll(temp_pickNos);
-      setPick(pickNos);
+      _items = [];
+      _items = [
+        {
+          'pickNo': pickNos[0].pickNo,
+        }
+      ];
+      for(int i = 1; i < pickNos.length; i++){
+        Map<String, dynamic> temp = {
+          'pickNo': pickNos[i].pickNo,
+        };
+        _items.add(temp);
+      }
       Navigator.of(context, rootNavigator: true).pop();
       final pickNosLength = pickNos.length;
+
     } else {
       Navigator.of(context, rootNavigator: true).pop();
       await Alert(
@@ -284,6 +453,7 @@ class _PickPageVerticalState extends State<PickPageVertical> {
       setState(() {
         pickDone = 1;
         pickInserted = 1;
+        
       });
       Alert(
           context: context,
@@ -361,9 +531,6 @@ class _PickPageVerticalState extends State<PickPageVertical> {
         }
       }
     }
-
-    
-
     // await refresh();
   }
 
@@ -413,7 +580,7 @@ class _PickPageVerticalState extends State<PickPageVertical> {
 
   refresh() async {
     Alert(context: context, loading: true, disableBackButton: true);
-    getNomorPick();
+    getCity();
     Navigator.of(context, rootNavigator: true).pop();
   }
 
@@ -422,16 +589,22 @@ class _PickPageVerticalState extends State<PickPageVertical> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.only(top: 40),
+          padding: EdgeInsets.only(top: 40,),
           child: Column(children: [
             Column(
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    dropdownSearch("Pilih nomor pick"),
+                    Padding(padding: EdgeInsets.only(left:20),
+                      child: dropdownSearchKecamatan("Pilih kecamatan"),
+                    ),
+                    Padding(padding: EdgeInsets.only(left:20),
+                      child: dropdownSearchToko("Pilih toko"),
+                    ),
+                    
                     Padding(
-                      padding: EdgeInsets.only(right: 10, left: 30),
+                      padding: EdgeInsets.only(right: 20, left: 20),
                       child: Button(
                         disable: false,
                         child: TextView('Refresh', 3,
@@ -441,7 +614,11 @@ class _PickPageVerticalState extends State<PickPageVertical> {
                         },
                       ),
                     ),
+                    
                   ],
+                ),
+                Padding(padding: EdgeInsets.only(bottom: 20, left: 20, right: 20),
+                  child: multiSelectPick(),
                 ),
                 Padding(
                   padding: EdgeInsets.only(left: 10, right: 10, top: 20),
@@ -584,31 +761,32 @@ class _PickPageVerticalState extends State<PickPageVertical> {
               endIndent: 0,
               color: Colors.grey,
             ),
-            Container(
-              height: 400,
-              width: MediaQuery.of(context).size.width * 0.98,
-              child: horizontalDataTable(),
-              // Scrollbar(
-              //   child: SingleChildScrollView(
-              //     physics: BouncingScrollPhysics(),
-              //     scrollDirection: Axis.horizontal,
-              //     child: SingleChildScrollView(
-              //       physics: BouncingScrollPhysics(),
-              //       scrollDirection: Axis.vertical,
-              //       child: Padding(
-              //         padding: EdgeInsets.only(top: 1),
-              //         child: Column(
-              //           mainAxisAlignment: MainAxisAlignment.start,
-              //           children: <Widget>[
-              //             // SizedBox(height: 20),
-              //             // buildDataTable(),
-              //           ],
-              //         ),
-              //       ),
-              //     ),
-              //   ),
-              // ),
-            ),
+            showDetailPick(),
+            // Container(
+            //   height: 400,
+            //   width: MediaQuery.of(context).size.width * 0.98,
+            //   child: horizontalDataTable(),
+            //   // Scrollbar(
+            //   //   child: SingleChildScrollView(
+            //   //     physics: BouncingScrollPhysics(),
+            //   //     scrollDirection: Axis.horizontal,
+            //   //     child: SingleChildScrollView(
+            //   //       physics: BouncingScrollPhysics(),
+            //   //       scrollDirection: Axis.vertical,
+            //   //       child: Padding(
+            //   //         padding: EdgeInsets.only(top: 1),
+            //   //         child: Column(
+            //   //           mainAxisAlignment: MainAxisAlignment.start,
+            //   //           children: <Widget>[
+            //   //             // SizedBox(height: 20),
+            //   //             // buildDataTable(),
+            //   //           ],
+            //   //         ),
+            //   //       ),
+            //   //     ),
+            //   //   ),
+            //   // ),
+            // ),
             SizedBox(height: 40),
             Align(
               alignment: Alignment.center,
@@ -628,6 +806,25 @@ class _PickPageVerticalState extends State<PickPageVertical> {
         ),
       ),
     );
+  }
+
+  Widget showDetailPick(){
+    return Container();
+    // List<Widget> widgetList = [];
+    // var widgets = List.generate(5, (int index){
+    //   widgetList.add(
+    //     Column(
+    //       children: [
+    //         Row(
+    //           children: [
+    //             Text('aaaa'),
+    //           ],
+    //         )
+    //       ],
+    //     )
+    //   );
+    // });
+    // return widgets;
   }
 
   // // Insert a new journal to the database
@@ -743,6 +940,9 @@ class _PickPageVerticalState extends State<PickPageVertical> {
       }
     }
   }
+
+
+
 
   setPick(pickNos) {
     // printHelp("choosenpickkkkkk " + choosenPick);
@@ -887,7 +1087,7 @@ class _PickPageVerticalState extends State<PickPageVertical> {
       // print("ini length picknosss " + pickNos.length.toString());
     }
 
-    getNomorPick();
+    // getNomorPick();
   }
 
   showAlertDialog(BuildContext context, String data) {
@@ -935,48 +1135,99 @@ class _PickPageVerticalState extends State<PickPageVertical> {
     );
   }
 
-  Widget dropdownSearch(choosen) {
-    selectedDropdownValue = choosen;
+  Widget multiSelectPick(){
+    printHelp("print items");
+    print(_items);
     return Container(
-      width: 250,
+      // padding: EdgeInsets.all(16),
+      child: MultiSelectFormField(
+        autovalidate: AutovalidateMode.disabled,
+        chipBackGroundColor: Colors.blue,
+        chipLabelStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        dialogTextStyle: TextStyle(fontWeight: FontWeight.bold),
+        checkBoxActiveColor: Colors.blue,
+        checkBoxCheckColor: Colors.white,
+        dialogShapeBorder: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12.0))),
+        title: Text(
+          "Nomor Pick",
+          style: TextStyle(fontSize: 16),
+        ),
+        validator: (value) {
+          if (value == null || value.length == 0) {
+            return 'Pilih nomor pick';
+          }
+          return null;
+        },
+        dataSource: _items,
+        textField: 'pickNo',
+        valueField: 'pickNo',
+        okButtonLabel: 'OK',
+        cancelButtonLabel: 'BATAL',
+        hintWidget: Text('Pilih nomor pick'),
+        initialValue: _myActivities,
+        onSaved: (value) {
+          if (value == null) return;
+          setState(() {
+            _myActivities = value;
+            printHelp(value);
+          });
+        },
+      ),
+    );
+  }
+
+  Widget dropdownSearchKecamatan(choosen) {
+    selectedDropdownValue = choosen;
+    // setState(() {
+    //   selectedDropdownValue = choosen;
+    // });
+    return Container(
+      width: 200,
       height: 50,
       child: DropdownSearch<String>(
         mode: Mode.BOTTOM_SHEET,
         showSelectedItems: true,
-        items: pickNos.map((list) => list.pickNo).toList(),
+        items: cities.map((list) => list.city).toList(),
         onChanged: (data) {
+          setState(() {
+            selectedCity = data;
+            selectedCustomerId = "Pilih toko";
+          });
+          getCustomer();
           printHelp("ini choosenpick " + choosenPick);
           printHelp("ini daata " + data);
-          if (choosenPick.contains("Pilih nomor pick")) {
-            changedPick(data);
-            // kalo pilih iya
-            setState(() {
-              choosenPick = data;
-              selectedDropdownValue = data;
-              printHelp("ini choosenpick 2" + choosenPick);
-            });
-          } else if (choosenPick != "" && choosenPick != data) {
-            showAlertDialog(context, data);
-            // selectedDropdownValue = data;
-          } else if(choosenPick == data){
-            printHelp("masuk sni");
-            selectedDropdownValue = data;
-            // getNomorPick();
-          }
-          else {
-            changedPick(data);
-            // kalo pilih iya
-            printHelp("ini choosenpick 3" + choosenPick);
-            setState(() {
-              choosenPick = data;
-              selectedDropdownValue = data;
-            });
-          }
+          // if (choosenPick.contains("Pilih kecamatan")) {
+          //   changedPick(data);
+          //   // kalo pilih iya
+          //   setState(() {
+          //     choosenPick = data;
+          //     selectedDropdownValue = data;
+          //     printHelp("ini choosenpick 2" + choosenPick);
+          //   });
+          // } else if (choosenPick != "" && choosenPick != data) {
+          //   showAlertDialog(context, data);
+            
+            
+          // } else if(choosenPick == data){
+          //   printHelp("masuk sni");
+          //   selectedDropdownValue = data;
+          //   // getNomorPick();
+          // }
+          // else {
+          //   changedPick(data);
+          //   // kalo pilih iya
+          //   printHelp("ini choosenpick 3" + choosenPick);
+          //   setState(() {
+          //     choosenPick = data;
+          //     selectedDropdownValue = data;
+          //   });
+          // }
         },
         selectedItem: selectedDropdownValue,
         dropdownSearchDecoration: InputDecoration(
-          labelText: "Nomor Pick",
-          hintText: "Pilih nomor pick disini",
+          labelText: "Kecamatan",
+          hintText: "Pilih Kecamatan",
           contentPadding: EdgeInsets.fromLTRB(12, 12, 0, 0),
           border: OutlineInputBorder(),
         ),
@@ -985,7 +1236,7 @@ class _PickPageVerticalState extends State<PickPageVertical> {
           decoration: InputDecoration(
             border: OutlineInputBorder(),
             contentPadding: EdgeInsets.fromLTRB(12, 12, 8, 0),
-            labelText: "Cari nomor pick",
+            labelText: "Cari kecamatan",
           ),
         ),
         popupTitle: Container(
@@ -999,7 +1250,101 @@ class _PickPageVerticalState extends State<PickPageVertical> {
           ),
           child: Center(
             child: Text(
-              'Nomor Pick',
+              'Kecamatan',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+        popupShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(24),
+            topRight: Radius.circular(24),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget dropdownSearchToko(choosen) {
+    selectedDropdownValue = choosen;
+    // setState(() {
+    //   selectedDropdownValue = choosen;
+    // });
+    return Container(
+      width: 200,
+      height: 50,
+      child: DropdownSearch<String>(
+        mode: Mode.BOTTOM_SHEET,
+        showSelectedItems: true,
+        items: customers.map((list) => list.custName).toList(),
+        onChanged: (data) {
+          setState(() {
+            selectedCustomerId = data;
+            // _items = [];
+            _myActivities = [];
+            _myActivitiesResult = '';
+          });
+          printHelp("ini choosenpick " + choosenPick);
+          printHelp("ini data " + data);
+          getNomorPick();
+          // if (choosenPick.contains("Pilih toko")) {
+          //   changedPick(data);
+          //   // kalo pilih iya
+          //   setState(() {
+          //     choosenPick = data;
+          //     selectedDropdownValue = data;
+          //     printHelp("ini choosenpick 2" + choosenPick);
+          //   });
+          // } else if (choosenPick != "" && choosenPick != data) {
+          //   showAlertDialog(context, data);
+            
+            
+          // } else if(choosenPick == data){
+          //   printHelp("masuk sni");
+          //   selectedDropdownValue = data;
+          //   // getNomorPick();
+          // }
+          // else {
+          //   changedPick(data);
+          //   // kalo pilih iya
+          //   printHelp("ini choosenpick 3" + choosenPick);
+          //   setState(() {
+          //     choosenPick = data;
+          //     selectedDropdownValue = data;
+          //   });
+          // }
+        },
+        selectedItem: selectedDropdownValue,
+        dropdownSearchDecoration: InputDecoration(
+          labelText: "Toko",
+          hintText: "Pilih toko disini",
+          contentPadding: EdgeInsets.fromLTRB(12, 12, 0, 0),
+          border: OutlineInputBorder(),
+        ),
+        showSearchBox: true,
+        searchFieldProps: TextFieldProps(
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            contentPadding: EdgeInsets.fromLTRB(12, 12, 8, 0),
+            labelText: "Cari toko",
+          ),
+        ),
+        popupTitle: Container(
+          height: 50,
+          decoration: BoxDecoration(
+            color: Theme.of(context).primaryColorDark,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          child: Center(
+            child: Text(
+              'Toko',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,

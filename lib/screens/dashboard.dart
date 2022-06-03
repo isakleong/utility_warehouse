@@ -5,13 +5,16 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:utility_warehouse/models/result.dart';
+import 'package:utility_warehouse/models/stockOpnameHeaderModel.dart';
 import 'package:utility_warehouse/models/userModel.dart';
+import 'package:utility_warehouse/resources/databaseHelper.dart';
 import 'package:utility_warehouse/resources/stockOpnameAPI.dart';
 import 'package:utility_warehouse/screens/processOpnameData.dart';
 import 'package:utility_warehouse/settings/configuration.dart';
 import 'package:utility_warehouse/tools/function.dart';
 import 'package:utility_warehouse/widget/button.dart';
 import 'package:utility_warehouse/widget/textView.dart';
+import 'package:sqflite/sqflite.dart' as sql;
 
 class Dashboard extends StatefulWidget {
   final User userModel;
@@ -35,6 +38,9 @@ class DashboardState extends State<Dashboard> {
   final _dropdownFormKey1 = GlobalKey<FormState>();
   final _dropdownFormKey2 = GlobalKey<FormState>();
 
+  StateSetter _setState;
+  String downloadLoadingMessage = "";
+
   @override
   void initState() {
     super.initState();
@@ -48,7 +54,7 @@ class DashboardState extends State<Dashboard> {
   }
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     super.didChangeDependencies();
     setState(() {
       userTypeList = [
@@ -56,22 +62,116 @@ class DashboardState extends State<Dashboard> {
         DropdownMenuItem(child: TextView('Stock Opname Difference', 5, color: Colors.white), value: "KG"),
       ];
     });
+    
+    await SQLHelper.createDatabase(tableName: "hk_stockopnameheader");
+    await SQLHelper.createDatabase(tableName: "hk_stockopnamedetail");
+    await SQLHelper.createDatabase(tableName: "sfa_productconversion");
+    await SQLHelper.createDatabase(tableName: "hk_stockopnameheaderselisih");
+    await SQLHelper.createDatabase(tableName: "hk_stockopnamedetailselisih");
+  }
+
+  downloadHeaderData() async {
+    final now = DateTime.now();
+    final formatter = new DateFormat('yyyy-MM-dd');
+    String pullDate = formatter.format(now);
+    pullDate = "2022-05-23";
+
+    setState(() {
+      downloadLoadingMessage = "Downloading header data";
+    });
+
+    Result downloadHeaderResult = await stockOpnameAPI.downloadOpnameDataHeader(context, parameter: "data-type=$selectedDataType&branch-id=${userModel.userId.substring(0, 3)}&pull-date=$pullDate");
+    printHelp("CODE "+downloadHeaderResult.code.toString());
+    if(downloadHeaderResult.code == 200) {
+      _setState(() {
+        downloadLoadingMessage = "Extracting header data";
+      });
+
+      StockOpnameHeader stockOpnameHeader = downloadHeaderResult.data;
+      print("fetch "+stockOpnameHeader.customerName);
+
+      //extract header data
+      final database = await SQLHelper.createDatabase();
+
+      //raw query
+      // await database.transaction((txn) async {
+      //   int id1 = await txn.rawInsert(
+      //       'INSERT INTO hk_stockopnameheader(Id, TanggalTarikData, Cabang, SuratJalanTerakhir, KodeCustomer, NamaCustomer, JumlahBinTerdaftar, BinTepat, KetepatanJumlahPadaBin, KetepatanJumlahBin, JumlahPadaBin, ZoneShipment, ZoneReceipt, ZoneAdjustment, TotalQty, SaldoItemDesimal, NamaKepalaCabang, NamaKepalaAdministrasi, SelisihItemBinContent, Jumlah Helper, DividenData, UpdateUserId, UpdateTime, Complete, Upload, DownloadCount) VALUES($stockOpnameHeader.Id, "${stockOpnameHeader.pullDate}", "${stockOpnameHeader.branchId}", "${stockOpnameHeader.lastSJ}", "${stockOpnameHeader.customerId}", "${stockOpnameHeader.customerName}", ${stockOpnameHeader.registeredBinCount}, ${stockOpnameHeader.exactBin}, ${stockOpnameHeader.quantityAccuracyOnBin}, ${stockOpnameHeader.}           )');
+      //   print('inserted1: $id1');
+      //   int id2 = await txn.rawInsert(
+      //       'INSERT INTO Test(name, value, num) VALUES(?, ?, ?)',
+      //       ['another name', 12345678, 3.1416]);
+      //   print('inserted2: $id2');
+      // });
+
+      var mapData = <String, dynamic>{};
+      mapData.addEntries([
+        MapEntry('Id', stockOpnameHeader.id),
+        MapEntry('TanggalTarikData', stockOpnameHeader.pullDate),
+        MapEntry('Cabang', stockOpnameHeader.branchId),
+        MapEntry('SuratJalanTerakhir', stockOpnameHeader.lastSJ),
+        MapEntry('KodeCustomer', stockOpnameHeader.customerId),
+        MapEntry('KodeCustomer', stockOpnameHeader.customerId),
+      ]);
+      
+      print(mapData);
+      // final dbData = {'title': title, 'description': descrption};
+      // final id = await db.insert('items', data, conflictAlgorithm: sql.ConflictAlgorithm.replace);
+
+    }
   }
 
   doDownloadData() async {
-    Alert(context: context, loading: true, disableBackButton: true);
+    // Alert(context: context, loading: true, disableBackButton: true);
+    // var now = DateTime.now();
+    // var formatter = new DateFormat('yyyy-MM-dd');
+    // String pullDate = formatter.format(now);
+    // Result downloadLogResult = await stockOpnameAPI.getDownloadOpnameLog(context, parameter: "data-type=$selectedDataType&branch-id=${userModel.userId.substring(0, 3)}&pull-date=$pullDate");
+    // Navigator.of(context).pop();
+    // print(downloadLogResult.data.toString());
 
-    var now = DateTime.now();
-    var formatter = new DateFormat('yyyy-MM-dd');
-    String pullDate = formatter.format(now);
+    //demo preparation
+    downloadHeaderData();
+    showDialog (
+      context: context,
+      barrierDismissible: false,
+      builder: (context){
+        return WillPopScope(
+          onWillPop: () async {
+            return false; 
+          },
+          child: AlertDialog(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            scrollable: true,
+            content: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+              _setState = setState;
+              return Column(
+                children: [
+                  Container(
+                    child: Lottie.asset('assets/illustration/loading.json', width: 220, height: 220, fit: BoxFit.contain)
+                  ),
+                  SizedBox(height: 30),
+                  Container(
+                    child: TextView(downloadLoadingMessage, 4, color: Colors.white),
+                  ),
+                ],
+              );
+            }),
+          )
+        );
+      }
+    );
+
+    // Alert(context: context, loading: true, loadingMessage: "Download header data", disableBackButton: true);
     
-    Result downloadLogResult = await stockOpnameAPI.getDownloadOpnameLog(context, parameter: "data-type=$selectedDataType&branch-id=${userModel.userId.substring(0, 3)}&pull-date=$pullDate");
 
-    Navigator.of(context).pop();
-    
-
-    print(downloadLogResult.data.toString());
   }
+
+  // Widget showData() {
+  //   return Container();
+  // }
   
   @override
   Widget build(BuildContext context) {
@@ -79,6 +179,8 @@ class DashboardState extends State<Dashboard> {
     
     double mediaWidth = MediaQuery.of(context).size.width;
     double mediaHeight = MediaQuery.of(context).size.height;
+
+    // showData();
     
     return Scaffold(
       body: WillPopScope(

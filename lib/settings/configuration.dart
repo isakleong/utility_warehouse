@@ -6,17 +6,15 @@ class Configuration extends InheritedWidget {
     Widget child,
   }) : super(key: key, child: child);
 
-  // String ip_public = "192.168.0.213";
-  // String ip_public_alt = "192.168.10.213";
   String ip_public = "203.142.77.243";
   String ip_public_alt = "103.76.27.124";
-  // String ip_port = "80" ;
   String serverName = "NewUtilityWarehouseDev";
   String apkName = "Utility Warehouse Dev";
   String apkVersion = "1.0";
 
-  String urlPath;
-  String urlPathAlt;
+  String urlPathLocal;
+  String urlPathPublic;
+  String urlPathPublicAlt;
 
   String get baseUrl => "http://"+ip_public+"/"+serverName+"/";
   String get baseUrlAlt => "http://"+ip_public_alt+"/"+serverName+"/";
@@ -36,29 +34,30 @@ class Configuration extends InheritedWidget {
   Color lightGrayColor = Color(0xFFC4C4C4);
   Color lighterGrayColor = Color(0xFFDDDDDD);
 
-  String get getUrlPath {
-    return urlPath;
+  
+  String get getUrlPathLocal {
+    return urlPathLocal;
   }
 
-  String get getUrlPathAlt {
-    return urlPathAlt;
+  String get getUrlPathPublic {
+    return urlPathPublic;
   }
 
-  set setUrlPath(String url) {
-    urlPath = url;
+  String get getUrlPathPublicAlt {
+    return urlPathPublicAlt;
   }
 
-  set setUrlPathAlt(String url) {
-    urlPathAlt = url;
+  set setUrlPathLocal(String url) {
+    urlPathLocal = url;
   }
 
-  // void setBaseUrl(String url) {
-  //   this.baseUrl = url;
-  // }
+  set setUrlPathPublic(String url) {
+    urlPathPublic = url;
+  }
 
-  // void setBaseUrlAlt(String url) {
-  //   this.baseUrlAlt = url;
-  // }
+  set setUrlPathPublicAlt(String url) {
+    urlPathPublicAlt = url;
+  }
 
 }
 
